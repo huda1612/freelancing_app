@@ -1,0 +1,63 @@
+import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/constants/app_animations.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/models/onboarding_model.dart';
+import 'package:get/get.dart';
+//import '../views/auth/login_screen.dart';
+
+class OnboardingController extends GetxController {
+  final pages = <OnboardingModel>[
+    OnboardingModel(
+      animationPath:AppAnimtions.redyBee,
+      title: "وظف أفضل المبدعين",
+      subtitle: "اعثر على محترفين موثوقين لتنفيذ مشروعك القادم بسهولة",
+    ),
+    OnboardingModel(
+      animationPath: AppAnimtions.beelooking,
+      title: "ابحث عن الفرصة المناسبة",
+      subtitle: "استعرض المشاريع المتاحة في أي وقت واختر ما يناسب  مهارتك",
+    ),
+    OnboardingModel(
+      animationPath: AppAnimtions.beeCarryingFlower,
+      title: "كل شيء على بُعد نقرة واحدة",
+      subtitle: "أنجز مشروعك أو اعثر على عمل  أحلامك بنقرة واحدة فقط",
+    ),
+    OnboardingModel(
+      animationPath: AppAnimtions.beeInFlower,
+      title: "ابدأ رحلتك المهنية الآن",
+      subtitle: "انضم إلى المنصة و ابدأ بتوظيف المستقلين و اكتشاف فرص العمل التي تناسبك",
+    ),
+  ];
+
+  var currentIndex = 0.obs;
+  final pageController = PageController();
+
+  void nextPage() {
+    if (currentIndex.value < pages.length - 1) {
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      finish();
+    }
+  }
+
+  void skip() => finish();
+
+  void finish() {
+    Get.offNamed(AppRoutes.welcome);
+
+
+  }
+
+  double get progressValue {
+    switch (currentIndex.value) {
+      case 0: return 0.25;
+      case 1: return 0.5;
+      case 2: return 0.75;
+      case 3: return 1.0;
+      default: return 0.0;
+    }
+  }
+}
