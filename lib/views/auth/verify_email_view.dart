@@ -54,7 +54,7 @@ class VerifyEmailView extends StatelessWidget {
                         "تم الإرسال",
                         "تم إرسال رابط التفعيل مرة أخرى",
                         backgroundColor: Colors.green,
-                        colorText: Colors.green,
+                        colorText: const Color.fromARGB(255, 255, 255, 255),
                       );
                     },
                   ),

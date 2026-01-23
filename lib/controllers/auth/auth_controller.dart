@@ -11,8 +11,9 @@ class AuthController extends GetxController {
   final confirmPassword = ''.obs;
 
   Future<void> sendVerificationEmail() async {
-    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-      await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
     }
   }
 
@@ -96,8 +97,8 @@ class AuthController extends GetxController {
       Get.snackbar("خطأ", message);
     } catch (e) {
       Get.snackbar("خطأ", "حدث خطأ غير معروف $e");
-      print("##########################################################");
-      print(e);
+      // print("##########################################################");
+      // print(e);
     }
   }
 
@@ -140,8 +141,8 @@ class AuthController extends GetxController {
       Get.snackbar("نجاح", "تم إنشاء الحساب");
 
       await sendVerificationEmail();
-      //هون لازم يتم التوجيه لصفحة التحقق من الايميل!!!!!!!!!!!!!!!!
-      Get.toNamed("/verify-email"); //the email validate page !!!!!!!!!!!!!!!!
+
+      Get.toNamed("/verify-email"); //the email validate page
     } on FirebaseAuthException catch (e) {
       String message;
       if (e.code == 'email-already-in-use') {
