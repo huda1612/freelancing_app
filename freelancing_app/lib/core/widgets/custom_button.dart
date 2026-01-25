@@ -18,14 +18,13 @@ class CustomButton extends StatelessWidget {
   final ButtonType buttonType;
   final Widget? prefix;
 
-
   const CustomButton({
     super.key,
     required this.text,
     required this.onTap,
-    this.width = 396,                 // ← رقم التصميم
-    this.height = 52,                 // ← رقم التصميم
-    this.padding,                    
+    this.width = 396, // ← رقم التصميم
+    this.height = 52, // ← رقم التصميم
+    this.padding,
     this.color = AppColors.vividPurple,
     this.textStyle,
     this.borderRadius,
@@ -48,30 +47,29 @@ class CustomButton extends StatelessWidget {
             ),
         decoration: BoxDecoration(
           color: buttonType == ButtonType.filled ? color : AppColors.white,
-          borderRadius: borderRadius ??
-              BorderRadius.circular(AppSpaces.radiusMedium),
+          borderRadius:
+              borderRadius ?? BorderRadius.circular(AppSpaces.radiusMedium),
           border: buttonType == ButtonType.outlined
               ? Border.all(color: color, width: 1.5.w)
               : null,
         ),
         alignment: Alignment.center,
         child: prefix == null
-    ? Text(
-        text,
-        style: textStyle ?? AppTextStyles.button,
-      )
-    : Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          prefix!,
-          SizedBox(width: 10.w),
-          Text(
-            text,
-            style: textStyle ?? AppTextStyles.button,
-          ),
-        ],
-      ),
-
+            ? Text(
+                text,
+                style: textStyle ?? AppTextStyles.button,
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  prefix!,
+                  SizedBox(width: 10.w),
+                  Text(
+                    text,
+                    style: textStyle ?? AppTextStyles.button,
+                  ),
+                ],
+              ),
       ),
     );
   }

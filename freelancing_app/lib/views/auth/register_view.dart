@@ -101,7 +101,7 @@ class RegisterView extends StatelessWidget {
                 ),
 
                 SizedBox(height: AppSpaces.heightMedium),
-              //لاختيار مستقل او عميل
+                //لاختيار مستقل او عميل
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -154,16 +154,11 @@ class RegisterView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "بالتسجيل، أنت توافق على ",
-                        style:
-                            AppTextStyles.link.copyWith(color: AppColors.grey),
-                      ),
                       InteractiveTextLink(
-                        text: "شروط الخدمة",
+                        text: "سياسة الخصوصية",
                         onTap: () {
-                          // افتحي صفحة الشروط
-                          Get.toNamed(AppRoutes.terms);
+                          // افتحي صفحة الخصوصية
+                          //     Get.toNamed(AppRoutes.privacy);
                         },
                       ),
                       Text(
@@ -172,11 +167,16 @@ class RegisterView extends StatelessWidget {
                             AppTextStyles.link.copyWith(color: AppColors.grey),
                       ),
                       InteractiveTextLink(
-                        text: "سياسة الخصوصية",
+                        text: "شروط الخدمة",
                         onTap: () {
-                          // افتحي صفحة الخصوصية
-                          Get.toNamed(AppRoutes.privacy);
+                          // افتحي صفحة الشروط
+                          // Get.toNamed(AppRoutes.terms);
                         },
+                      ),
+                      Text(
+                        "بالتسجيل، أنت توافق على ",
+                        style:
+                            AppTextStyles.link.copyWith(color: AppColors.grey),
                       ),
                     ],
                   ),
@@ -236,15 +236,15 @@ class RegisterView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      InteractiveTextLink(
+                        text: "تسجيل الدخول",
+                        onTap: () => Get.toNamed(AppRoutes.login),
+                      ),
                       Text(
-                        "لديك حساب ؟",
+                        " لديك حساب ؟",
                         style: AppTextStyles.link.copyWith(
                           color: AppColors.grey,
                         ),
-                      ),
-                      InteractiveTextLink(
-                        text: "تسجيل الدخول",
-                        onTap: () => Get.toNamed(AppRoutes.accountSelection),
                       ),
                     ],
                   ),

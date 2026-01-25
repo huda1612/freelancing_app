@@ -136,15 +136,16 @@ class LoginView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "ليس لديك حساب ؟",
-                        style:
-                            AppTextStyles.link.copyWith(color: AppColors.grey),
-                      ),
                       InteractiveTextLink(
                         text: "إنشاء حساب",
                         onTap: () => Get.toNamed(AppRoutes.register),
                       ),
+                      Text(
+                        " ليس لديك حساب ؟",
+                        style:
+                            AppTextStyles.link.copyWith(color: AppColors.grey),
+                      ),
+                      
                     ],
                   ),
                 ),
