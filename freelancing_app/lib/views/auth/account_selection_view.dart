@@ -36,7 +36,7 @@ class AccountSelectionView extends StatelessWidget {
             children: [
               SizedBox(
                 height: 240.h,
-                child: Image.asset(AppAssets.logo1, fit: BoxFit.contain),
+                child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
               ),
 
               SizedBox(height: AppSpaces.heightSmall),

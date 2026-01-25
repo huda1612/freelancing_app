@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth/auth_controller.dart';
@@ -13,23 +15,8 @@ class VerifyEmailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AuthController());
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.softPurple, // بنفسجي
-                  AppColors.softBlue, // أزرق
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Center(
-              child: Column(
+    return BaseScreen( 
+       body: Center( child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -46,7 +33,9 @@ class VerifyEmailView extends StatelessWidget {
                   SizedBox(height: AppSpaces.heightLarge),
 
                   // زر إعادة إرسال الرابط
-                  CustomButton(
+                  SizedBox(
+                width: 380.w,
+                  child:  CustomButton(
                     text: "إعادة إرسال رابط التفعيل",
                     onTap: () async {
                       await controller.sendVerificationEmail();
@@ -58,23 +47,22 @@ class VerifyEmailView extends StatelessWidget {
                       );
                     },
                   ),
-
+                  ),
                   SizedBox(height: AppSpaces.heightMedium),
 
                   // زر تم التفعيل
-                  CustomButton(
+                  SizedBox(
+                width: 380.w,
+                  child:                  CustomButton(
                     text: "تم التفعيل",
                     onTap: controller.login,
                     //هاد الاصلي بس حطيت الفوق ليشتغل الكود
                     //onTap: controller.goToHomeIfVerified,
                     color: AppColors.vividPurple,
-                  ),
+                  ),),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 }

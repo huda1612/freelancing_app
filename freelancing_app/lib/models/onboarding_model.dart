@@ -1,11 +1,12 @@
 class OnboardingModel {
-  final String animationPath;
+  final String assetPath;
   final String title;
   final String subtitle;
 
   OnboardingModel({
-    required this.animationPath,
-    required this.title,
-    required this.subtitle,
-  });
+  required this.assetPath,
+  required this.title,
+  required this.subtitle,
+});
+
 }

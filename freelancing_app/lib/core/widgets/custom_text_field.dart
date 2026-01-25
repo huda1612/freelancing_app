@@ -4,15 +4,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CustomTextField extends StatefulWidget {
   final String? hintText;
   final TextEditingController? controller;
-  final bool obscureText; // لإخفاء النص
-  final Widget? prefixIcon; // أيقونة بداية الحقل
-  final Widget? suffixIcon; // أيقونة نهاية الحقل
+  final bool obscureText;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final TextInputType? keyboardType;
-  final String? Function(String?)? validator; // للتحقق من المدخلات
+  final String? Function(String?)? validator;
   final double? width;
   final double? height;
   final Function(String)? onChanged;
-
+  final Color? fillColor;
+  final BorderRadius? borderRadius;
 
   const CustomTextField({
     super.key,
@@ -26,7 +27,8 @@ class CustomTextField extends StatefulWidget {
     this.width = 380,
     this.height = 48,
     this.onChanged,
-
+    this.fillColor,
+    this.borderRadius,
   });
 
   @override
@@ -57,13 +59,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
             icon: Icon(
               _obscure ? Icons.visibility_off : Icons.visibility,
               color: Colors.grey.shade600,
-              size: 20,
+              size: 20.w,
             ),
             onPressed: _toggleVisibility,
           )
         : widget.suffixIcon;
 
-    TextDirection textDirection =
+    final textDirection =
         Localizations.localeOf(context).languageCode == 'ar'
             ? TextDirection.rtl
             : TextDirection.ltr;
@@ -77,7 +79,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
         keyboardType: widget.keyboardType,
         validator: widget.validator,
         onChanged: widget.onChanged,
-
         maxLines: isCommentField ? 5 : 1,
         minLines: isCommentField ? 3 : 1,
         style: TextStyle(
@@ -93,22 +94,30 @@ class _CustomTextFieldState extends State<CustomTextField> {
             color: Colors.grey.shade500,
           ),
           filled: true,
-          fillColor: Colors.grey.shade200,
+          fillColor: widget.fillColor ?? Colors.grey.shade200,
           prefixIcon: widget.prefixIcon,
           suffixIcon: suffixIcon,
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 12.h,
+            horizontal: 16.w,
+          ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius:
+                widget.borderRadius ?? BorderRadius.circular(10.r),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius:
+                widget.borderRadius ?? BorderRadius.circular(10.r),
             borderSide: BorderSide(color: Colors.grey.shade300),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.r),
-            borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+            borderRadius:
+                widget.borderRadius ?? BorderRadius.circular(10.r),
+            borderSide: BorderSide(
+              color: Colors.blue,
+              width: 1.5.w,
+            ),
           ),
         ),
       ),

@@ -23,7 +23,7 @@ class OnboardingScreen extends StatelessWidget {
               itemBuilder: (context, i) {
                 final p = controller.pages[i];
                 return Obx(() => OnboardingCard(
-                  animationPath: p.animationPath,
+                  assetPath: p.assetPath,
                   title: p.title,
                   subtitle: p.subtitle,
                   isLast: i == controller.pages.length - 1,
