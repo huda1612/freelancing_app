@@ -86,7 +86,7 @@ class RegisterView extends StatelessWidget {
                   validator: (value) => Validators.password(value ?? ""),
                 ),
 
-                SizedBox(height: AppSpaces.heightSmall),
+                SizedBox(height: AppSpaces.heightMedium),
 
                 //تاكيد الباسوورد
                 CustomTextField(
@@ -101,12 +101,12 @@ class RegisterView extends StatelessWidget {
                 ),
 
                 SizedBox(height: AppSpaces.heightMedium),
-//لاختيار مستقل او عميل
+              //لاختيار مستقل او عميل
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     "نوع الحساب",
-                    style: AppTextStyles.subheading
+                    style: AppTextStyles.body
                         .copyWith(color: AppColors.darkBackground),
                   ),
                 ),
@@ -216,7 +216,8 @@ class RegisterView extends StatelessWidget {
                   child: CustomButton(
                     text: "الدخول باستخدام حساب جوجل",
                     color: AppColors.white,
-                  textStyle: AppTextStyles.button.copyWith(color: AppColors.black),
+                    textStyle:
+                        AppTextStyles.button.copyWith(color: AppColors.black),
                     prefix: Image.asset(
                       AppIcons.google,
                       width: 24.w,

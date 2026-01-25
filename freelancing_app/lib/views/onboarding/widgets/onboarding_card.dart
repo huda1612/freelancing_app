@@ -78,8 +78,8 @@ class OnboardingCard extends StatelessWidget {
                         height: 300.h,
                         child: Image.asset(
                           assetPath,
-                          width: 250.w,
-                          height: 250.h,
+                          width: 300.w,
+                          height: 300.h,
                         ),
                       ),
                     ],
