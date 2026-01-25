@@ -43,7 +43,7 @@ class WelcomeView extends StatelessWidget {
               ),
               SizedBox(height: AppSpaces.heightLarge),
               Text(
-                "أهلا بك في منصة بيزي نحول",
+                " FREELANCITY أهلا بك في منصة  ",
                 style: AppTextStyles.heading,
                 textAlign: TextAlign.center,
               ),
@@ -62,6 +62,8 @@ class WelcomeView extends StatelessWidget {
                 width: 380.w,
                 child: CustomButton(
                     text: "الدخول باستخدام حساب جوجل",
+                   textStyle: AppTextStyles.button.copyWith(color: AppColors.black),
+
                     // onTap: () => Get.toNamed(AppRoutes.login),
                     color: AppColors.white,
                     prefix: Image.asset(
