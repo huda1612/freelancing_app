@@ -9,6 +9,10 @@ class AuthController extends GetxController {
   final email = ''.obs;
   final password = ''.obs;
   final confirmPassword = ''.obs;
+  var userRole = 'client'.obs; // client أو freelancer
+var firstName = ''.obs;
+var lastName = ''.obs;
+
 
   Future<void> sendVerificationEmail() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -124,8 +128,7 @@ class AuthController extends GetxController {
       await FirebaseFirestore.instance.collection('Users').doc(uid).set({
         'name': '', //هون لازم يكون مدخل حقل للاسم لازم نضيفه!!!!!!!!!!!
         'email': email.value,
-        'role':
-            'client', // أو 'freelancer' حسب اختيار المستخدم لازم نضيف حقل للنوع !!!!!!!
+        'role': userRole.value, // أو 'freelancer' حسب اختيار المستخدم لازم نضيف حقل للنوع !!!!!!!
         'photoUrl': '', // افتراضي فارغ
         'bio': '',
         'skills': [],

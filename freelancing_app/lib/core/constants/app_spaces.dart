@@ -33,7 +33,9 @@ class AppSpaces {
   // -------------------------
 
   static const double screenHorizontalPadding = 20.0;
-  static const double mediumVerticalSpacing = 16.0;
+  static const double mediumHorizontalPadding = 16.0;
+  static const double smallHorizontalPadding = 8.0;
+  static const double mediumVerticalSpacing = 14.0;
   static const double largeVerticalSpacing = 24.0;
   static const double smallVerticalSpacing = 8.0;
 

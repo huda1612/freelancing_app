@@ -9,26 +9,28 @@ enum ButtonType { filled, outlined }
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
-  final double? width; // لو null، يمتد ليملأ المساحة المتاحة
+  final double? width;
   final double height;
-  final EdgeInsetsGeometry padding;
-  final Color color;                // اللون الأساسي للزر
+  final EdgeInsetsGeometry? padding;
+  final Color color;
   final TextStyle? textStyle;
-final BorderRadiusGeometry? borderRadius;
+  final BorderRadiusGeometry? borderRadius;
   final ButtonType buttonType;
+  final Widget? prefix;
+
 
   const CustomButton({
     super.key,
     required this.text,
     required this.onTap,
-    this.width=396,
-    this.height = 52,
-    this.padding = const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-    this.color = AppColors.vividPurple,       // اللون الافتراضي
+    this.width = 396,                 // ← رقم التصميم
+    this.height = 52,                 // ← رقم التصميم
+    this.padding,                    
+    this.color = AppColors.vividPurple,
     this.textStyle,
-this.borderRadius,
-
+    this.borderRadius,
     this.buttonType = ButtonType.filled,
+    this.prefix,
   });
 
   @override
@@ -38,24 +40,38 @@ this.borderRadius,
       child: Container(
         width: width != null ? width!.w : double.infinity,
         height: height.h,
-        padding: padding,
+        padding: padding ??
+            EdgeInsets.symmetric(
+              vertical: AppSpaces.smallVerticalSpacing.h,
+              //14.h,
+              horizontal: AppSpaces.smallHorizontalPadding.w,
+            ),
         decoration: BoxDecoration(
-          color: buttonType == ButtonType.filled ? color : Colors.white,
-          borderRadius:  borderRadius ??
-    BorderRadius.all(
-      Radius.circular(AppSpaces.radiusMedium),
-    ),
-
+          color: buttonType == ButtonType.filled ? color : AppColors.white,
+          borderRadius: borderRadius ??
+              BorderRadius.circular(AppSpaces.radiusMedium),
           border: buttonType == ButtonType.outlined
               ? Border.all(color: color, width: 1.5.w)
               : null,
         ),
         alignment: Alignment.center,
-        child: Text(
-          text,
-          style: textStyle ??
-               AppTextStyles.button
-        ),
+        child: prefix == null
+    ? Text(
+        text,
+        style: textStyle ?? AppTextStyles.button,
+      )
+    : Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          prefix!,
+          SizedBox(width: 10.w),
+          Text(
+            text,
+            style: textStyle ?? AppTextStyles.button,
+          ),
+        ],
+      ),
+
       ),
     );
   }

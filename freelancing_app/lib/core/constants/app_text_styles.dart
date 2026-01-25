@@ -7,28 +7,28 @@ class AppTextStyles {
   //جاهز
   // العنوان الرئيسي (مثل "Welcome to HappWork")
   static TextStyle get heading => TextStyle(
-    fontSize: 20.sp,
+    fontSize: 24.sp,
     fontWeight: FontWeight.bold,
     color: AppColors.black,
   );
    //جاهز
   // العنوان الثانوي (مثل "Job and Freelancing Marketplace!")
   static TextStyle get subheading => TextStyle(
-    fontSize: 16.sp,
+    fontSize: 18.sp,
     fontWeight: FontWeight.w500,
     color: AppColors.veryLightGrey,
   );
    //جاهز
  //للنصوص التوضسيحية الرئيسية
   static TextStyle get meduimstyle => TextStyle(
-    fontSize: 20.sp,
+    fontSize: 22.sp,
     fontWeight:FontWeight.bold,
     color: AppColors.purple,
   );
 //جاهز
   // النص التوضيحي (مثل "We help you finding the best partners for work")
   static TextStyle get body => TextStyle(
-    fontSize: 14.sp,
+    fontSize: 16.sp,
     fontWeight: FontWeight.normal,
     color:  AppColors.white,
   );
@@ -36,7 +36,7 @@ class AppTextStyles {
   //جاهز
     // زر "Get Started"
   static TextStyle get button => TextStyle(
-    fontSize: 12.sp,
+    fontSize: 14.sp,
     fontWeight: FontWeight.w200,
     color: AppColors.white,
   );
@@ -50,7 +50,7 @@ class AppTextStyles {
 
   // النصوص التفاعلية (مثل "Create Account", "Sign In", "Forgot Password?")
   static TextStyle get link => TextStyle(
-    fontSize: 10.sp,
+    fontSize: 12.sp,
     fontWeight: FontWeight.bold,
     color: AppColors.vividPurple,
     
@@ -60,7 +60,7 @@ class AppTextStyles {
 
   // نصوص الحقول (مثل "Email Address", "Password")
   static TextStyle get inputLabel => TextStyle(
-    fontSize: 14.sp,
+    fontSize: 16.sp,
     fontWeight: FontWeight.w400,
     color: Colors.white,
   );

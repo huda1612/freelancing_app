@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:freelancing_platform/core/constants/app_animations.dart';
+import 'package:freelancing_platform/core/constants/app_assets.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/models/onboarding_model.dart';
 import 'package:get/get.dart';
-//import '../views/auth/login_screen.dart';
 
 class OnboardingController extends GetxController {
   final pages = <OnboardingModel>[
     OnboardingModel(
-      animationPath:AppAnimtions.redyBee,
+      assetPath: AppAssets.first,
       title: "وظف أفضل المبدعين",
       subtitle: "اعثر على محترفين موثوقين لتنفيذ مشروعك القادم بسهولة",
     ),
     OnboardingModel(
-      animationPath: AppAnimtions.beelooking,
+      assetPath: AppAssets.second,
       title: "ابحث عن الفرصة المناسبة",
       subtitle: "استعرض المشاريع المتاحة في أي وقت واختر ما يناسب  مهارتك",
     ),
     OnboardingModel(
-      animationPath: AppAnimtions.beeCarryingFlower,
+      assetPath: AppAssets.third,
       title: "كل شيء على بُعد نقرة واحدة",
       subtitle: "أنجز مشروعك أو اعثر على عمل  أحلامك بنقرة واحدة فقط",
     ),
     OnboardingModel(
-      animationPath: AppAnimtions.beeInFlower,
+      assetPath:AppAssets.finaly,
       title: "ابدأ رحلتك المهنية الآن",
       subtitle: "انضم إلى المنصة و ابدأ بتوظيف المستقلين و اكتشاف فرص العمل التي تناسبك",
     ),

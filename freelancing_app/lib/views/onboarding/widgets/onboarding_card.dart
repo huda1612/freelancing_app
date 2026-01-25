@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
-import 'package:lottie/lottie.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 
 class OnboardingCard extends StatelessWidget {
-  final String animationPath;
+  final String assetPath;
   final String title;
   final String subtitle;
   final bool isLast;
@@ -17,7 +16,7 @@ class OnboardingCard extends StatelessWidget {
 
   const OnboardingCard({
     super.key,
-    required this.animationPath,
+    required this.assetPath,
     required this.title,
     required this.subtitle,
     required this.isLast,
@@ -65,20 +64,20 @@ class OnboardingCard extends StatelessWidget {
                           child: CustomButton(
                             text: "تخطي",
                             onTap: onSkip,
-                            width: 80.w,
-                            height: 36.h,
+                            width: 75.w,
+                            height: 52.h,
                             color: AppColors.veryLightGrey,
                             borderRadius: BorderRadius.all(
-                              Radius.circular(AppSpaces.radiusLarge),
+                              Radius.circular(AppSpaces.radiusMedium),
                             ),
-                            textStyle: AppTextStyles.link,
+                            textStyle: AppTextStyles.link.copyWith(fontSize:10.sp ),
                           ),
                         ),
                       SizedBox(height: AppSpaces.heightLarge),
                       SizedBox(
                         height: 300.h,
-                        child: Lottie.asset(
-                          animationPath,
+                        child: Image.asset(
+                          assetPath,
                           width: 250.w,
                           height: 250.h,
                         ),
@@ -104,7 +103,7 @@ class OnboardingCard extends StatelessWidget {
 
               isLast
                   ? SizedBox(
-                      width: 250.w,
+                      width: 380.w,
                       child: CustomButton(text: "ابدأ", onTap: onNext),
                     )
                   : GestureDetector(

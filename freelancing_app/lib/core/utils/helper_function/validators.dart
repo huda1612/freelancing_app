@@ -17,4 +17,24 @@ class Validators {
     if (value != original) return "كلمتا المرور غير متطابقتين";
     return null;
   }
+
+  //  فاليديتور الاسم الأول
+  static String? firstName(String value) {
+    if (value.trim().isEmpty) return "الاسم الأول مطلوب";
+    if (value.length < 2) return "الاسم الأول يجب أن يكون حرفين على الأقل";
+    if (!RegExp(r"^[a-zA-Z\u0600-\u06FF\s]+$").hasMatch(value)) {
+      return "الاسم الأول يجب أن يحتوي على أحرف فقط";
+    }
+    return null;
+  }
+
+  //  فاليديتور الاسم الأخير
+  static String? lastName(String value) {
+    if (value.trim().isEmpty) return "الاسم الأخير مطلوب";
+    if (value.length < 2) return "الاسم الأخير يجب أن يكون حرفين على الأقل";
+    if (!RegExp(r"^[a-zA-Z\u0600-\u06FF\s]+$").hasMatch(value)) {
+      return "الاسم الأخير يجب أن يحتوي على أحرف فقط";
+    }
+    return null;
+  }
 }
