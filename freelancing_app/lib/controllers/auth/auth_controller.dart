@@ -125,10 +125,10 @@ class AuthController extends GetxController {
       final uid = userCredential.user!.uid;
       //بدي دخل بيانات المستخدم بقاعدة البيانات
       await FirebaseFirestore.instance.collection('Users').doc(uid).set({
-        'name': '', //هون لازم يكون مدخل حقل للاسم لازم نضيفه!!!!!!!!!!!
+        'fname': firstName.value,
+        'lname': lastName.value,
         'email': email.value,
-        'role': userRole
-            .value, // أو 'freelancer' حسب اختيار المستخدم لازم نضيف حقل للنوع !!!!!!!
+        'role': userRole.value,
         'photoUrl': '', // افتراضي فارغ
         'bio': '',
         'skills': [],
