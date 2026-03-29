@@ -141,10 +141,21 @@ class RegisterView extends StatelessWidget {
                 // زر انشاء حساب
                 SizedBox(
                   width: 380.w,
-                  child: CustomButton(
-                    text: "إنشاء حساب",
-                    onTap: controller.register,
-                  ),
+                  child: Obx(() {
+                    if (controller.isRegisterLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return CustomButton(
+                      text: "إنشاء حساب",
+                      onTap: controller.register,
+                    );
+                  }),
+                  // child: CustomButton(
+                  //   text: "إنشاء حساب",
+                  //   onTap: controller.register,
+                  // ),
                 ),
                 SizedBox(height: AppSpaces.heightSmall),
 

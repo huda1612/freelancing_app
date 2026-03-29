@@ -77,10 +77,18 @@ class LoginView extends StatelessWidget {
                 // LOGIN BUTTON with email
                 SizedBox(
                   width: 380.w,
-                  child: CustomButton(
-                    text: "تسجيل الدخول",
-                    onTap: controller.login,
-                  ),
+                  child: Obx(() {
+                    if (controller.isLoginLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return CustomButton(
+                      text: "تسجيل الدخول",
+                      onTap: controller.login,
+                    );
+                  }),
+                 
                 ),
                 SizedBox(height: AppSpaces.heightLarge),
 
@@ -116,8 +124,8 @@ class LoginView extends StatelessWidget {
                   width: 380.w,
                   child: CustomButton(
                       text: "تسجيل الدخول باستخدام حساب جوجل",
-                                        textStyle: AppTextStyles.button.copyWith(color: AppColors.black),
-
+                      textStyle:
+                          AppTextStyles.button.copyWith(color: AppColors.black),
                       prefix: Image.asset(
                         AppIcons.google,
                         width: 24.w,
@@ -145,7 +153,6 @@ class LoginView extends StatelessWidget {
                         style:
                             AppTextStyles.link.copyWith(color: AppColors.grey),
                       ),
-                      
                     ],
                   ),
                 ),
