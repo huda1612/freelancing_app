@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
+import 'package:freelancing_platform/models/user_model.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
@@ -12,6 +13,8 @@ class AuthController extends GetxController {
   var userRole = 'client'.obs; // client أو freelancer
   var firstName = ''.obs;
   var lastName = ''.obs;
+  final isLoginLoading = false.obs;
+  final isRegisterLoading = false.obs;
 
   Future<void> sendVerificationEmail() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -71,6 +74,7 @@ class AuthController extends GetxController {
       return;
     }
     try {
+      isLoginLoading.value = true;
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email.value, password: password.value);
       Get.snackbar("نجاح", "تم تسجيل الدخول");
@@ -102,49 +106,64 @@ class AuthController extends GetxController {
       Get.snackbar("خطأ", "حدث خطأ غير معروف $e");
       // print("##########################################################");
       // print(e);
+    } finally {
+      isLoginLoading.value = false;
     }
   }
 
   void register() async {
+    //اول شي عم نتحقق من ان مافي خطأ بالحقول هي وإلا رح يعطي سناك بار بأول خطأ طلع بس
     final emailError = Validators.email(email.value);
     final passError = Validators.password(password.value);
     final confirmError =
         Validators.confirmPassword(confirmPassword.value, password.value);
+    final fnameError = Validators.firstName(firstName.value);
+    final lnameError = Validators.lastName(lastName.value);
 
-    if (emailError != null || passError != null || confirmError != null) {
-      Get.snackbar("خطأ", emailError ?? passError ?? confirmError!);
+    if (emailError != null ||
+        passError != null ||
+        confirmError != null ||
+        fnameError != null ||
+        lnameError != null) {
+      Get.snackbar("خطأ",
+          fnameError ?? lnameError ?? emailError ?? passError ?? confirmError!);
       return;
     }
 
     try {
-      //انشأت المستخدم اول شي
+      isRegisterLoading.value = true;
+      //انشأت المستخدم اول شي بالفايربيز
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: email.value, password: password.value);
 
+      print("current user : ${FirebaseAuth.instance.currentUser}");
+
+      //بعدين بدي دخل بيانات المستخدم بقاعدة البيانات
       final uid = userCredential.user!.uid;
-      //بدي دخل بيانات المستخدم بقاعدة البيانات
-      await FirebaseFirestore.instance.collection('Users').doc(uid).set({
-        'fname': firstName.value,
-        'lname': lastName.value,
-        'email': email.value,
-        'role': userRole.value,
-        'photoUrl': '', // افتراضي فارغ
-        'bio': '',
-        'skills': [],
-        'rating': 0.0,
-        'completed_projects': 0,
-        'points': 0,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      final newUser = UserModel(
+        uid: uid,
+        fname: firstName.value,
+        lname: lastName.value,
+        email: email.value,
+        role: userRole.value,
+      );
+     
+      try {
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(uid)
+            .set(newUser.toMap());
+        Get.snackbar("نجاح", "تم إنشاء الحساب");
+      } catch (e) {
+        // إذا فشل الحفظ في Firestore، نحذف المستخدم اللي انشأناه
+        await FirebaseAuth.instance.currentUser?.delete();
+        Get.snackbar("خطأ", "حدث خطأ بادخال المستخدم في قاعدة البيانات : $e");
 
-      // المجموعات الفرعية يمكن إضافتها لاحقًا عند الحاجة
-      // portfolio, reviews, suggestions, activities
-
-      Get.snackbar("نجاح", "تم إنشاء الحساب");
-
-      await sendVerificationEmail();
-
+        rethrow; // لحتى يوصل للـ catch الخارجي
+      }
+      // await sendVerificationEmail();
+      await userCredential.user!.sendEmailVerification();
       Get.toNamed("/verify-email"); //the email validate page
     } on FirebaseAuthException catch (e) {
       String message;
@@ -159,7 +178,9 @@ class AuthController extends GetxController {
       }
       Get.snackbar("خطأ", message);
     } catch (e) {
-      Get.snackbar("خطأ", "حدث خطأ غير معروف");
+      Get.snackbar("خطأ", "حدث خطأ غير معروف : $e");
+    } finally {
+      isRegisterLoading.value = false;
     }
   }
 }

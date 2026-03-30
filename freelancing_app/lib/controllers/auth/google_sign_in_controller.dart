@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/controllers/auth/auth_controller.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
+import 'package:freelancing_platform/models/user_model.dart';
 import 'package:freelancing_platform/views/auth/widgets/role_option.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,13 +37,13 @@ class GoogleSignInController extends GetxController {
       }
       await _addUserToFirestoreIfItsNotExist(user);
 
-      Get.snackbar("نجاح", "تم تسجيل الدخول");
+      // Get.snackbar("نجاح", "تم تسجيل الدخول");
     } catch (e) {
       Get.snackbar("فشل", "فشل تسجيل الدخول $e");
     }
   }
 
-  Future<void> _addUserToFirestoreIfItsNotExist(user) async {
+  Future<void> _addUserToFirestoreIfItsNotExist(User user) async {
     final controller = Get.put(AuthController());
     // **الآن نتأكد إذا موجود في Firestore**
     DocumentReference userDoc =
@@ -110,22 +111,38 @@ class GoogleSignInController extends GetxController {
         ),
       );
       if (role == null) {
+        await FirebaseAuth.instance.currentUser?.delete();
+        Get.snackbar("تم الإلغاء", "تم إلغاء تسجيل الدخول");
         return;
       } // المستخدم ألغى اختيار الدور
 
       // المستخدم جديد → نضيفه للـ Users collection
-      await userDoc.set({
-        'name': user.displayName ?? '',
-        'email': user.email ?? '',
-        'role': role,
-        'photoUrl': user.photoURL ?? '',
-        'bio': '',
-        'skills': [],
-        'rating': 0.0,
-        'completed_projects': 0,
-        'points': 0,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      String fullName = user.displayName ?? "";
+      // نقسم الاسم حسب الفراغات
+      List<String> nameParts = fullName.split(" ");
+      // الاسم الأول = أول عنصر
+      String firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+      // الاسم الأخير = الباقي بعد الاسم الأول
+      String lastName =
+          nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+      //انشاء غرض للمستخدم
+      final newUser = UserModel(
+        uid: user.uid,
+        fname: firstName,
+        lname: lastName,
+        email: user.email ?? '',
+        role: role,
+        photoUrl: user.photoURL ?? '',
+      );
+      //ادخال المستخدم في قاعدة البيانات
+      try {
+        await userDoc.set(newUser.toMap());
+      } catch (e) {
+        await FirebaseAuth.instance.currentUser?.delete();
+        Get.snackbar("خطأ", "حدث خطأ بادخال المستخدم في قاعدة البيانات : $e");
+        return;
+      } //هي بحال فشل ادخال سجل للمستخدم بقاعدة البيانات
     }
+    Get.snackbar("نجاح", "تم تسجيل الدخول");
   }
 }
