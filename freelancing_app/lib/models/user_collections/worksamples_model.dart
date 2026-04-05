@@ -1,18 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PortfolioModel {
+class WorksamplesModel {
+  final String id;
   final String title;
   final String description;
   final String imageUrl;
   final Timestamp? createdAt;
 
-  PortfolioModel({
+  WorksamplesModel({
+    required this.id,
     required this.title,
     required this.description,
     this.imageUrl = '',
     this.createdAt,
   });
-
   // 🔹 تحويل من Object إلى Map (للتخزين)
   Map<String, dynamic> toMap() {
     return {
@@ -24,13 +25,15 @@ class PortfolioModel {
   }
 
   // 🔹 تحويل من Firestore إلى Object
-  factory PortfolioModel.fromMap(Map<String, dynamic> map) {
-    return PortfolioModel(
+  factory WorksamplesModel.fromMap(Map<String, dynamic> map, String docId) {
+    return WorksamplesModel(
+      id: docId,
       title: map['title'],
       description: map['description'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       // createdAt: map['createdAt'],
-      createdAt: map['createdAt'] as Timestamp?, //??
+      createdAt:
+          map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );
   }
 }

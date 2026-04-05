@@ -1,5 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum UserStatus { incomplete, pending, approved, rejected }
+
+String statusToString(UserStatus status) {
+  switch (status) {
+    case UserStatus.incomplete:
+      return 'incomplete';
+    case UserStatus.pending:
+      return 'pending';
+    case UserStatus.approved:
+      return 'approved';
+    case UserStatus.rejected:
+      return 'rejected';
+  }
+}
+
 class UserModel {
   final String uid;
   final String fname;
@@ -9,6 +24,7 @@ class UserModel {
   final String photoUrl;
   final String bio;
   final List<String> skills; //هي لازم غيرها بس اعمل صف المهارات
+  final UserStatus status;
   final double rating;
   final int completedProjects;
   final int points;
@@ -23,6 +39,7 @@ class UserModel {
     this.photoUrl = '',
     this.bio = '',
     this.skills = const [],
+    this.status = UserStatus.incomplete,
     this.rating = 0.0,
     this.completedProjects = 0,
     this.points = 0,
@@ -57,10 +74,13 @@ class UserModel {
       photoUrl: map['photoUrl'] ?? '',
       bio: map['bio'] ?? '',
       skills: List<String>.from(map['skills'] ?? []),
-      rating: (map['rating'] ?? 0).toDouble(),
+      // rating: (map['rating'] ?? 0).toDouble(),
+      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
       completedProjects: map['completed_projects'] ?? 0,
       points: map['points'] ?? 0,
-      createdAt: map['createdAt'] as Timestamp?,
+      // createdAt: map['createdAt'] as Timestamp?,
+      createdAt:
+          map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );
   }
 }

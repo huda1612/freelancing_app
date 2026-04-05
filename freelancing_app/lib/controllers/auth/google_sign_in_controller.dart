@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/controllers/auth/auth_controller.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
-import 'package:freelancing_platform/models/user_model.dart';
+import 'package:freelancing_platform/models/user_collections/user_model.dart';
 import 'package:freelancing_platform/views/auth/widgets/role_option.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
