@@ -7,7 +7,6 @@ class AppRoutes {
   static const login = '/login';
   static const register = '/register';
   static const join = '/join';
-  static const accountSelection = '/account-selection';
   static const forgotPassword = '/forgot-password';
   static const verifyEmail = '/verify-email';
 }
