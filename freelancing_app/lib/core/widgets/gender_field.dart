@@ -16,7 +16,8 @@ class GenderField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      // initialValue: value,
+      value: value,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:get/get.dart';
@@ -13,17 +14,33 @@ class AuthController extends GetxController {
   var userRole = 'client'.obs;
   var firstName = ''.obs;
   var lastName = ''.obs;
+  var agreed = false.obs;
   final isLoginLoading = false.obs;
   final isRegisterLoading = false.obs;
 
   Future<void> sendVerificationEmail() async {
     User? user = _authService.currentUser;
     if (user != null && !user.emailVerified) {
+      if (!await handleFirebaseCheck()) return;
       await _authService.resendVerificationEmail();
     }
   }
 
+  Future<void> checkIfVerified() async {
+    if (!await handleFirebaseCheck()) return;
+    User? user = _authService.currentUser;
+    if (user != null && !user.emailVerified) {
+      Get.snackbar("لم يتم التفعيل بعد", "يرجى اعادة المحاولة");
+      return;
+    } else {
+      Get.snackbar("تم تفعيل حسابك", "ابدأ بملئ بياناتك الشخصية");
+      Get.offAllNamed(AppRoutes.personalInfo);
+    }
+  }
+
   void resetPassword() async {
+    if (!await handleFirebaseCheck(loginRequired: false)) return;
+
     final emailError = Validators.email(email.value);
     //التحقق من ادخال الايميل
     if (emailError != null) {
@@ -62,11 +79,19 @@ class AuthController extends GetxController {
       return;
     }
     try {
+      if (!await handleFirebaseCheck(loginRequired: false)) return;
+
       isLoginLoading.value = true;
+
       await _authService.login(email: email.value, password: password.value);
       Get.snackbar("نجاح", "تم تسجيل الدخول");
       if (!_authService.currentUser!.emailVerified) {
-        Get.toNamed(AppRoutes.verifyEmail);
+        //مؤقته للتجربه
+        Get.toNamed(AppRoutes.personalInfo);
+        // Get.toNamed(AppRoutes.verifyEmail);
+      } else {
+        // Get.toNamed("");
+        //هون لازم اعمل التوجيه حسب حالة الطلب عنده!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       }
     } on FirebaseAuthException catch (e) {
       String message;
@@ -111,9 +136,20 @@ class AuthController extends GetxController {
           fnameError ?? lnameError ?? emailError ?? passError ?? confirmError!);
       return;
     }
+    if (!agreed.value) {
+      Get.snackbar("خطأ",
+          "لا يمكنك التسجيل بدون الموافقة على شروط الخدمة وسياسة الخصوصية");
+      return;
+    }
 
     try {
       isRegisterLoading.value = true;
+      if (!await handleFirebaseCheck(loginRequired: false)) {
+        isRegisterLoading.value = false;
+        return;
+      }
+
+      // isRegisterLoading.value = true;
       await _authService.registerUser(
         firstName: firstName.value,
         lastName: lastName.value,
@@ -123,6 +159,8 @@ class AuthController extends GetxController {
       );
       Get.snackbar("نجاح", "تم إنشاء الحساب");
       Get.toNamed(AppRoutes.verifyEmail);
+      //مؤقتا
+      // Get.toNamed(AppRoutes.personalInfo);
     } on FirebaseAuthException catch (e) {
       String message;
       if (e.code == 'email-already-in-use') {

@@ -9,6 +9,7 @@ import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/interactive_text_link.dart';
+import 'package:freelancing_platform/views/auth_section/auth_controller/google_sign_in_controller.dart';
 import 'package:get/get.dart';
 
 class JoinView extends StatelessWidget {
@@ -16,6 +17,8 @@ class JoinView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final googleController = Get.find<GoogleSignInController>();
+
     return BaseScreen(
       body: SingleChildScrollView(
         child: Center(
@@ -64,10 +67,12 @@ class JoinView extends StatelessWidget {
                       height: 24.h,
                     ),
                     onTap: () async {
-                      //await googleController.signInWithGoogle();
-                      // هون لازم عيد توجيهه لصفحة الرئيسية حسب نوع المستخدم!!!!!!!!!!!!!!!!!!!!
+                      await googleController.signInWithGoogle();
                     },
                   ),
+                ),
+                SizedBox(
+                  height: AppSpaces.heightMedium,
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -75,7 +80,7 @@ class JoinView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "لديك حساب ؟",
+                        "لديك حساب ؟ ",
                         style:
                             AppTextStyles.link.copyWith(color: AppColors.grey),
                       ),

@@ -1,0 +1,23 @@
+import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/constants/app_constant_data.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:get/get.dart';
+
+class OnboardingMiddleware extends GetMiddleware {
+  @override
+  RouteSettings? redirect(String? route) {
+    //if its not the first time
+    if (AppConstantData.firstOpen != null) {
+      //if the user has not log in
+      if (AppConstantData.uid == null) {
+        return RouteSettings(name: AppRoutes.welcome);
+      }
+      //if the user has log in
+      else {
+        return RouteSettings(
+            name: AppRoutes.personalInfo); //!!!! i have to check email verify
+      }
+    }
+    return null; // يعني ما في تحويل، خليه يكمل للصفحة المطلوبة
+  }
+}

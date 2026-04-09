@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/data/repositories/auth_repository.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
+import 'package:freelancing_platform/services/local_storage_service.dart';
 
 class AuthService {
   AuthService(this._authRepository);
@@ -8,12 +10,23 @@ class AuthService {
   final AuthRepository _authRepository;
 
   User? get currentUser => _authRepository.currentUser;
+  Future<String?> get userRole async => await _authRepository.userRole;
 
   Future<UserCredential> login({
     required String email,
     required String password,
-  }) {
-    return _authRepository.login(email: email, password: password);
+  }) async {
+    UserCredential uc =
+        await _authRepository.login(email: email, password: password);
+    //حفظ رقم تعريف المستخدم و دوره بالذاكره المحليه
+    LocalStorageService.setStringValue(AppKeys.uid, currentUser!.uid);
+    LocalStorageService.setConstantUid();
+    final role = await userRole;
+    if (role != null) {
+      LocalStorageService.setStringValue(AppKeys.role, role);
+      LocalStorageService.setConstantRole();
+    }
+    return uc;
   }
 
   Future<void> resetPassword(String email) async {
@@ -47,6 +60,14 @@ class AuthService {
 
     try {
       await _authRepository.saveUser(newUser);
+      //حفظ رقم تعريف المستخدم و دوره بالذاكره المحليه
+      LocalStorageService.setStringValue(AppKeys.uid, currentUser!.uid);
+      LocalStorageService.setConstantUid();
+      final role = await userRole;
+      if (role != null) {
+        LocalStorageService.setStringValue(AppKeys.role, role);
+        LocalStorageService.setConstantRole();
+      }
     } catch (_) {
       await _authRepository.deleteCurrentUser();
       rethrow;

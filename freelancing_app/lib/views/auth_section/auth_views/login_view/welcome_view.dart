@@ -17,7 +17,7 @@ class WelcomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final googleController = Get.find<GoogleSignInController>();
+    final googleController = Get.find<GoogleSignInController>();
 
     return BaseScreen(
       body: Center(
@@ -43,11 +43,22 @@ class WelcomeView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpaces.heightLarge),
-            Text(
-              " FREELANCITY أهلا بك في منصة  ",
-              style: AppTextStyles.heading,
-              textAlign: TextAlign.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "  أهلا بك في منصة  ",
+                  style: AppTextStyles.heading,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  " FREELANCITY",
+                  style: AppTextStyles.heading,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
+
             SizedBox(height: AppSpaces.heightLarge),
             //زر للدخول بالايميل
             SizedBox(
@@ -89,7 +100,7 @@ class WelcomeView extends StatelessWidget {
                     onTap: () => Get.toNamed(AppRoutes.register),
                   ),
                   Text(
-                     " ليس لديك حساب ؟",
+                    " ليس لديك حساب ؟",
                     style: AppTextStyles.link.copyWith(color: AppColors.grey),
                   ),
                 ],

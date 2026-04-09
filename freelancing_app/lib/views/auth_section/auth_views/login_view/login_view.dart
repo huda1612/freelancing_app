@@ -25,10 +25,10 @@ class LoginView extends StatelessWidget {
 
     return BaseScreen(
         appBar: CustomAppBar(
-          leadingIcon: IconButton(
-            onPressed: () => Get.toNamed(AppRoutes.join),
-            icon: const Icon(Icons.arrow_back),
-          ),
+          // leadingIcon: IconButton(
+          //   onPressed: () => Get.toNamed(AppRoutes.join),
+          //   icon: const Icon(Icons.arrow_back),
+          // ),
         ),
         body: SingleChildScrollView(
           child: Padding(

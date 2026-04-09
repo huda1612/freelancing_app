@@ -55,9 +55,7 @@ class VerifyEmailView extends StatelessWidget {
                 width: 380.w,
                   child:                  CustomButton(
                     text: "تم التفعيل",
-                    onTap: controller.login,
-                    //هاد الاصلي بس حطيت الفوق ليشتغل الكود
-                    //onTap: controller.goToHomeIfVerified,
+                    onTap: controller.checkIfVerified,
                     color: AppColors.vividPurple,
                   ),),
                 ],
