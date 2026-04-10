@@ -4,6 +4,5 @@ import 'package:get/get.dart';
 
 class LocalizationService implements Translations {
   @override
-  Map<String, Map<String, String>> get keys =>
-      {"ar": Arabic.ar, "en": English.en};
+  Map<String, Map<String, String>> get keys => {"ar": ar, "en": en};
 }
