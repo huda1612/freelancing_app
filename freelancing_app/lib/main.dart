@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
           locale: AppConstantData.lang == null
               ? Get.deviceLocale
               : Locale(AppConstantData.lang!),
+          fallbackLocale: Locale('ar'),
           translations: LocalizationService(),
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splash,
