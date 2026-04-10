@@ -19,6 +19,9 @@ class UserModel {
   final String uid;
   final String fname;
   final String lname;
+  final String? gender;
+  final String? countryCode;
+  final DateTime? birthDate;
   final String email;
   final String role;
   final String photoUrl;
@@ -33,6 +36,9 @@ class UserModel {
   UserModel({
     required this.uid,
     required this.fname,
+    this.gender,
+    this.countryCode,
+    this.birthDate,
     required this.lname,
     required this.email,
     required this.role,
@@ -51,6 +57,9 @@ class UserModel {
     return {
       'fname': fname,
       'lname': lname,
+      'gender': gender,
+      'countryCode': countryCode,
+      'birthDate': birthDate != null ? Timestamp.fromDate(birthDate!) : null,
       'email': email,
       'role': role,
       'photoUrl': photoUrl,
@@ -69,16 +78,19 @@ class UserModel {
       uid: docId,
       fname: map['fname'] ?? '',
       lname: map['lname'] ?? '',
+      gender: map['gender'] ?? null,
+      countryCode: map['countryCode'],
+      birthDate: map['birthDate'] != null
+          ? (map['birthDate'] as Timestamp).toDate()
+          : null,
       email: map['email'] ?? '',
       role: map['role'] ?? '',
       photoUrl: map['photoUrl'] ?? '',
       bio: map['bio'] ?? '',
       skills: List<String>.from(map['skills'] ?? []),
-      // rating: (map['rating'] ?? 0).toDouble(),
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
       completedProjects: map['completed_projects'] ?? 0,
       points: map['points'] ?? 0,
-      // createdAt: map['createdAt'] as Timestamp?,
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );

@@ -46,6 +46,8 @@ dependencies:
   firebase_auth: ^6.1.4
   google_sign_in: ^6.2.2
   country_code_picker: ^3.4.1
+  shared_preferences: ^2.5.3
+  http: ^1.6.0
 
  
 

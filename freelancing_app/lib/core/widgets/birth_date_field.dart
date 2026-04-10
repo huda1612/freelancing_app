@@ -36,7 +36,8 @@ class BirthDateField extends StatelessWidget {
             /// السنة
             Expanded(
               child: DropdownButtonFormField<String>(
-                initialValue: year,
+                // initialValue: year,
+                value: year,
                 decoration: const InputDecoration(labelText: "السنة"),
                 items: List.generate(
                   60,
@@ -54,7 +55,8 @@ class BirthDateField extends StatelessWidget {
             /// الشهر
             Expanded(
               child: DropdownButtonFormField<String>(
-                initialValue: month,
+                // initialValue: month,
+                value: month,
                 decoration: const InputDecoration(labelText: "الشهر"),
                 items: List.generate(
                   12,
@@ -72,7 +74,8 @@ class BirthDateField extends StatelessWidget {
             /// اليوم
             Expanded(
               child: DropdownButtonFormField<String>(
-                initialValue: day,
+                // initialValue: day,
+                value: day,
                 decoration: const InputDecoration(labelText: "اليوم"),
                 items: List.generate(
                   31,

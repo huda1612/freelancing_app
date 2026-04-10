@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 
 class CountryPickerField extends StatefulWidget {
-  const CountryPickerField({super.key});
+  final Function(CountryCode)? onChanged;
+  final CountryCode? initialCountry;
+  const CountryPickerField({super.key, this.onChanged, this.initialCountry});
 
   @override
   State<CountryPickerField> createState() => _CountryPickerFieldState();
@@ -12,6 +14,11 @@ class CountryPickerField extends StatefulWidget {
 
 class _CountryPickerFieldState extends State<CountryPickerField> {
   CountryCode? selectedCountry;
+  @override
+  void initState() {
+    super.initState();
+    selectedCountry = widget.initialCountry;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +40,6 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
             ),
             child: Row(
               children: [
-               
                 SizedBox(width: 6.w),
 
                 /// اسم الدولة
@@ -49,10 +55,9 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
                 SizedBox(width: 6.w),
 
                 /// العلم
-                 if (selectedCountry?.flagUri != null)
+                if (selectedCountry?.flagUri != null)
                   Image.asset(
-                                       selectedCountry!.flagUri!,
-
+                    selectedCountry!.flagUri!,
                     package: 'country_code_picker',
                     width: 24.w,
                     height: 24.h,
@@ -72,16 +77,13 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
                   setState(() {
                     selectedCountry = country;
                   });
+                  widget.onChanged?.call(country);
                 },
-
-                initialSelection: 'SY',
-
+                initialSelection: widget.initialCountry?.code ?? 'SY',
                 showCountryOnly: true,
                 showOnlyCountryWhenClosed: true,
-
                 showFlag: true,
                 showFlagDialog: true,
-
                 hideMainText: true,
                 showDropDownButton: false,
                 padding: EdgeInsets.zero,

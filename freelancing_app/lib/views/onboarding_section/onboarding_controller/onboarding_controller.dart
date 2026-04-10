@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_assets.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/models/onboarding/onboarding_model.dart';
+import 'package:freelancing_platform/services/local_storage_service.dart';
 import 'package:get/get.dart';
 
 class OnboardingController extends GetxController {
@@ -22,9 +24,10 @@ class OnboardingController extends GetxController {
       subtitle: "أنجز مشروعك أو اعثر على عمل  أحلامك بنقرة واحدة فقط",
     ),
     OnboardingModel(
-      assetPath:AppAssets.finaly,
+      assetPath: AppAssets.finaly,
       title: "ابدأ رحلتك المهنية الآن",
-      subtitle: "انضم إلى المنصة و ابدأ بتوظيف المستقلين و اكتشاف فرص العمل التي تناسبك",
+      subtitle:
+          "انضم إلى المنصة و ابدأ بتوظيف المستقلين و اكتشاف فرص العمل التي تناسبك",
     ),
   ];
 
@@ -45,18 +48,24 @@ class OnboardingController extends GetxController {
   void skip() => finish();
 
   void finish() {
-    Get.offNamed(AppRoutes.welcome);
-
-
+    //بدي خزن قيمه لاعرف اذا اول مره بيفتح التطبيق بعدين
+    LocalStorageService.setStringValue(AppKeys.firstOpen, "1");
+    LocalStorageService.setConstantFirstOpen();
+    Get.offNamed(AppRoutes.join);
   }
 
   double get progressValue {
     switch (currentIndex.value) {
-      case 0: return 0.25;
-      case 1: return 0.5;
-      case 2: return 0.75;
-      case 3: return 1.0;
-      default: return 0.0;
+      case 0:
+        return 0.25;
+      case 1:
+        return 0.5;
+      case 2:
+        return 0.75;
+      case 3:
+        return 1.0;
+      default:
+        return 0.0;
     }
   }
 }

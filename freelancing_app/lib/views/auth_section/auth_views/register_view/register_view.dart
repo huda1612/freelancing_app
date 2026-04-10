@@ -26,11 +26,11 @@ class RegisterView extends StatelessWidget {
 
     return BaseScreen(
         appBar: CustomAppBar(
-          leadingIcon: IconButton(
-            onPressed: () => Get.toNamed(AppRoutes.join),
-            icon: const Icon(Icons.arrow_back),
-          ),
-        ),
+            // leadingIcon: IconButton(
+            //   onPressed: () => Get.toNamed(AppRoutes.join),
+            //   icon: const Icon(Icons.arrow_back),
+            // ),
+            ),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -49,7 +49,7 @@ class RegisterView extends StatelessWidget {
                 Text("أنشئ حسابك وحقق أهدافك", style: AppTextStyles.body),
 
                 SizedBox(height: AppSpaces.heightMedium),
-//الاسم الاول
+                //الاسم الاول
                 CustomTextField(
                   hintText: "الاسم الأول",
                   keyboardType: TextInputType.emailAddress,
@@ -136,7 +136,47 @@ class RegisterView extends StatelessWidget {
                       ],
                     )),
 
-                SizedBox(height: AppSpaces.heightLarge),
+                SizedBox(height: AppSpaces.heightMedium),
+
+                /// الموافقة على الشروط
+                Row(
+                  children: [
+                    Obx(() => Checkbox(
+                          // value: controller.agreed.value,
+                          // onChanged: (v) {},
+                          value: controller.agreed.value,
+                          onChanged: (v) {
+                            controller.agreed.value = v!;
+                          },
+                        )),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "أوافق على ",
+                            style: AppTextStyles.link
+                                .copyWith(color: AppColors.grey),
+                          ),
+                          InteractiveTextLink(
+                            text: "شروط الخدمة",
+                            onTap: () => Get.toNamed(AppRoutes.terms),
+                          ),
+                          Text(
+                            " و ",
+                            style: AppTextStyles.link
+                                .copyWith(color: AppColors.grey),
+                          ),
+                          InteractiveTextLink(
+                            text: "سياسة الخصوصية",
+                            onTap: () => Get.toNamed(AppRoutes.privacy),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppSpaces.heightMedium),
 
                 // زر انشاء حساب
                 SizedBox(
@@ -155,33 +195,6 @@ class RegisterView extends StatelessWidget {
                 ),
                 SizedBox(height: AppSpaces.heightSmall),
 
-                //للشروط المنصة
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InteractiveTextLink(
-                        text: "سياسة الخصوصية",
-                        onTap: () => Get.toNamed(AppRoutes.privacy),
-                      ),
-                      Text(
-                        " و ",
-                        style:
-                            AppTextStyles.link.copyWith(color: AppColors.grey),
-                      ),
-                      InteractiveTextLink(
-                        text: "شروط الخدمة",
-                        onTap: () => Get.toNamed(AppRoutes.terms),
-                      ),
-                      Text(
-                        "بالتسجيل، أنت توافق على ",
-                        style:
-                            AppTextStyles.link.copyWith(color: AppColors.grey),
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: AppSpaces.heightLarge),
 
                 //or line
@@ -226,7 +239,6 @@ class RegisterView extends StatelessWidget {
                     ),
                     onTap: () async {
                       await googleController.signInWithGoogle();
-                      // هون لازم عيد توجيهه لصفحة الرئيسية حسب نوع المستخدم!!!!!!!!!!!!!!!!!!!!
                     },
                   ),
                 ),
@@ -237,15 +249,15 @@ class RegisterView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      InteractiveTextLink(
-                        text: "تسجيل الدخول",
-                        onTap: () => Get.toNamed(AppRoutes.login),
-                      ),
                       Text(
-                        " لديك حساب ؟",
+                        " لديك حساب ؟ ",
                         style: AppTextStyles.link.copyWith(
                           color: AppColors.grey,
                         ),
+                      ),
+                      InteractiveTextLink(
+                        text: "تسجيل الدخول",
+                        onTap: () => Get.toNamed(AppRoutes.login),
                       ),
                     ],
                   ),

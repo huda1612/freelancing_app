@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/auth_controller.dart';
@@ -13,6 +14,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 class GoogleSignInController extends GetxController {
   Future<void> signInWithGoogle() async {
     try {
+      if (!await handleFirebaseCheck(loginRequired: false)) return;
+
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         return;
@@ -44,7 +47,7 @@ class GoogleSignInController extends GetxController {
   }
 
   Future<void> _addUserToFirestoreIfItsNotExist(User user) async {
-  final controller = Get.find<AuthController>();
+    final controller = Get.find<AuthController>();
     // **الآن نتأكد إذا موجود في Firestore**
     DocumentReference userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);

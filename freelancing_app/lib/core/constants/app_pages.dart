@@ -1,7 +1,7 @@
-
 import 'package:freelancing_platform/core/bindings/auth_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
+import 'package:freelancing_platform/views/account_setup/account_setup_view/freelancer_personal_info_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/privacy_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/terms_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/login_view/login_view.dart';
@@ -13,11 +13,14 @@ import 'package:freelancing_platform/views/onboarding_section/onboarding_view/on
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
 import 'package:get/get.dart';
 
+import '../middleware/onboarding_middleware.dart';
 import 'app_routes.dart';
 
 class AppPages {
   static final pages = [
-      GetPage(
+    //**********************************************auth pages****************************************
+
+    GetPage(
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
       binding: SplashBinding(),
@@ -26,6 +29,7 @@ class AppPages {
       name: AppRoutes.onboarding,
       page: () => const OnboardingView(),
       binding: OnboardingBinding(),
+      middlewares: [OnboardingMiddleware()],
     ),
     GetPage(
       name: AppRoutes.welcome,
@@ -54,5 +58,16 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.privacy, page: () => const PrivacyView()),
     GetPage(name: AppRoutes.terms, page: () => const TermsView()),
+
+    //**********************************************after login page****************************************
+    //  GetPage(
+    //     name: AppRoutes.home,
+    //     page: () => const HomeView(),
+    //     middlewares: [HomeMiddleware()]
+    //     // binding: SplashBinding(),
+    //   ),
+
+    //**********************************************settings pages****************************************
+    GetPage(name: AppRoutes.personalInfo, page: () => const PersonalInfoView())
   ];
 }

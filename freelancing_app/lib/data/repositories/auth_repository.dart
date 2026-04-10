@@ -14,6 +14,19 @@ class AuthRepository {
 
   User? get currentUser => _firebaseAuth.currentUser;
 
+  Future<String?> get userRole async {
+    if (currentUser != null) {
+      final userDoc = await _firebaseFirestore
+          .collection('Users')
+          .doc(currentUser!.uid)
+          .get();
+      if (userDoc.exists) {
+        return userDoc.data()!['role'] as String?;
+      }
+    }
+    return null;
+  }
+
   Future<UserCredential> login({
     required String email,
     required String password,
@@ -48,7 +61,10 @@ class AuthRepository {
   }
 
   Future<void> saveUser(UserModel user) {
-    return _firebaseFirestore.collection('Users').doc(user.uid).set(user.toMap());
+    return _firebaseFirestore
+        .collection('Users')
+        .doc(user.uid)
+        .set(user.toMap());
   }
 
   Future<void> deleteCurrentUser() async {
