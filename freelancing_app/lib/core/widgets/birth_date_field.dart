@@ -39,7 +39,8 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                initialValue: year,
+                // initialValue: year,
+                value: year,
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
@@ -86,6 +87,7 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
+                value: month,
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
@@ -131,6 +133,7 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
+                value: day,
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,

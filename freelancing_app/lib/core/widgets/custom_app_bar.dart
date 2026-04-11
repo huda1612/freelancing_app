@@ -9,6 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? trailingIcon;
   final VoidCallback? onTrailingPressed;
   final Color? backgroundColor;
+  final PreferredSizeWidget? bottom;
 
   const CustomAppBar({
     super.key,
@@ -18,6 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.trailingIcon,
     this.onTrailingPressed,
     this.backgroundColor,
+    this.bottom,
   });
 
   @override
@@ -26,14 +28,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: 0,
       centerTitle: true,
-
       title: title != null
           ? Text(
               title!,
-              style: AppTextStyles.inputLabel,
+              style: AppTextStyles.appbarTitle,
             )
           : null,
-
       leading: leadingIcon != null
           ? IconButton(
               onPressed: onLeadingPressed ?? () {},
@@ -41,7 +41,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               iconSize: 22.w,
             )
           : null,
-
       actions: trailingIcon != null
           ? [
               IconButton(
@@ -51,9 +50,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ]
           : [],
+      bottom: bottom,
     );
   }
 
+  // @override
+  // Size get preferredSize => Size.fromHeight(56.h);
   @override
-  Size get preferredSize => Size.fromHeight(56.h);
+  Size get preferredSize {
+    double bottomHeight = bottom?.preferredSize.height ?? 0;
+    return Size.fromHeight(56.h + bottomHeight);
+  }
 }
