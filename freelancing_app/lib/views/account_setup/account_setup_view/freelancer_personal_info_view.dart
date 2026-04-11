@@ -25,10 +25,14 @@ class PersonalInfoView extends StatelessWidget {
     return BaseScreen(
       appBar: CustomAppBar(
         title: "المعلومات الشخصية",
-        leadingIcon: IconButton(
-          onPressed: () => Get.back(),
-          icon: const Icon(Icons.arrow_back),
-        ),
+        // leadingIcon: IconButton(
+        //   onPressed: () => Get.back(),
+        //   icon: const Icon(Icons.arrow_back),
+        // ),
+        // leadingIcon: Icon(
+        //   Icons.person,
+        //   color: AppColors.darkPurple,
+        // ),
       ),
       body: GetBuilder<PersonalInfoController>(
         builder: (_) {

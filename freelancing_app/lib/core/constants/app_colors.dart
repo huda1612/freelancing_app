@@ -8,6 +8,7 @@ class AppColors {
   static const Color softPurple = Color(0xFFB191FE);   // بنفسجي ناعم إضافي
   static const Color vividPurple = Color.fromARGB(255, 121, 92, 235); // بنفسجي مشبع
   static const Color ovividPurple = Color.fromARGB(159, 121, 92, 235); // بنفسجي مشبع
+  static const Color darkPurple = Color.fromARGB(159, 37, 9, 151); // بنفسجي مشبع
 
   // أزرق
   static const Color blue = Color(0xFF4B75CB);         // أزرق متوسط
