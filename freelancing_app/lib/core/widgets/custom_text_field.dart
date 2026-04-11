@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? hintText;
@@ -58,7 +59,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ? IconButton(
             icon: Icon(
               _obscure ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey.shade600,
+              color: AppColors.vividPurple,
               size: 20.w,
             ),
             onPressed: _toggleVisibility,
@@ -72,7 +73,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return SizedBox(
       width: widget.width!.w,
-      height: widget.height!.h,
+     // height: widget.height!.h,
       child: TextFormField(
         controller: widget.controller,
         obscureText: _obscure,
@@ -91,10 +92,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           hintText: widget.hintText,
           hintStyle: TextStyle(
             fontSize: 12.sp,
-            color: Colors.grey.shade500,
+            color: AppColors.vividPurple,
           ),
           filled: true,
-          fillColor: widget.fillColor ?? Colors.grey.shade200,
+          fillColor: widget.fillColor ?? AppColors.veryLightGrey,
           prefixIcon: widget.prefixIcon,
           suffixIcon: suffixIcon,
           contentPadding: EdgeInsets.symmetric(
@@ -115,7 +116,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             borderRadius:
                 widget.borderRadius ?? BorderRadius.circular(10.r),
             borderSide: BorderSide(
-              color: Colors.blue,
+              color: AppColors.purple,
               width: 1.5.w,
             ),
           ),

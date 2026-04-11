@@ -1,7 +1,9 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
@@ -22,6 +24,7 @@ class PersonalInfoView extends StatelessWidget {
 
     return BaseScreen(
       appBar: CustomAppBar(
+        title: "المعلومات الشخصية",
         leadingIcon: IconButton(
           onPressed: () => Get.back(),
           icon: const Icon(Icons.arrow_back),
@@ -42,6 +45,12 @@ class PersonalInfoView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            "حدّث بياناتك لتجربة أفضل في المنصة",
+                            style: AppTextStyles.body
+                                .copyWith(color: AppColors.grey),
+                          ),
+
                           /// الاسم الأول
                           CustomTextField(
                             controller: c.firstNameController,
@@ -50,7 +59,7 @@ class PersonalInfoView extends StatelessWidget {
                             onChanged: (v) => c.refreshForm(),
                           ),
 
-                          SizedBox(height: AppSpaces.heightMedium),
+                          SizedBox(height: AppSpaces.heightMedium2),
 
                           /// الاسم الأخير
                           CustomTextField(
@@ -60,7 +69,7 @@ class PersonalInfoView extends StatelessWidget {
                             onChanged: (v) => c.refreshForm(),
                           ),
 
-                          SizedBox(height: AppSpaces.heightMedium),
+                          SizedBox(height: AppSpaces.heightMedium2),
 
                           /// الدولة
                           CountryPickerField(
@@ -74,7 +83,7 @@ class PersonalInfoView extends StatelessWidget {
                             },
                           ),
 
-                          SizedBox(height: AppSpaces.heightMedium),
+                          SizedBox(height: AppSpaces.heightMedium2),
 
                           /// الجنس
                           GenderField(
@@ -85,7 +94,7 @@ class PersonalInfoView extends StatelessWidget {
                             },
                           ),
 
-                          SizedBox(height: AppSpaces.heightMedium),
+                          SizedBox(height: AppSpaces.heightMedium2),
 
                           /// تاريخ الميلاد
                           BirthDateField(
@@ -106,7 +115,7 @@ class PersonalInfoView extends StatelessWidget {
                             },
                           ),
 
-                          SizedBox(height: AppSpaces.heightMedium),
+                          SizedBox(height: AppSpaces.heightMedium2),
 
                           /// الموافقة على الشروط
                           // Row(
@@ -131,7 +140,7 @@ class PersonalInfoView extends StatelessWidget {
 
                           /// زر التالي
                           Align(
-                              alignment: Alignment.centerRight,
+                              alignment: Alignment.center,
                               child: GetBuilder<PersonalInfoController>(
                                 builder: (_) => ElevatedButton(
                                   onPressed: (c.isFormValid &&

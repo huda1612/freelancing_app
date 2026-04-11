@@ -8,7 +8,7 @@ Future<bool> checkInternet() async {
 
     // return response.statusCode == 200;
     return response.statusCode >= 200 && response.statusCode < 400;
-  } catch (_) {
+   } catch (_) {
     return false;
   }
 }

@@ -23,7 +23,9 @@ class AppSpaces {
   // SizedBox Heights
   static double get heightSmall => 8.h;
   static double get heightMedium => 16.h;
-  static double get heightLarge => 32.h;
+  static double get heightMedium2 => 20.h;
+  static double get heightLarge => 36.h;
+  static double get heightLarge1 => 40.h;
 
   // SizedBox width
   static double get width => 12.w;

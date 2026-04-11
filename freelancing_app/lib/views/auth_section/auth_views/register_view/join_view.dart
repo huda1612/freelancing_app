@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancing_platform/core/constants/app_assets.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_icons.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/widgets/app_brand.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/interactive_text_link.dart';
@@ -28,22 +28,13 @@ class JoinView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //الشعار
-                SizedBox(
-                  height: 240.h,
-                  child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
-                ),
-                SizedBox(height: AppSpaces.heightSmall),
-                //اسم التطبيق
-                Text("FREELANCITY", style: AppTextStyles.heading),
-                SizedBox(height: AppSpaces.heightSmall),
-                Text(
-                  "منصّة تجمع بين الوظائف والعمل الحر",
-                  style: AppTextStyles.subheading,
-                  textAlign: TextAlign.center,
-                ),
+                                SizedBox(height: AppSpaces.heightMedium2),
+
+                AppBrand(),
+               
                 SizedBox(height: AppSpaces.heightLarge),
-                Text("انضم إلى المنصة", style: AppTextStyles.heading),
-                SizedBox(height: AppSpaces.heightMedium),
+                Text("انضم إلى المنصة", style: AppTextStyles.blacksubheading),
+                SizedBox(height: AppSpaces.heightMedium2),
                 //زر انشاء حساب بالايميل
                 SizedBox(
                   width: 380.w,

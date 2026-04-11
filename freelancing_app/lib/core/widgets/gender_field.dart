@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 
 class GenderField extends StatelessWidget {
   final String? value;
@@ -15,15 +18,29 @@ class GenderField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      // initialValue: value,
-      value: value,
+    return SizedBox(
+  width: 380.w,
+  height: 55.h,
+  child:DropdownButtonFormField<String>(
+        
+       initialValue: value,
+      //value: value,
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: AppTextStyles.body,
+        filled: true,
+        fillColor: AppColors.veryLightGrey,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(AppSpaces.radiusSmall),
+        
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSpaces.radiusSmall),
+            borderSide: BorderSide(
+              color: AppColors.purple,
+              width: 1.5,
+            ),),
+        contentPadding: EdgeInsets.symmetric(horizontal: AppSpaces.mediumHorizontalPadding, vertical: AppSpaces.smallVerticalSpacing),
       ),
       items: const [
         DropdownMenuItem(value: "male", child: Text("ذكر")),
@@ -31,6 +48,6 @@ class GenderField extends StatelessWidget {
       ],
       onChanged: onChanged,
       validator: (v) => v == null ? "هذا الحقل مطلوب" : null,
-    );
+    ));
   }
 }

@@ -52,7 +52,7 @@ class RegisterView extends StatelessWidget {
                 //الاسم الاول
                 CustomTextField(
                   hintText: "الاسم الأول",
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.name,
                   onChanged: (value) => controller.firstName.value = value,
                   validator: Validators.firstName,
                 ),
@@ -61,11 +61,17 @@ class RegisterView extends StatelessWidget {
                 // الاسم الاخير
                 CustomTextField(
                   hintText: "الاسم الأخير",
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) => controller.lastName.value = value,
+                  validator: Validators.username,
+                ),
+                 SizedBox(height: AppSpaces.heightMedium),
+CustomTextField(
+                  hintText: "اسم المستخدم",
+                  keyboardType: TextInputType.name,
                   onChanged: (value) => controller.lastName.value = value,
                   validator: Validators.lastName,
                 ),
-
                 SizedBox(height: AppSpaces.heightMedium),
 
                 // الاييمل
@@ -118,7 +124,7 @@ class RegisterView extends StatelessWidget {
                       children: [
                         // زر العميل
                         RoleOption(
-                          label: "عميل",
+                          label: "client",
                           icon: Icons.person_outline,
                           isSelected: controller.userRole.value == "client",
                           onTap: () => controller.userRole.value = "client",
@@ -128,7 +134,7 @@ class RegisterView extends StatelessWidget {
 
                         // زر المستقل
                         RoleOption(
-                          label: "مستقل",
+                          label: "freelancer",
                           icon: Icons.work_outline,
                           isSelected: controller.userRole.value == "freelancer",
                           onTap: () => controller.userRole.value = "freelancer",
