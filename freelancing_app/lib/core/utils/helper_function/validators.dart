@@ -59,4 +59,23 @@ class Validators {
     }
     return null;
   }
+
+  // اسم المستخدم
+static String? username(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "اسم المستخدم مطلوب";
+  }
+
+  if (value.length < 3) {
+    return "اسم المستخدم يجب أن يكون 3 أحرف على الأقل";
+  }
+
+  // يسمح بالعربي + الإنجليزي + الأرقام + _ فقط
+  if (!RegExp(r'^[a-zA-Z0-9\u0600-\u06FF_]+$').hasMatch(value)) {
+    return "اسم المستخدم يجب أن يحتوي على أحرف أو أرقام فقط بدون مسافات";
+  }
+
+  return null;
+}
+
 }

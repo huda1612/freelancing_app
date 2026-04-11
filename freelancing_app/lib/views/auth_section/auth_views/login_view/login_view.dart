@@ -25,11 +25,11 @@ class LoginView extends StatelessWidget {
 
     return BaseScreen(
         appBar: CustomAppBar(
-          // leadingIcon: IconButton(
-          //   onPressed: () => Get.toNamed(AppRoutes.join),
-          //   icon: const Icon(Icons.arrow_back),
-          // ),
-        ),
+            // leadingIcon: IconButton(
+            //   onPressed: () => Get.toNamed(AppRoutes.join),
+            //   icon: const Icon(Icons.arrow_back),
+            // ),
+            ),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -58,16 +58,21 @@ class LoginView extends StatelessWidget {
                   hintText: "كلمة المرور",
                   obscureText: true,
                   onChanged: (value) => controller.password.value = value,
-                  validator:Validators.password,
+                  validator: Validators.password,
                 ),
 
-                SizedBox(height: AppSpaces.heightSmall),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: InteractiveTextLink(
-                    text: "نسيت كلمة المرور؟",
-                    onTap: controller.resetPassword,
-                   
+                SizedBox(height: AppSpaces.heightMedium),
+
+                Padding(
+                  padding: EdgeInsets.only(
+                      right: AppSpaces
+                          .mediumVerticalSpacing), // المسافة اللي بدك ياها
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: InteractiveTextLink(
+                      text: "نسيت كلمة المرور؟",
+                      onTap: controller.resetPassword,
+                    ),
                   ),
                 ),
 
@@ -87,7 +92,6 @@ class LoginView extends StatelessWidget {
                       onTap: controller.login,
                     );
                   }),
-                 
                 ),
                 SizedBox(height: AppSpaces.heightLarge),
 
@@ -143,15 +147,16 @@ class LoginView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      InteractiveTextLink(
-                        text: "إنشاء حساب",
-                        onTap: () => Get.toNamed(AppRoutes.register),
-                      ),
                       Text(
                         " ليس لديك حساب ؟",
                         style:
                             AppTextStyles.link.copyWith(color: AppColors.grey),
                       ),
+                      InteractiveTextLink(
+                        text: "إنشاء حساب",
+                        onTap: () => Get.toNamed(AppRoutes.register),
+                      ),
+                      
                     ],
                   ),
                 ),

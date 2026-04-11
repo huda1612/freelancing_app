@@ -22,8 +22,8 @@ class BaseScreen extends StatelessWidget {
             AppColors.softPurple,
             AppColors.softBlue,
           ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+           begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
         ),
       ),
       child: Scaffold(

@@ -24,13 +24,16 @@ class RoleOption extends StatelessWidget {
       onTap: onTap,
       child: Container(
           width: 140.w,
-          padding: EdgeInsets.symmetric(vertical: AppSpaces.mediumVerticalSpacing.h),
+          padding:
+              EdgeInsets.symmetric(vertical: AppSpaces.mediumVerticalSpacing.h),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.vividPurple : AppColors.white,
+            color: AppColors.white, // دائماً أبيض
             borderRadius: BorderRadius.circular(AppSpaces.radiusMedium),
             border: Border.all(
-              color: isSelected ? AppColors.vividPurple : AppColors.white,
-              width: 2,
+              color: isSelected
+                  ? AppColors.vividPurple
+                  : AppColors.grey, // حدود واضحة
+              width: isSelected ? 2 : 1,
             ),
           ),
           child: Row(
@@ -39,13 +42,14 @@ class RoleOption extends StatelessWidget {
               Icon(
                 icon,
                 size: 22.w,
-                color: isSelected ? AppColors.white : AppColors.black,
+                color: isSelected ? AppColors.purple : AppColors.grey,
               ),
               SizedBox(width: AppSpaces.marginSmall),
               Text(
                 label,
-                style: AppTextStyles.button.copyWith(color: isSelected ? AppColors.white : AppColors.black)
-                
+                style: AppTextStyles.button.copyWith(
+                  color: isSelected ? AppColors.purple : AppColors.grey,
+                ),
               ),
             ],
           )),

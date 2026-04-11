@@ -78,7 +78,8 @@ class UserModel {
       uid: docId,
       fname: map['fname'] ?? '',
       lname: map['lname'] ?? '',
-      gender: map['gender'] ?? null,
+      gender: map['gender'] ,//?? null,
+      
       countryCode: map['countryCode'],
       birthDate: map['birthDate'] != null
           ? (map['birthDate'] as Timestamp).toDate()

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancing_platform/core/constants/app_assets.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_icons.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/widgets/app_brand.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/interactive_text_link.dart';
@@ -24,31 +24,16 @@ class WelcomeView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 240.h,
-              child: Image.asset(
-                AppAssets.logo,
-                fit: BoxFit.contain,
-              ),
-            ),
-            SizedBox(height: AppSpaces.heightSmall),
-            Text(
-              "FREELANCITY",
-              style: AppTextStyles.heading,
-            ),
-            SizedBox(height: AppSpaces.heightSmall),
-            Text(
-              "منصّة تجمع بين الوظائف والعمل الحر",
-              style: AppTextStyles.subheading,
-              textAlign: TextAlign.center,
-            ),
+            SizedBox(height: AppSpaces.heightMedium2),
+                            AppBrand(),
+
             SizedBox(height: AppSpaces.heightLarge),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "  أهلا بك في منصة  ",
-                  style: AppTextStyles.heading,
+                  style: AppTextStyles.blacksubheading,
                   textAlign: TextAlign.center,
                 ),
                 Text(

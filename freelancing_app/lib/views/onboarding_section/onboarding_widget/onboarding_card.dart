@@ -34,17 +34,16 @@ class OnboardingCard extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                height: 0.70.sh,
+                height: 0.65.sh,
                 width: double.infinity,
-
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
                       AppColors.softPurple, // بنفسجي
                       AppColors.softBlue, // أزرق
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(AppSpaces.radiusMedium),
@@ -57,7 +56,7 @@ class OnboardingCard extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      SizedBox(height: AppSpaces.heightSmall),
+                      SizedBox(height: AppSpaces.heightMedium),
                       if (!isLast)
                         Align(
                           alignment: Alignment.topRight,
@@ -70,12 +69,23 @@ class OnboardingCard extends StatelessWidget {
                             borderRadius: BorderRadius.all(
                               Radius.circular(AppSpaces.radiusMedium),
                             ),
-                            textStyle: AppTextStyles.link.copyWith(fontSize:10.sp ),
+                            textStyle:
+                                AppTextStyles.link.copyWith(fontSize: 10.sp),
                           ),
                         ),
                       SizedBox(height: AppSpaces.heightLarge),
-                      SizedBox(
-                        height: 300.h,
+                      Container(
+                        height: 350,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.oblack, // ظل خفيف
+                              blurRadius: 40, // مدى الانتشار
+                              spreadRadius: 0,
+                              offset: const Offset(0, 8), // اتجاه الظل للأسفل
+                            ),
+                          ],
+                        ),
                         child: Image.asset(
                           assetPath,
                           width: 300.w,
@@ -86,21 +96,19 @@ class OnboardingCard extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: AppSpaces.heightLarge),
+              SizedBox(height: AppSpaces.heightLarge1),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.meduimstyle,
               ),
-              SizedBox(height: AppSpaces.heightMedium),
+              SizedBox(height: AppSpaces.heightMedium2),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body,
               ),
-
-              SizedBox(height: AppSpaces.heightMedium),
-
+              SizedBox(height: AppSpaces.heightLarge1),
               isLast
                   ? SizedBox(
                       width: 380.w,

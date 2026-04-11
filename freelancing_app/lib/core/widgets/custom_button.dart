@@ -52,6 +52,14 @@ class CustomButton extends StatelessWidget {
           border: buttonType == ButtonType.outlined
               ? Border.all(color: color, width: 1.5.w)
               : null,
+
+           boxShadow: [
+      BoxShadow(
+        color: AppColors.ovividPurple,
+        blurRadius: 10,
+        offset: const Offset(0, 4),
+      ),
+    ],
         ),
         alignment: Alignment.center,
         child: prefix == null

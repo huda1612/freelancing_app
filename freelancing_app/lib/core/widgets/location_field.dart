@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_spaces.dart';
 
 class CountryPickerField extends StatefulWidget {
   final Function(CountryCode)? onChanged;
@@ -30,29 +31,30 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
         children: [
           /// الحقل الأساسي
           Container(
-            width: 160.w,
-            height: 40.h,
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
+            width: 380.w,
+            height: 55.h,
+            padding: EdgeInsets.symmetric(horizontal: AppSpaces.mediumHorizontalPadding.w),
             decoration: BoxDecoration(
-              color: AppColors.white,
-              border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(8.r),
+              color: AppColors.veryLightGrey,
+              border: Border.all(color: AppColors.veryLightGrey),
+              borderRadius: BorderRadius.circular(AppSpaces.radiusSmall),
             ),
             child: Row(
               children: [
-                SizedBox(width: 6.w),
+                SizedBox(width: AppSpaces.width),
 
                 /// اسم الدولة
                 Expanded(
                   child: Text(
                     selectedCountry?.name ??
                         (isArabic ? "اختر الدولة" : "Select Country"),
-                    style: TextStyle(fontSize: 12.sp),
+                    style: TextStyle(fontSize: 12.sp,
+            color: AppColors.vividPurple,),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
 
-                SizedBox(width: 6.w),
+                SizedBox(width: AppSpaces.width),
 
                 /// العلم
                 if (selectedCountry?.flagUri != null)
@@ -63,7 +65,7 @@ class _CountryPickerFieldState extends State<CountryPickerField> {
                     height: 24.h,
                   )
                 else
-                  Icon(Icons.public, color: AppColors.grey),
+                  Icon(Icons.public, color: AppColors.vividPurple),
               ],
             ),
           ),
