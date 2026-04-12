@@ -67,12 +67,5 @@ class AppTextStyles {
         fontFamilyFallback: ["Poppins"],
         color: Colors.white,
       );
-  static TextStyle get appbarTitle => TextStyle(
-        fontSize: 19.sp,
-        fontWeight: FontWeight.w400,
-        fontFamilyFallback: ["Poppins"],
-        color: const Color.fromARGB(159, 25, 2, 117),
-
-        // color: Colors.white,
-      );
+  
 }

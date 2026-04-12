@@ -25,14 +25,6 @@ class PersonalInfoView extends StatelessWidget {
     return BaseScreen(
       appBar: CustomAppBar(
         title: "المعلومات الشخصية",
-        // leadingIcon: IconButton(
-        //   onPressed: () => Get.back(),
-        //   icon: const Icon(Icons.arrow_back),
-        // ),
-        // leadingIcon: Icon(
-        //   Icons.person,
-        //   color: AppColors.darkPurple,
-        // ),
       ),
       body: GetBuilder<PersonalInfoController>(
         builder: (_) {
@@ -47,13 +39,14 @@ class PersonalInfoView extends StatelessWidget {
                     child: Form(
                       key: c.formKey,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            "حدّث بياناتك لتجربة أفضل في المنصة",
-                            style: AppTextStyles.body
-                                .copyWith(color: AppColors.grey),
-                          ),
+                          SizedBox(height: AppSpaces.heightMedium2),
+
+                          Text("حدّث بياناتك لتجربة أفضل في المنصة",
+                              style: AppTextStyles.body),
+
+                          SizedBox(height: AppSpaces.heightLarge),
 
                           /// الاسم الأول
                           CustomTextField(
@@ -99,26 +92,29 @@ class PersonalInfoView extends StatelessWidget {
                           ),
 
                           SizedBox(height: AppSpaces.heightMedium2),
+                          Center(
+                            
+                            child:
 
-                          /// تاريخ الميلاد
-                          BirthDateField(
-                            year: c.year.value,
-                            month: c.month.value,
-                            day: c.day.value,
-                            onYearChanged: (v) {
-                              c.year.value = v;
-                              c.refreshForm();
-                            },
-                            onMonthChanged: (v) {
-                              c.month.value = v;
-                              c.refreshForm();
-                            },
-                            onDayChanged: (v) {
-                              c.day.value = v;
-                              c.refreshForm();
-                            },
+                                /// تاريخ الميلاد
+                                BirthDateField(
+                              year: c.year.value,
+                              month: c.month.value,
+                              day: c.day.value,
+                              onYearChanged: (v) {
+                                c.year.value = v;
+                                c.refreshForm();
+                              },
+                              onMonthChanged: (v) {
+                                c.month.value = v;
+                                c.refreshForm();
+                              },
+                              onDayChanged: (v) {
+                                c.day.value = v;
+                                c.refreshForm();
+                              },
+                            ),
                           ),
-
                           SizedBox(height: AppSpaces.heightMedium2),
 
                           /// الموافقة على الشروط
@@ -147,21 +143,30 @@ class PersonalInfoView extends StatelessWidget {
                               alignment: Alignment.center,
                               child: GetBuilder<PersonalInfoController>(
                                 builder: (_) => ElevatedButton(
-                                  onPressed: (c.isFormValid &&
-                                          !c.savingIsLoading.value)
-                                      ? () async {
-                                          await c.saveUserPersonalData();
-                                        }
-                                      : null,
-                                  child: c.savingIsLoading.value
-                                      ? SizedBox(
-                                          width: 85.w,
-                                          child: const CustomLoading())
-                                      : SizedBox(
-                                          width: 85.w,
-                                          child: const Text("حفظ التعديلات"),
-                                        ),
-                                ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.vividPurple,
+                                    ),
+                                    onPressed: (c.isFormValid &&
+                                            !c.savingIsLoading.value)
+                                        ? () async {
+                                            await c.saveUserPersonalData();
+                                          }
+                                        : null,
+                                    child: c.savingIsLoading.value
+                                        ? SizedBox(
+                                            height: 48.h,
+                                            width: 250.w,
+                                            child: const CustomLoading())
+                                        : SizedBox(
+                                            height: 48.h,
+                                            width: 250.w,
+                                            child: Center(
+                                              child: Text(
+                                                "حفظ التعديلات",
+                                                style: AppTextStyles.button,
+                                              ),
+                                            ),
+                                          )),
                               )),
                         ],
                       ),
