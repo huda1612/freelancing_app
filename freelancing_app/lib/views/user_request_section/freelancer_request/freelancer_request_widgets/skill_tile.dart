@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_spaces.dart';
 
 class SkillTile extends StatelessWidget {
   final String title;
@@ -25,11 +27,11 @@ class SkillTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: AppSpaces.smallVerticalSpacing),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        color: AppColors.owhite,
+        borderRadius: BorderRadius.circular(AppSpaces.radiusMedium),
+        border: Border.all(color: AppColors.owhite),
       ),
       child: Column(
         children: [
@@ -58,25 +60,25 @@ class SkillTile extends StatelessWidget {
                     onTap: () => onSubSkillToggle(s),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                        horizontal: AppSpaces.mediumHorizontalPadding,
+                        vertical: AppSpaces.smallVerticalSpacing,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? Colors.blue.shade100
-                            : Colors.grey.shade100,
+                            ? AppColors.lightPink
+                              : AppColors.veryLightGrey,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isSelected
-                              ? Colors.blue
-                              : Colors.grey.shade300,
+                              ? AppColors.lightPink
+                              : AppColors.veryLightGrey,
                         ),
                       ),
                       child: Text(
                         s,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? Colors.blue.shade900 : Colors.black,
+                          color: isSelected ? AppColors.white : AppColors.blue ,
                         ),
                       ),
                     ),

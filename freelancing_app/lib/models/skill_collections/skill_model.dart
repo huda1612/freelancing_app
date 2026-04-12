@@ -1,16 +1,16 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+
 class SkillModel {
   final String name;
   final List<String> subSkills;
-  bool expanded;
+  RxBool expanded = false.obs;
 
-  /// قائمة المهارات الفرعية المختارة
-  List<String> selectedSubSkills;
-
-  SkillModel({
+  // قائمة المهارات الفرعية المختارة
+  RxList<String> selectedSubSkills = <String>[].obs;
+   SkillModel({
     required this.name,
     required this.subSkills,
-    this.expanded = false,
-    this.selectedSubSkills = const [],
+    
   });
 
   factory SkillModel.fromMap(Map<String, dynamic> data) {

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/classes/app_initializer.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/services/localization_service.dart';
-
-// import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/admin_requests_list.dart';
-// import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -36,11 +33,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
 
-        // return MaterialApp(
-
-        //   debugShowCheckedModeBanner: false,
-        //   home: AdminRequestsListView(),
-        // );
+       
         return GetMaterialApp(
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),

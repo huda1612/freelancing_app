@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SkillController extends GetxController {
   RxList<SkillModel> skills = <SkillModel>[].obs;
-
+ var specialization = ''.obs;
+  var jobTitle = ''.obs;
+  var bio = ''.obs;
   @override
   void onInit() {
     super.onInit();
@@ -29,22 +31,21 @@ skills.value = [
         .map((doc) => SkillModel.fromMap(doc.data()))
         .toList();
   }
-
   void toggleSkill(int index) {
-    skills[index].expanded = !skills[index].expanded;
-    skills.refresh();
+  skills[index].expanded.value = !skills[index].expanded.value;
+  skills.refresh();
+}
+void toggleSubSkill(int index, String subSkill) {
+  final skill = skills[index];
+
+  if (skill.selectedSubSkills.contains(subSkill)) {
+    skill.selectedSubSkills.remove(subSkill);
+  } else {
+    skill.selectedSubSkills.add(subSkill);
   }
 
-  /// اختيار / إلغاء اختيار مهارة فرعية
-  void toggleSubSkill(int skillIndex, String subSkill) {
-    final skill = skills[skillIndex];
-
-    if (skill.selectedSubSkills.contains(subSkill)) {
-      skill.selectedSubSkills.remove(subSkill);
-    } else {
-      skill.selectedSubSkills.add(subSkill);
-    }
-
-    skills.refresh();
-  }
+  skills.refresh();
+}
+bool get hasSelectedSkills =>
+      skills.any((s) => s.selectedSubSkills.isNotEmpty);
 }
