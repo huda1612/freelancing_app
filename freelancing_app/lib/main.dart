@@ -5,8 +5,9 @@ import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/services/localization_service.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
-//import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
+
+// import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/admin_requests_list.dart';
+// import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -34,21 +35,20 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          home: ProfileSkillsScreen(),
-        );
-       
-        //         return GetMaterialApp(
-        //   locale: Locale('ar'),
-        //   // locale: AppConstantData.lang == null
-        //   //     ? Get.deviceLocale
-        //   //     : Locale(AppConstantData.lang!),
-        //   fallbackLocale: Locale('ar'),
-        //   translations: LocalizationService(),
+
+        // return MaterialApp(
+
         //   debugShowCheckedModeBanner: false,
-        //   initialRoute: AppRoutes.splash,
-        //   getPages: AppPages.pages,
+        //   home: AdminRequestsListView(),
         // );
+        return GetMaterialApp(
+          locale: Locale('ar'),
+          fallbackLocale: Locale('ar'),
+          translations: LocalizationService(),
+          debugShowCheckedModeBanner: false,
+          initialRoute: AppRoutes.splash,
+          getPages: AppPages.pages,
+        );
       },
     );
   }
