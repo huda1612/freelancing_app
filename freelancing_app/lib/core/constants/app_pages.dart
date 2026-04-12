@@ -1,6 +1,7 @@
 import 'package:freelancing_platform/core/bindings/auth_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
+import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
 import 'package:freelancing_platform/views/account_setup/account_setup_view/freelancer_personal_info_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/privacy_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/terms_view.dart';
@@ -68,6 +69,9 @@ class AppPages {
     //   ),
 
     //**********************************************settings pages****************************************
-    GetPage(name: AppRoutes.personalInfo, page: () => const PersonalInfoView())
+    GetPage(
+        name: AppRoutes.personalInfo,
+        page: () => const PersonalInfoView(),
+        middlewares: [AuthMiddleware()])
   ];
 }

@@ -48,6 +48,7 @@ dependencies:
   country_code_picker: ^3.4.1
   shared_preferences: ^2.5.3
   http: ^1.6.0
+  dartz: ^0.10.1
 
  
 
