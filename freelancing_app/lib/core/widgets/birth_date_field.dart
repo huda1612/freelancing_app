@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_input_styles.dart';
+import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 
 class BirthDateField extends StatelessWidget {
@@ -28,10 +30,11 @@ class BirthDateField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "تاريخ الميلاد",
-          style: AppTextStyles.body,
+          " تاريخ الميلاد",
+          style: AppTextStyles.button.copyWith(color: AppColors.black),
+          
         ),
-        SizedBox(height: 6.h),
+        SizedBox(height: AppSpaces.heightMedium),
         Row(
           children: [
             /// السنة
@@ -39,35 +42,10 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                // initialValue: year,
-                value: year,
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  fillColor: AppColors.veryLightGrey,
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 12.h,
-                    horizontal: 16.w,
-                  ),
-                  labelText: "السنة",
-                  labelStyle:
-                      AppTextStyles.body.copyWith(color: AppColors.vividPurple),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(
-                      color: AppColors.purple,
-                      width: 1.5.w,
-                    ),
-                  ),
-                ),
+                initialValue: year,
+                // value: year,
+                decoration: unifiedDecoration("السنة"),
+
                 items: List.generate(
                   60,
                   (i) => DropdownMenuItem(
@@ -87,34 +65,10 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                value: month,
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  fillColor: AppColors.veryLightGrey,
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 12.h,
-                    horizontal: 16.w,
-                  ),
-                  labelText: "الشهر",
-                  labelStyle:
-                      AppTextStyles.body.copyWith(color: AppColors.vividPurple),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(
-                      color: AppColors.purple,
-                      width: 1.5.w,
-                    ),
-                  ),
-                ),
+                initialValue: month,
+                //value: month,
+                decoration: unifiedDecoration("الشهر"),
+
                 items: List.generate(
                   12,
                   (i) => DropdownMenuItem(
@@ -133,34 +87,10 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                value: day,
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  fillColor: AppColors.veryLightGrey,
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 12.h,
-                    horizontal: 16.w,
-                  ),
-                  labelText: "اليوم",
-                  labelStyle:
-                      AppTextStyles.body.copyWith(color: AppColors.vividPurple),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(
-                      color: AppColors.purple,
-                      width: 1.5.w,
-                    ),
-                  ),
-                ),
+                initialValue: day,
+                // value: day,
+                decoration: unifiedDecoration("اليوم"),
+
                 items: List.generate(
                   31,
                   (i) => DropdownMenuItem(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? hintText;
@@ -88,39 +89,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           fontWeight: FontWeight.w500,
         ),
         textDirection: textDirection,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          hintStyle: TextStyle(
-            fontSize: 12.sp,
-            color: AppColors.vividPurple,
-          ),
-          filled: true,
-          fillColor: widget.fillColor ?? AppColors.veryLightGrey,
-          prefixIcon: widget.prefixIcon,
-          suffixIcon: suffixIcon,
-          contentPadding: EdgeInsets.symmetric(
-            vertical: 12.h,
-            horizontal: 16.w,
-          ),
-          border: OutlineInputBorder(
-            borderRadius:
-                widget.borderRadius ?? BorderRadius.circular(10.r),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius:
-                widget.borderRadius ?? BorderRadius.circular(10.r),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius:
-                widget.borderRadius ?? BorderRadius.circular(10.r),
-            borderSide: BorderSide(
-              color: AppColors.purple,
-              width: 1.5.w,
-            ),
-          ),
-        ),
+        decoration: unifiedDecoration(widget.hintText ?? "").copyWith(
+  suffixIcon: suffixIcon,
+),
+
       ),
     );
   }
