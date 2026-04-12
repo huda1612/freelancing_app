@@ -5,6 +5,6 @@ class AppInitializer {
     LocalStorageService.setConstantUid();
     LocalStorageService.setConstantRole();
     LocalStorageService.setConstantFirstOpen();
-    LocalStorageService.setConstantLang();
+    // LocalStorageService.setConstantLang();
   }
 }

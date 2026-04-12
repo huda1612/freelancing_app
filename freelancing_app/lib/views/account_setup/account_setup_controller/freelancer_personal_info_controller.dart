@@ -46,9 +46,9 @@ class PersonalInfoController extends GetxController {
       return;
     }
 
-    firstNameController.text = currentUser.fname ;
+    firstNameController.text = currentUser.fname;
     lastNameController.text = currentUser.lname;
-  
+
     gender.value = currentUser.gender;
     countryCode.value = currentUser.countryCode;
     if (currentUser.birthDate != null) {
@@ -125,6 +125,7 @@ class PersonalInfoController extends GetxController {
         savingIsLoading.value = false;
         update();
         Get.snackbar("تم الحفظ", "تم تعديل البيانات بنجاح");
+  
       } else {
         savingIsLoading.value = false;
         update();

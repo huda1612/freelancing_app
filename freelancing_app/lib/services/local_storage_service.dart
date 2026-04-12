@@ -30,7 +30,7 @@ class LocalStorageService {
     AppConstantData.firstOpen = await getStringValue(AppKeys.firstOpen);
   }
 
-  static setConstantLang() async {
-    AppConstantData.lang = await getStringValue(AppKeys.lang);
-  }
+  // static setConstantLang() async {
+  //   AppConstantData.lang = await getStringValue(AppKeys.lang);
+  // }
 }
