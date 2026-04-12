@@ -78,4 +78,32 @@ static String? username(String? value) {
   return null;
 }
 
+static String? validateSpecialization(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "الرجاء إدخال التخصص";
+  }
+  if (value.length < 3) {
+    return "التخصص يجب أن يكون 3 أحرف على الأقل";
+  }
+  return null;
+}
+static String? validateJobTitle(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "الرجاء إدخال المسمى الوظيفي";
+  }
+  if (value.length < 3) {
+    return "المسمى الوظيفي يجب أن يكون 3 أحرف على الأقل";
+  }
+  return null;
+}
+static String? validateBio(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "الرجاء كتابة نبذة قصيرة";
+  }
+  if (value.length < 20) {
+    return "النبذة يجب أن تكون 20 حرفًا على الأقل";
+  }
+  return null;
+}
+
 }

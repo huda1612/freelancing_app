@@ -54,8 +54,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isCommentField = widget.height == 107;
-
+final bool isMultiline = widget.keyboardType == TextInputType.multiline;
     final Widget? suffixIcon = widget.obscureText
         ? IconButton(
             icon: Icon(
@@ -67,11 +66,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           )
         : widget.suffixIcon;
 
-    final textDirection =
-        Localizations.localeOf(context).languageCode == 'ar'
-            ? TextDirection.rtl
-            : TextDirection.ltr;
-
+    
     return SizedBox(
       width: widget.width!.w,
      // height: widget.height!.h,
@@ -81,14 +76,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
         keyboardType: widget.keyboardType,
         validator: widget.validator,
         onChanged: widget.onChanged,
-        maxLines: isCommentField ? 5 : 1,
-        minLines: isCommentField ? 3 : 1,
+        maxLines: isMultiline ? null : 1,
+        minLines: isMultiline ? 3 : 1,
         style: TextStyle(
           fontSize: 14.sp,
           color: Colors.black87,
           fontWeight: FontWeight.w500,
         ),
-        textDirection: textDirection,
+textDirection: TextDirection.rtl,
         decoration: unifiedDecoration(widget.hintText ?? "").copyWith(
   suffixIcon: suffixIcon,
 ),
