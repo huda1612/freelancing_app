@@ -1,5 +1,4 @@
 class AppRoutes {
-  
   //auth routes
   static const splash = '/splash';
   static const onboarding = '/onboarding';
@@ -14,4 +13,6 @@ class AppRoutes {
 
   //settings routes
   static const personalInfo = '/personal_info';
+  //request route
+  static const freelancerAccountInfo = '/freelancer_account_info';
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/post_type.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 
 class FirebaseCrud {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
