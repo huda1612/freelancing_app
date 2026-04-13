@@ -1,4 +1,5 @@
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:get/get_core/src/get_main.dart';

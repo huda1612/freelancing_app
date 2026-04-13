@@ -32,8 +32,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-
-       
+  
         return GetMaterialApp(
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),
