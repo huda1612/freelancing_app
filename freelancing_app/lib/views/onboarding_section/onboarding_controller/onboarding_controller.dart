@@ -3,7 +3,7 @@ import 'package:freelancing_platform/core/constants/app_assets.dart';
 import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/models/onboarding/onboarding_model.dart';
-import 'package:freelancing_platform/services/local_storage_service.dart';
+import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:get/get.dart';
 
 class OnboardingController extends GetxController {

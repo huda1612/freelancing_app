@@ -19,6 +19,7 @@ class UserModel {
   final String uid;
   final String fname;
   final String lname;
+  final String username;
   final String? gender;
   final String? countryCode;
   final DateTime? birthDate;
@@ -36,10 +37,11 @@ class UserModel {
   UserModel({
     required this.uid,
     required this.fname,
+    required this.lname,
+    required this.username,
     this.gender,
     this.countryCode,
     this.birthDate,
-    required this.lname,
     required this.email,
     required this.role,
     this.photoUrl = '',
@@ -57,6 +59,7 @@ class UserModel {
     return {
       'fname': fname,
       'lname': lname,
+      'username': username,
       'gender': gender,
       'countryCode': countryCode,
       'birthDate': birthDate != null ? Timestamp.fromDate(birthDate!) : null,
@@ -78,8 +81,9 @@ class UserModel {
       uid: docId,
       fname: map['fname'] ?? '',
       lname: map['lname'] ?? '',
-      gender: map['gender'] ,//?? null,
-      
+      username: map['username'] ?? '',
+      gender: map['gender'], //?? null,
+
       countryCode: map['countryCode'],
       birthDate: map['birthDate'] != null
           ? (map['birthDate'] as Timestamp).toDate()

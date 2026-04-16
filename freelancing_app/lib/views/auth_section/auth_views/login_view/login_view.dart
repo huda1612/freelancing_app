@@ -47,6 +47,7 @@ class LoginView extends StatelessWidget {
                 // EMAIL
                 CustomTextField(
                   hintText: "البريد الإلكتروني",
+                  keyboardType: TextInputType.emailAddress,
                   onChanged: (value) => controller.email.value = value,
                   validator: Validators.email,
                 ),
@@ -71,7 +72,31 @@ class LoginView extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: InteractiveTextLink(
                       text: "نسيت كلمة المرور؟",
-                      onTap: controller.resetPassword,
+                      // onTap: controller.resetPassword,
+                      onTap: () => Get.defaultDialog(
+                        title: "هل تريد إرسال رابط لتغيير كلمة المرور ؟",
+                        content: Column(
+                          children: [
+                            Text(
+                                "ان كنت ترغب بإعادة ارسال كلمة المرور الرجاء ادخال بريدك الالكتروني في حقل البريد الإلكتروني ثم الضغط على الزر التالي لإرسال رسالة إعادة التعيين الى بريدك")
+                          ],
+                        ),
+                        // textConfirm: "ارسال رسالة لتغيير كلمة السر ",
+                        // onConfirm: controller.resetPassword,
+                        confirm: Obx(() {
+                          return SizedBox(
+                            width: 180.w,
+                            child: CustomButton(
+                                isLoading:
+                                    controller.sendEmailResetIsLoading.value,
+                                isDisable: !controller.canResend.value,
+                                text: controller.canResend.value
+                                    ? "إعادة إرسال رابط التفعيل"
+                                    : "انتظر ${controller.resendSeconds.value}s",
+                                onTap: controller.resetPassword),
+                          );
+                        }),
+                      ),
                     ),
                   ),
                 ),
@@ -82,15 +107,19 @@ class LoginView extends StatelessWidget {
                 SizedBox(
                   width: 380.w,
                   child: Obx(() {
-                    if (controller.isLoginLoading.value) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                    // if (controller.isLoginLoading.value) {
+                    //   return const Center(
+                    //     child: CircularProgressIndicator(),
+                    //   );
+                    // }
+                    // return CustomButton(
+                    //   text: "تسجيل الدخول",
+                    //   onTap: controller.login,
+                    // );
                     return CustomButton(
-                      text: "تسجيل الدخول",
-                      onTap: controller.login,
-                    );
+                        isLoading: controller.isLoginLoading.value,
+                        text: "تسجيل الدخول",
+                        onTap: controller.login);
                   }),
                 ),
                 SizedBox(height: AppSpaces.heightLarge),
@@ -156,7 +185,6 @@ class LoginView extends StatelessWidget {
                         text: "إنشاء حساب",
                         onTap: () => Get.toNamed(AppRoutes.register),
                       ),
-                      
                     ],
                   ),
                 ),

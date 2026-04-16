@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:freelancing_platform/core/constants/app_keys.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/data/repositories/auth_repository.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
-import 'package:freelancing_platform/services/local_storage_service.dart';
 
 class AuthService {
   AuthService(this._authRepository);
@@ -19,14 +18,32 @@ class AuthService {
     UserCredential uc =
         await _authRepository.login(email: email, password: password);
     //حفظ رقم تعريف المستخدم و دوره بالذاكره المحليه
-    LocalStorageService.setStringValue(AppKeys.uid, currentUser!.uid);
-    LocalStorageService.setConstantUid();
-    final role = await userRole;
-    if (role != null) {
-      LocalStorageService.setStringValue(AppKeys.role, role);
-      LocalStorageService.setConstantRole();
-    }
+    // final role = await userRole;
+    // if (role != null) {
+    //   await UserSession.save(uidValue: currentUser!.uid, roleValue: role);
+    //   //لو كان الدور ما موجود بالمستند مارح يعتبره مسجل دخول خلص حتى لو كان مسجل بالتطبيق لان مارح تنحفظ الجلسه انتبهي !!!!!!!!!!!!!!!!!
+    // } else {
+    //   await FirebaseAuth.instance.signOut();
+    //   throw Exception("لا يوجد دور للمستخدم!!");
+    // }
+    await saveUserSession(passedRole: null);
     return uc;
+  }
+
+  Future<void> saveUserSession({String? passedRole}) async {
+    String? role;
+    if (passedRole == null) {
+      role = await userRole;
+    } else {
+      role = passedRole;
+    }
+    if (role != null) {
+      await UserSession.save(uidValue: currentUser!.uid, roleValue: role);
+    } else {
+      //لو كان الدور ما موجود بالمستند مارح يعتبره مسجل دخول خلص حتى لو كان مسجل بالتطبيق لان مارح تنحفظ الجلسه انتبهي !!!!!!!!!!!!!!!!!
+      await FirebaseAuth.instance.signOut();
+      throw Exception("لا يوجد دور للمستخدم!!");
+    }
   }
 
   Future<void> resetPassword(String email) async {
@@ -43,6 +60,7 @@ class AuthService {
   Future<void> registerUser({
     required String firstName,
     required String lastName,
+    required String username,
     required String email,
     required String password,
     required String role,
@@ -54,20 +72,15 @@ class AuthService {
       uid: uid,
       fname: firstName,
       lname: lastName,
+      username: username,
       email: email,
       role: role,
     );
 
     try {
       await _authRepository.saveUser(newUser);
-      //حفظ رقم تعريف المستخدم و دوره بالذاكره المحليه
-      LocalStorageService.setStringValue(AppKeys.uid, currentUser!.uid);
-      LocalStorageService.setConstantUid();
-      final role = await userRole;
-      if (role != null) {
-        LocalStorageService.setStringValue(AppKeys.role, role);
-        LocalStorageService.setConstantRole();
-      }
+      await saveUserSession(passedRole: role);
+      // await UserSession.save(uidValue: currentUser!.uid, roleValue: role);
     } catch (_) {
       await _authRepository.deleteCurrentUser();
       rethrow;
@@ -77,6 +90,10 @@ class AuthService {
   }
 
   Future<void> resendVerificationEmail() {
-    return _authRepository.sendVerificationEmail();
+    try {
+      return _authRepository.sendVerificationEmail();
+    } catch (_) {
+      rethrow; //رح عالج الخطأ بالكنترولر
+    }
   }
 }

@@ -16,16 +16,19 @@ class CustomLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return Center(
+    // child: Column(mainAxisSize: MainAxisSize.min, children: [
+    // CircularProgressIndicator(
+    //     color: loadingColor,
+    //     strokeWidth: strokeWidth
+    //   ),
+    //   if (text != null) ...[
+    //     SizedBox(height: spaceHeight),
+    //     Text(text!),
+    //   ]
+    // ]));
     return Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-      CircularProgressIndicator(
-        color: loadingColor,
-        strokeWidth: strokeWidth
-      ),
-      if (text != null) ...[
-        SizedBox(height: spaceHeight),
-        Text(text!),
-      ]
-    ]));
+        child: CircularProgressIndicator(
+            color: loadingColor, strokeWidth: strokeWidth));
   }
 }
