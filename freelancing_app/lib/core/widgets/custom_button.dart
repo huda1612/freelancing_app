@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 
 enum ButtonType { filled, outlined }
 
@@ -17,67 +18,85 @@ class CustomButton extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final ButtonType buttonType;
   final Widget? prefix;
+  final bool isLoading;
+  final bool isDisable;
 
-  const CustomButton({
-    super.key,
-    required this.text,
-    required this.onTap,
-    this.width = 396, // ← رقم التصميم
-    this.height = 52, // ← رقم التصميم
-    this.padding,
-    this.color = AppColors.vividPurple,
-    this.textStyle,
-    this.borderRadius,
-    this.buttonType = ButtonType.filled,
-    this.prefix,
-  });
+  const CustomButton (
+      {super.key,
+      required this.text,
+      required this.onTap,
+      this.width = 396, // ← رقم التصميم
+      this.height = 52, // ← رقم التصميم
+      this.padding,
+      this.color = AppColors.vividPurple,
+      this.textStyle,
+      this.borderRadius,
+      this.buttonType = ButtonType.filled,
+      this.prefix,
+      this.isLoading = false,
+      this.isDisable = false});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: width != null ? width!.w : double.infinity,
-        height: height.h,
-        padding: padding ??
-            EdgeInsets.symmetric(
-              vertical: AppSpaces.smallVerticalSpacing.h,
-              //14.h,
-              horizontal: AppSpaces.smallHorizontalPadding.w,
-            ),
-        decoration: BoxDecoration(
-          color: buttonType == ButtonType.filled ? color : AppColors.white,
-          borderRadius:
-              borderRadius ?? BorderRadius.circular(AppSpaces.radiusMedium),
-          border: buttonType == ButtonType.outlined
-              ? Border.all(color: color, width: 1.5.w)
-              : null,
+    final bool effectiveDisable = isDisable || isLoading;
 
-           boxShadow: [
-      BoxShadow(
-        color: AppColors.ovividPurple,
-        blurRadius: 10,
-        offset: const Offset(0, 4),
-      ),
-    ],
-        ),
-        alignment: Alignment.center,
-        child: prefix == null
-            ? Text(
-                text,
-                style: textStyle ?? AppTextStyles.button,
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  prefix!,
-                  SizedBox(width: 10.w),
-                  Text(
-                    text,
-                    style: textStyle ?? AppTextStyles.button,
-                  ),
-                ],
+    return IgnorePointer(
+      ignoring: effectiveDisable,
+      child: GestureDetector(
+        onTap: effectiveDisable ? null : onTap,
+        child: Container(
+          width: width != null ? width!.w : double.infinity,
+          height: height.h,
+          padding: padding ??
+              EdgeInsets.symmetric(
+                vertical: AppSpaces.smallVerticalSpacing.h,
+                //14.h,
+                horizontal: AppSpaces.smallHorizontalPadding.w,
               ),
+          decoration: BoxDecoration(
+            color: buttonType == ButtonType.filled
+                ? (effectiveDisable
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.12)
+                    : color)
+                : AppColors.white,
+            borderRadius:
+                borderRadius ?? BorderRadius.circular(AppSpaces.radiusMedium),
+            border: buttonType == ButtonType.outlined
+                ? Border.all(color: color, width: 1.5.w)
+                : null,
+            boxShadow: effectiveDisable
+                ? []
+                : [
+                    BoxShadow(
+                      color: AppColors.ovividPurple,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+          ),
+          alignment: Alignment.center,
+          child: isLoading
+              ? CustomLoading()
+              : (prefix == null
+                  ? Text(
+                      text,
+                      style: isDisable
+                          ? AppTextStyles.button
+                              .copyWith(color: AppColors.white)
+                          : (textStyle ?? AppTextStyles.button),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        prefix!,
+                        SizedBox(width: 10.w),
+                        Text(
+                          text,
+                          style: textStyle ?? AppTextStyles.button,
+                        ),
+                      ],
+                    )),
+        ),
       ),
     );
   }

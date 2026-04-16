@@ -1,7 +1,10 @@
-import 'package:freelancing_platform/core/constants/app_constant_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
 
 bool checkLogin() {
-  if (AppConstantData.uid == null || AppConstantData.role == null) {
+  if (FirebaseAuth.instance.currentUser == null ||
+      UserSession.uid == null ||
+      UserSession.role == null) {
     return false;
   }
   return true;

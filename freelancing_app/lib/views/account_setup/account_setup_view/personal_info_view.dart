@@ -12,7 +12,7 @@ import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/location_field.dart';
 import 'package:freelancing_platform/core/widgets/gender_field.dart';
 import 'package:freelancing_platform/core/widgets/birth_date_field.dart';
-import 'package:freelancing_platform/views/account_setup/account_setup_controller/freelancer_personal_info_controller.dart';
+import 'package:freelancing_platform/views/account_setup/account_setup_controller/personal_info_controller.dart';
 import 'package:get/get.dart';
 
 class PersonalInfoView extends StatelessWidget {
@@ -47,6 +47,25 @@ class PersonalInfoView extends StatelessWidget {
                               style: AppTextStyles.body),
 
                           SizedBox(height: AppSpaces.heightLarge),
+                          CustomTextField(
+                            controller: c.usernameController,
+                            hintText: "اسم المستخدم",
+                            keyboardType: TextInputType.name,
+                            onChanged: c.onUsernameChanged,
+                            // validator: Validators.username,//شلتها مشان ما يطلعوا خطأين فوق بعض
+                          ),
+                          Obx(() {
+                            if (c.usernameError.value != null) {
+                              return Text(
+                                c.usernameError.value!,
+                                style: const TextStyle(color: AppColors.red),
+                              );
+                            } else {
+                              return SizedBox.shrink();
+                            }
+                          }),
+
+                          SizedBox(height: AppSpaces.heightMedium2),
 
                           /// الاسم الأول
                           CustomTextField(
@@ -93,7 +112,6 @@ class PersonalInfoView extends StatelessWidget {
 
                           SizedBox(height: AppSpaces.heightMedium2),
                           Center(
-                            
                             child:
 
                                 /// تاريخ الميلاد

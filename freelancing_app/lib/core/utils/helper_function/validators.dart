@@ -61,49 +61,58 @@ class Validators {
   }
 
   // اسم المستخدم
-static String? username(String? value) {
-  if (value == null || value.trim().isEmpty) {
-    return "اسم المستخدم مطلوب";
+  static String? username(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "اسم المستخدم مطلوب";
+    }
+
+    if (value.length < 3) {
+      return "اسم المستخدم يجب أن يكون 3 أحرف على الأقل";
+    }
+    if (value.length > 30) {
+      return "اسم المستخدم يجب أن يكون أقل من 30 محرف";
+    }
+
+    // يسمح بالعربي + الإنجليزي + الأرقام + _ فقط
+    // if (!RegExp(r'^[a-zA-Z0-9\u0600-\u06FF_]+$').hasMatch(value)) {
+    //   return "اسم المستخدم يجب أن يحتوي على أحرف أو أرقام أو _ فقط";
+    // }
+    if (!RegExp(
+      r'^(?!^[0-9]+$)(?!^_+$)[a-zA-Z0-9\u0600-\u06FF_]+$',
+    ).hasMatch(value)) {
+      return "اسم المستخدم يجب أن يحتوي على أحرف أو أرقام أو _ فقط";
+    }
+
+    return null;
   }
 
-  if (value.length < 3) {
-    return "اسم المستخدم يجب أن يكون 3 أحرف على الأقل";
+  static String? validateSpecialization(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "الرجاء إدخال التخصص";
+    }
+    if (value.length < 3) {
+      return "التخصص يجب أن يكون 3 أحرف على الأقل";
+    }
+    return null;
   }
 
-  // يسمح بالعربي + الإنجليزي + الأرقام + _ فقط
-  if (!RegExp(r'^[a-zA-Z0-9\u0600-\u06FF_]+$').hasMatch(value)) {
-    return "اسم المستخدم يجب أن يحتوي على أحرف أو أرقام فقط بدون مسافات";
+  static String? validateJobTitle(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "الرجاء إدخال المسمى الوظيفي";
+    }
+    if (value.length < 3) {
+      return "المسمى الوظيفي يجب أن يكون 3 أحرف على الأقل";
+    }
+    return null;
   }
 
-  return null;
-}
-
-static String? validateSpecialization(String? value) {
-  if (value == null || value.trim().isEmpty) {
-    return "الرجاء إدخال التخصص";
+  static String? validateBio(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "الرجاء كتابة نبذة قصيرة";
+    }
+    if (value.length < 20) {
+      return "النبذة يجب أن تكون 20 حرفًا على الأقل";
+    }
+    return null;
   }
-  if (value.length < 3) {
-    return "التخصص يجب أن يكون 3 أحرف على الأقل";
-  }
-  return null;
-}
-static String? validateJobTitle(String? value) {
-  if (value == null || value.trim().isEmpty) {
-    return "الرجاء إدخال المسمى الوظيفي";
-  }
-  if (value.length < 3) {
-    return "المسمى الوظيفي يجب أن يكون 3 أحرف على الأقل";
-  }
-  return null;
-}
-static String? validateBio(String? value) {
-  if (value == null || value.trim().isEmpty) {
-    return "الرجاء كتابة نبذة قصيرة";
-  }
-  if (value.length < 20) {
-    return "النبذة يجب أن تكون 20 حرفًا على الأقل";
-  }
-  return null;
-}
-
 }

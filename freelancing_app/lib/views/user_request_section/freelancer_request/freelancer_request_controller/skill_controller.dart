@@ -1,10 +1,9 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/models/skill_collections/skill_model.dart';
 import 'package:get/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FreelancerAccountInfoController extends GetxController {
   final formKey = GlobalKey<FormState>();
