@@ -12,6 +12,7 @@ import 'package:freelancing_platform/views/auth_section/auth_views/register_view
 import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verify_email_view.dart';
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
+import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
 import 'package:get/get.dart';
 
 import '../middleware/onboarding_middleware.dart';
@@ -67,6 +68,10 @@ class AppPages {
     //     middlewares: [HomeMiddleware()]
     //     // binding: SplashBinding(),
     //   ),
+        GetPage(
+        name: AppRoutes.freelancerAccountInfo,
+        page: () =>  FreelancerAccountInfoView(),
+      ),
 
     //**********************************************settings pages****************************************
     GetPage(

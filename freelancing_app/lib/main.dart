@@ -32,13 +32,14 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-  
+
         return GetMaterialApp(
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),
           translations: LocalizationService(),
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.splash,
+          // initialRoute: AppRoutes.splash,
+          initialRoute: AppRoutes.freelancerAccountInfo,
           getPages: AppPages.pages,
         );
       },

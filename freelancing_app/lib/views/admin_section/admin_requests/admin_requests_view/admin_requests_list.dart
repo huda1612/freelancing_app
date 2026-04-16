@@ -9,10 +9,9 @@ class AdminRequestsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DefaultTabController(
-          length: 3,
-          child: Scaffold(
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
             appBar: CustomAppBar(
               backgroundColor: AppColors
                   .white, //هي لازمها تعديل بالappBar نفسه نخليهم كلهم جوا التطبيق ابيض افتراضيا
@@ -30,23 +29,25 @@ class AdminRequestsListView extends StatelessWidget {
                 )
               ]),
             ),
-            body: Container(
-              color: AppColors.veryLightGrey,
-              child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    // return RequestShortcut(id , RequestStatus , usrename , date);
-                    return RequestShortcut(
-                      id: "",
-                      requestStatus: RequestStatus.approved,
-                      usrename: "HudaAhmed",
-                      date: "",
-                      onTab: () {},
-                    );
-                  }),
-              // child: ,
-            ),
-          )),
-    );
+            body: TabBarView(
+              children: [
+                //-----tab1-----------
+                Container(
+                  color: AppColors.veryLightGrey,
+                  child: ListView.builder(
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        // return RequestShortcut(id , RequestStatus , usrename , date);
+                        return RequestShortcut(
+                          id: "",
+                          requestStatus: RequestStatus.approved,
+                          usrename: "HudaAhmed",
+                          date: "",
+                          onTab: () {},
+                        );
+                      }),
+                ),
+              ],
+            )));
   }
 }
