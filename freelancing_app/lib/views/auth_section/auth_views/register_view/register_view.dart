@@ -63,15 +63,26 @@ class RegisterView extends StatelessWidget {
                   hintText: "الاسم الأخير",
                   keyboardType: TextInputType.name,
                   onChanged: (value) => controller.lastName.value = value,
-                  validator: Validators.username,
-                ),
-                 SizedBox(height: AppSpaces.heightMedium),
-CustomTextField(
-                  hintText: "اسم المستخدم",
-                  keyboardType: TextInputType.name,
-                  onChanged: (value) => controller.lastName.value = value,
                   validator: Validators.lastName,
                 ),
+                SizedBox(height: AppSpaces.heightMedium),
+                CustomTextField(
+                  hintText: "اسم المستخدم",
+                  keyboardType: TextInputType.name,
+                  // onChanged: (value) => controller.username.value = value,
+                  onChanged: controller.onUsernameChanged,
+                  validator: Validators.username,
+                ),
+                Obx(() {
+                  if (controller.usernameError.value != null) {
+                    return Text(
+                      controller.usernameError.value!,
+                      style: const TextStyle(color: Colors.red),
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                }),
                 SizedBox(height: AppSpaces.heightMedium),
 
                 // الاييمل
@@ -188,12 +199,13 @@ CustomTextField(
                 SizedBox(
                   width: 380.w,
                   child: Obx(() {
-                    if (controller.isRegisterLoading.value) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                    // if (controller.isRegisterLoading.value) {
+                    //   return const Center(
+                    //     child: CircularProgressIndicator(),
+                    //   );
+                    // }
                     return CustomButton(
+                      isLoading: controller.isRegisterLoading.value,
                       text: "إنشاء حساب",
                       onTap: controller.register,
                     );

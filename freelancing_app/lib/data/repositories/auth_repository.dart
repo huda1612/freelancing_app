@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 
+
 class AuthRepository {
   AuthRepository({
     FirebaseAuth? firebaseAuth,
@@ -74,7 +75,13 @@ class AuthRepository {
   Future<void> sendVerificationEmail() async {
     final user = _firebaseAuth.currentUser;
     if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
+      try {
+        await user.sendEmailVerification();
+      } catch (e) {
+        //هاد الخطأ هون غالبا بيطلع بس يضغط اكثر من مره على زر الارسال مرات ورا بعض
+        //رح عالج الخطأ بالكنترولر
+        rethrow;
+      }
     }
   }
 }

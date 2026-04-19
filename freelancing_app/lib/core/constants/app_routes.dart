@@ -10,6 +10,7 @@ class AppRoutes {
   static const join = '/join';
   static const forgotPassword = '/forgot-password';
   static const verifyEmail = '/verify-email';
+  // static const verification = '/verification';
 
   //settings routes
   static const personalInfo = '/personal_info';

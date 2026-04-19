@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/classes/firebase_crud.dart';
+import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
-import 'package:freelancing_platform/core/widgets/custom_button.dart';
+import 'package:freelancing_platform/data/services/auth_service.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/auth_controller.dart';
-import 'package:freelancing_platform/views/auth_section/widgets/role_option.dart';
+
+import 'package:freelancing_platform/views/auth_section/widgets/role_username_set_dialog.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -38,86 +40,41 @@ class GoogleSignInController extends GetxController {
       if (user == null) {
         return;
       }
-      await _addUserToFirestoreIfItsNotExist(user);
-
-      // Get.snackbar("نجاح", "تم تسجيل الدخول");
+      await _addUserToFirestoreIfItsNotExistAndSaveTheUserSeeion(user);
+      //لازم وجهه !!!!!
+      //مؤقتا
+      Get.offAllNamed(AppRoutes.personalInfo);
     } catch (e) {
       Get.snackbar("فشل", "فشل تسجيل الدخول $e");
     }
   }
 
-  Future<void> _addUserToFirestoreIfItsNotExist(User user) async {
+  Future<void> _addUserToFirestoreIfItsNotExistAndSaveTheUserSeeion(
+      User user) async {
     final controller = Get.find<AuthController>();
-    // **الآن نتأكد إذا موجود في Firestore**
+    // اولا بدي اتأكد اذا المستخدم موجود في فاير ستور
     DocumentReference userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
     final snapshot = await userDoc.get();
 
+    //لو ما موجودالمستخدم
     if (!snapshot.exists) {
-      String? role = await Get.dialog(
-        SimpleDialog(
-          title: Text(
-            'اختر نوع الحساب',
-            textAlign: TextAlign.center,
-          ),
-          children: [
-            Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // زر العميل
-                    RoleOption(
-                      label: "عميل",
-                      icon: Icons.person_outline,
-                      isSelected: controller.userRole.value == "client",
-                      onTap: () => controller.userRole.value = "client",
-                    ),
+      //بخليه يدخل الدور واسم المستخدم
+      String? role =
+          await Get.dialog(RoleUsernameSetDialog(controller: controller));
 
-                    SizedBox(width: 16.w),
-
-                    // زر المستقل
-                    RoleOption(
-                      label: "مستقل",
-                      icon: Icons.work_outline,
-                      isSelected: controller.userRole.value == "freelancer",
-                      onTap: () => controller.userRole.value = "freelancer",
-                    ),
-                  ],
-                )),
-            SizedBox(height: AppSpaces.heightLarge),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 120.w),
-              child: SizedBox(
-                child: CustomButton(
-                  text: "موافق",
-                  onTap: () => Get.back(result: controller.userRole.value),
-                  height: 50.h,
-                ),
-              ),
-            ),
-
-            // SizedBox(
-            //     width: 100.w,
-            //     child: CustomButton(
-            //         text: "موافق",
-            //         width: 50.w,
-            //         onTap: () => Get.back(result: controller.userRole.value))),
-            // SimpleDialogOption(
-            //   child: Text('عميل'),
-            //   onPressed: () => Get.back(result: 'client'),
-            // ),
-            // SimpleDialogOption(
-            //   child: Text('مقدم خدمة'),
-            //   onPressed: () => Get.back(result: 'freelancer'),
-            // ),
-          ],
-        ),
-      );
+      //اذا الغى الادخال بطلعه ما بخليه يسجل دخوله
       if (role == null) {
         await FirebaseAuth.instance.currentUser?.delete();
         Get.snackbar("تم الإلغاء", "تم إلغاء تسجيل الدخول");
         return;
-      } // المستخدم ألغى اختيار الدور
+      }
+      if (controller.username.value.isEmpty) {
+        await FirebaseAuth.instance.currentUser?.delete();
+        Get.snackbar("تم الإلغاء", "تم إلغاء تسجيل الدخول");
+        return;
+      }
 
       // المستخدم جديد → نضيفه للـ Users collection
       String fullName = user.displayName ?? "";
@@ -133,19 +90,48 @@ class GoogleSignInController extends GetxController {
         uid: user.uid,
         fname: firstName,
         lname: lastName,
+        username: controller.username.value,
         email: user.email ?? '',
         role: role,
         photoUrl: user.photoURL ?? '',
       );
+
       //ادخال المستخدم في قاعدة البيانات
       try {
+        //بدخله اول على مجموعه المستخدمين
         await userDoc.set(newUser.toMap());
+
+        //بعدين منضيف اسم المستخدم لقاعدة البيانات لضمان عدم تكراره
+        var firestore = FirebaseFirestore.instance;
+        StatusClasses st = await FirebaseCrud.createDocument(
+            docId: controller.username.value,
+            collectionRef: firestore.collection(CollectionsNames.usernames),
+            body: {"uid": FirebaseAuth.instance.currentUser!.uid});
+
+        //بحال ما نجحت العملية
+        if (st != StatusClasses.success) {
+          await FirebaseAuth.instance.currentUser?.delete();
+          Get.snackbar("خطأ", "حدث خطأ اثناء انشاء الحساب");
+          // isRegisterLoading.value = false;
+          return;
+        }
+
+        //بعد ما خلص بحفظ الجلسة
+        final AuthService authService = Get.find<AuthService>();
+        await authService.saveUserSession(passedRole: role);
       } catch (e) {
+        //هي بحال فشل ادخال سجل للمستخدم بقاعدة البيانات
         await FirebaseAuth.instance.currentUser?.delete();
         Get.snackbar("خطأ", "حدث خطأ بادخال المستخدم في قاعدة البيانات : $e");
         return;
-      } //هي بحال فشل ادخال سجل للمستخدم بقاعدة البيانات
+      }
+    } else {
+      //في حال وجود المستخدم مسبقا فقط نحفظ المستخدم في الجلسه
+      final AuthService authService = Get.find<AuthService>();
+      await authService.saveUserSession(passedRole: null);
+
+      Get.snackbar("نجاح", "تم تسجيل الدخول");
+      return;
     }
-    Get.snackbar("نجاح", "تم تسجيل الدخول");
   }
 }

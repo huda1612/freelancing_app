@@ -5,7 +5,8 @@ class AppColors {
   // بنفسجي
   static const Color purple = Color(0xFF6C63FF); // بنفسجي رئيسي
   static const Color lightPurple = Color(0xFFB3A9FF); // بنفسجي فاتح
-  static const Color softPurple = Color.fromARGB(150, 178, 145, 254); // بنفسجي ناعم إضافي
+  static const Color softPurple =
+      Color.fromARGB(150, 178, 145, 254); // بنفسجي ناعم إضافي
   static const Color vividPurple =
       Color.fromARGB(255, 121, 92, 235); // بنفسجي مشبع
   static const Color ovividPurple =
@@ -19,7 +20,8 @@ class AppColors {
   static const Color veryLightBlue =
       Color.fromARGB(255, 163, 196, 250); // أزرق فاتح
 
-  static const Color softBlue = Color.fromARGB(151, 143, 186, 255); // أزرق ناعم إضافي
+  static const Color softBlue =
+      Color.fromARGB(151, 143, 186, 255); // أزرق ناعم إضافي
 
   // خلفية رمادية غامقة
   static const Color darkBackground = Color(0xFF2C2C2E); // رمادي غامق جداً
@@ -38,6 +40,7 @@ class AppColors {
   static const Color owhite = Color.fromARGB(170, 255, 255, 255); // أبيض نقي
   static const Color veryLightGrey = Color(0xFFF5F5F5); // رمادي شبه أبيض
   static const Color grey = Color(0xFFE0E0E0); // رمادي شبه أبيض
+  static Color disableButton = const Color.fromARGB(255, 198, 198, 198);
 
   //اخضر
   static const Color lightGreen = Color.fromARGB(255, 214, 245, 192);
