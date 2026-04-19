@@ -1,5 +1,3 @@
-// import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/models/skill_collections/skill_model.dart';
@@ -8,10 +6,26 @@ import 'package:get/get.dart';
 class FreelancerAccountInfoController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
+//معلومات الحساب
   RxList<SkillModel> skills = <SkillModel>[].obs;
   var specialization = RxnString();
   var jobTitle = RxnString();
   var bio = RxnString();
+
+
+
+
+
+//البحث
+  var searchQuery = "".obs;
+  RxList<String> filteredSubSkills = <String>[].obs;
+
+// المهارات المختارة
+  RxList<String> selectedSubSkills = <String>[].obs;
+
+
+
+
   @override
   void onInit() {
     super.onInit();
@@ -29,6 +43,13 @@ class FreelancerAccountInfoController extends GetxController {
       ),
     ];
   }
+  
+  void onSearchChanged(String value) {}
+
+
+  void toggleSelectSubSkill(String sub) {}
+
+
 
   // Future<void> fetchSkills() async {
   //   final snapshot =
@@ -38,9 +59,11 @@ class FreelancerAccountInfoController extends GetxController {
   //       snapshot.docs.map((doc) => SkillModel.fromMap(doc.data(),)).toList();
   // }
 
+
+
   void toggleSkill(int index) {
     skills[index].expanded.value = !skills[index].expanded.value;
-    skills.refresh();
+    //skills.refresh();
   }
 
   void toggleSubSkill(int index, String subSkill) {
@@ -52,7 +75,7 @@ class FreelancerAccountInfoController extends GetxController {
       skill.selectedSubSkills.add(subSkill);
     }
 
-    skills.refresh();
+   // skills.refresh();
   }
 
   void nextBottonOnPressed() {
@@ -81,4 +104,10 @@ class FreelancerAccountInfoController extends GetxController {
 
   bool get _hasSelectedSkills =>
       skills.any((s) => s.selectedSubSkills.isNotEmpty);
+
+
+
+
+
+
 }

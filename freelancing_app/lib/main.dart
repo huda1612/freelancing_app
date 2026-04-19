@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
           fallbackLocale: Locale('ar'),
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splash,
-          // initialRoute: AppRoutes.freelancerAccountInfo,
           getPages: AppPages.pages,
         );
       },
