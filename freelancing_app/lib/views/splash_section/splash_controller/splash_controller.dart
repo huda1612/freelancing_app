@@ -9,6 +9,7 @@ class SplashController extends GetxController {
 
     // الانتقال بعد 5 ثواني
     Future.delayed(const Duration(seconds: 5), () {
+      //!!!!!!!!!!!!!!!!!!!!!!!! هون التوجيه الاول 
       Get.offNamed(AppRoutes.onboarding);
 
     });

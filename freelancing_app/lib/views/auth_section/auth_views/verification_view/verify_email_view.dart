@@ -7,7 +7,7 @@ import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
-import 'package:freelancing_platform/views/auth_section/auth_controller/verification_email_controller.dart';
+import 'package:freelancing_platform/views/auth_section/auth_controller/verify_email_controller.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -16,9 +16,8 @@ class VerifyEmailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<VerificationEmailController>(
-        init:
-            Get.put<VerificationEmailController>(VerificationEmailController()),
+    return GetBuilder<VerifyEmailController>(
+        init: Get.put<VerifyEmailController>(VerifyEmailController()),
         builder: (controller) {
           return ModalProgressHUD(
             inAsyncCall: controller.state == StatusClasses.isloading,

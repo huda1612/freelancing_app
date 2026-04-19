@@ -19,7 +19,7 @@ void main() async {
   );
 
   // استدعاء تهيئة البيانات قبل تشغيل التطبيق
-  AppInitializer.init();
+  await AppInitializer.init();
   runApp(const MyApp());
 }
 

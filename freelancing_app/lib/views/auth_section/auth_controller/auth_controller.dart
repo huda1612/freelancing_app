@@ -33,6 +33,13 @@ class AuthController extends GetxController {
   final resendSeconds = 0.obs;
   Timer? _resendTimer;
 
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   email.value = '';
+  //   password.value = '';
+  // }
+
   void _startCooldown({int seconds = 30}) {
     _resendTimer?.cancel(); // مهم جداً
 
