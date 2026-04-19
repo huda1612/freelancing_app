@@ -9,7 +9,7 @@ class StatusClasses {
   static const success = StatusClasses._("success");
 
   //---------------- error states ---------------------
-  static const offlineError = StatusClasses._("offlineError");
+  static const offlineError = StatusClasses._("offlineError" , "الرجاء التحقق من اتصالك بالانترنت");
   static const serverError = StatusClasses._("serverError");
   static const permissionDenied = StatusClasses._("permissionDenied", "انتهت صلاحيتك، يرجى تسجيل الدخول");
   // static const unavailable = StatusClasses._("unavailable", "تعذر الاتصال بالخادم، تحقق من اتصال الإنترنت وحاول مرة أخرى");

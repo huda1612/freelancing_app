@@ -6,7 +6,7 @@ import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_
 import 'package:freelancing_platform/data/services/auth_service.dart';
 import 'package:get/get.dart';
 
-class VerificationEmailController extends GetxController {
+class VerifyEmailController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
   StatusClasses state = StatusClasses.idle;
   final canResend = true.obs;

@@ -11,7 +11,7 @@ class OnboardingMiddleware extends GetMiddleware {
     //if its not the first time
     if (AppConstantData.firstOpen != null) {
       //if the user has not log in
-      if (!checkLogin()) {
+      if (!isLogin()) {
         return RouteSettings(name: AppRoutes.welcome);
       }
       //if the user has log in

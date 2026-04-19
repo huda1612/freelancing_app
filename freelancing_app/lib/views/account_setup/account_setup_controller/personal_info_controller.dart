@@ -29,19 +29,24 @@ class PersonalInfoController extends GetxController {
   final year = RxnString();
   final month = RxnString();
   final day = RxnString();
-  // final agreed = false.obs; //???
+
+  final isErrorOccure = false.obs;
 
   // Form key
   final formKey = GlobalKey<FormState>();
   @override
   void onInit() async {
     super.onInit();
-    _loadData();
+    loadData();
   }
 
-  Future<void> _loadData() async {
+  Future<void> loadData() async {
+    infoIsLoading.value = true;
+    isErrorOccure.value = false;
+    update();
     if (!await handleFirebaseCheck()) {
       infoIsLoading.value = false;
+      isErrorOccure.value = true;
       update();
       return;
     }

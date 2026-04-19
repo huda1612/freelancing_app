@@ -22,17 +22,18 @@ class BaseScreen extends StatelessWidget {
             AppColors.softPurple,
             AppColors.softBlue,
           ],
-           begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: appBar ??
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
+        appBar: appBar,
+        // ??
+        //     AppBar(
+        //       backgroundColor: Colors.transparent,
+        //       elevation: 0,
+        //     ),
         body: body,
         floatingActionButton: floatingActionButton,
       ),
