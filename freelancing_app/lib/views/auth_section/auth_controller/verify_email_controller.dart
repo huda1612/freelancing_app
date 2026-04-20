@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
@@ -94,6 +95,8 @@ class VerifyEmailController extends GetxController {
       state = StatusClasses.idle;
       update();
       Get.snackbar("تم تفعيل حسابك", "ابدأ بملئ بياناتك الشخصية");
+       var nextRoute = await RouteHandler.firstRoutHandler();
+      Get.offAllNamed(nextRoute);
       // Get.offAllNamed(AppRoutes.personalInfo);
       return;
     }

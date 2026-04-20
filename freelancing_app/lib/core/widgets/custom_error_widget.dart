@@ -59,15 +59,18 @@ class CustomErrorWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpaces.heightLarge),
-            CustomButton(
-                width: 150.w,
-                // color: AppColors.veryLightGrey,
-                prefix: Icon(
-                  Icons.replay_outlined,
-                  color: AppColors.white,
-                ),
-                text: "اعادة المحاولة",
-                onTap: onRetry ?? () {}),
+            
+            onRetry != null
+                ? CustomButton(
+                    width: 150.w,
+                    // color: AppColors.veryLightGrey,
+                    prefix: Icon(
+                      Icons.replay_outlined,
+                      color: AppColors.white,
+                    ),
+                    text: "اعادة المحاولة",
+                    onTap: onRetry!)
+                : SizedBox.shrink()
           ],
         ),
       ),
