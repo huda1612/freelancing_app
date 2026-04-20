@@ -16,4 +16,5 @@ class AppRoutes {
   static const personalInfo = '/personal_info';
   //request route
   static const freelancerAccountInfo = '/freelancer_account_info';
+    static const freelancerWorkAndCertificates = '/freelancer_work_and_certificates';
 }

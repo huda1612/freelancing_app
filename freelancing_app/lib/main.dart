@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.splash,
+          initialRoute: AppRoutes.freelancerWorkAndCertificates,
+        //  initialRoute: AppRoutes.splash,
           getPages: AppPages.pages,
         );
       },

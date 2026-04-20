@@ -25,7 +25,6 @@ class FreelancerAccountInfoController extends GetxController {
 
 
 
-
   @override
   void onInit() {
     super.onInit();
@@ -104,10 +103,5 @@ class FreelancerAccountInfoController extends GetxController {
 
   bool get _hasSelectedSkills =>
       skills.any((s) => s.selectedSubSkills.isNotEmpty);
-
-
-
-
-
 
 }
