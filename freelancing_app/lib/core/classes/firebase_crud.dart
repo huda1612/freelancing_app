@@ -1,10 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 // import 'package:freelancing_platform/core/classes/post_type.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 
+//كأني ما عالجت حاله عدم تسجيل الدخول بالunauthrized !!!!!!!!!!!!!!!!
+//الا لو بس خلص رح اعتمد عالmiddleware
+//ممكن وحده نسخه الfirebasefirestore بس بهالحاله لازم احقنها واعمل تابع تهيئه الها !!!!!!!!!!!!!!!!!!!!!
+
+//لاستخدمه
+// final crud = Get.find<FirebaseCrud>();
 class FirebaseCrud {
   // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -15,6 +21,12 @@ class FirebaseCrud {
     // if (await checkInternet()) {
     try {
       final snapshot = await query.get();
+
+      //لو البيانات كانت من الكاش ومافي بيانات يعني فاضيه فيعني مافي نت
+      //هي مشان ما نلغي دعم الاوف لاين ويقدر يجيب بيانات من الكاش وبنفس الوقت لو مافي شي بالكاش نطلعله ان مافي نت
+      if (snapshot.metadata.isFromCache && snapshot.docs.isEmpty) {
+        return Left(StatusClasses.offlineError);
+      }
 
       final data = snapshot.docs.map((doc) {
         return fromMap(doc.data(), doc.id);
@@ -31,7 +43,6 @@ class FirebaseCrud {
     // }
   }
 
-
   //****************************how to use******************************************************
 //   final query = FirebaseFirestore.instance
 //     .collection("requests")
@@ -45,7 +56,6 @@ class FirebaseCrud {
 // final result = await runGetQuery<SpecializationModel>(query: query, fromMap: (data, id) {
 //     return SpecializationModel.fromMap(data);
 //   },);
-
 
 //مثال كامل عن التنفيذ
 // Future<void> loadData() async {
@@ -80,10 +90,14 @@ class FirebaseCrud {
         return Left(StatusClasses.notFound);
       }
 
+      print("4444444444444444444444${doc.id}");
       return Right(fromMap(doc.data()!, doc.id));
     } on FirebaseException catch (e) {
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + e.toString());
       return Left(mapFirestoreError(e));
     } catch (e) {
+      print("!!!!!!!!!!!!7687687!!!!!!!!!!!!!!!!!!!" + e.toString());
+
       return Left(StatusClasses.customError(e.toString()));
     }
     // } else {

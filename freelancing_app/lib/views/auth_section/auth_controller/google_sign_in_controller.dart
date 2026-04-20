@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
+import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
-import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
@@ -42,8 +42,10 @@ class GoogleSignInController extends GetxController {
       }
       await _addUserToFirestoreIfItsNotExistAndSaveTheUserSeeion(user);
       //لازم وجهه !!!!!
+       var nextRoute = await RouteHandler.firstRoutHandler();
+      Get.offAllNamed(nextRoute);
       //مؤقتا
-      Get.offAllNamed(AppRoutes.personalInfo);
+      // Get.offAllNamed(AppRoutes.personalInfo);
     } catch (e) {
       Get.snackbar("فشل", "فشل تسجيل الدخول $e");
     }

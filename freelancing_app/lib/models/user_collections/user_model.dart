@@ -84,7 +84,7 @@ class UserModel {
       fname: map['fname'] ?? '',
       lname: map['lname'] ?? '',
       username: map['username'] ?? '',
-      status: map['status'],
+      status: map['status'] ?? UserStatus.incomplete,
       gender: map['gender'], //?? null,
 
       countryCode: map['countryCode'],

@@ -165,7 +165,7 @@ class PersonalInfoView extends StatelessWidget {
 
                               SizedBox(height: AppSpaces.heightLarge),
 
-                              /// زر التالي
+                              /// زر 
                               Align(
                                   alignment: Alignment.center,
                                   child: GetBuilder<PersonalInfoController>(
