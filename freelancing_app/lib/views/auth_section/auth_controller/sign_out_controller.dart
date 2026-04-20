@@ -23,10 +23,10 @@ class SignOutController extends GetxController {
     googleSignIn.signOut();
 
     //لازم احذف الsharedPrefrences المحفوظه للمستخدم بعد ما سجل دخوله
-    // LocalStorageService.removeValue(AppKeys.uid);
-    // LocalStorageService.removeValue(AppKeys.role);
-    // LocalStorageService.setConstantUid();
-    // LocalStorageService.setConstantRole();
+    // await LocalStorageService.removeValue(AppKeys.uid);
+    // await LocalStorageService.removeValue(AppKeys.role);
+    // await LocalStorageService.setConstantUid();
+    // await LocalStorageService.setConstantRole();
     UserSession.clear();
 
     //تسجيل خروج اذا مسجل بالايميل
