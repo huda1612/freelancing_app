@@ -6,8 +6,8 @@ import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/models/user_collections/admission_questions.dart';
-import 'package:freelancing_platform/views/user_request_section/client_request/client_request_controller/client_request_controller.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_controller/freelancer_request_controller.dart';
+import 'package:freelancing_platform/views/user_request_section/request_controller/client_request_controller.dart';
+import 'package:freelancing_platform/views/user_request_section/request_controller/freelancer_request_controller.dart';
 import 'package:get/get.dart';
 
 //انتهى
