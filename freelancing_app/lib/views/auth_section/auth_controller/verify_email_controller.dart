@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
 import 'package:get/get.dart';
 
-class VerificationEmailController extends GetxController {
+class VerifyEmailController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
   StatusClasses state = StatusClasses.idle;
   final canResend = true.obs;
@@ -94,6 +95,8 @@ class VerificationEmailController extends GetxController {
       state = StatusClasses.idle;
       update();
       Get.snackbar("تم تفعيل حسابك", "ابدأ بملئ بياناتك الشخصية");
+       var nextRoute = await RouteHandler.firstRoutHandler();
+      Get.offAllNamed(nextRoute);
       // Get.offAllNamed(AppRoutes.personalInfo);
       return;
     }

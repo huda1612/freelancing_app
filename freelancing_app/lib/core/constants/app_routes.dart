@@ -10,11 +10,24 @@ class AppRoutes {
   static const join = '/join';
   static const forgotPassword = '/forgot-password';
   static const verifyEmail = '/verify-email';
-  // static const verification = '/verification';
+  static const error = '/error';
+  static const noInternet = '/no_interner';
+
+  //admin routes
+  static const admin_home = '/admin_home'; //لسا ما حطيتلها صفحه
+
+  //request route
+  static const freelancerAccountInfo = '/freelancer_account_info';
+  static const freelancerWorkAndCertificates = '/freelancer_work_and_certificates';
+
+  static const clientAccountInfo = '/client_account_info';
+    static const entryTest = '/entryTest';
+
+  static const pending = '/pending/';
+  static const approved = '/approved';
+  static const rejected = '/rejected';
 
   //settings routes
   static const personalInfo = '/personal_info';
-  //request route
-  static const freelancerAccountInfo = '/freelancer_account_info';
-    static const freelancerWorkAndCertificates = '/freelancer_work_and_certificates';
+
 }

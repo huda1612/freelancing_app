@@ -20,7 +20,7 @@ class GenderField extends StatelessWidget {
         width: 380.w,
         height: 55.h,
         child: DropdownButtonFormField<String>(
-           initialValue: value,
+            initialValue: value,
           //value: value,
           decoration: unifiedDecoration(label),
 

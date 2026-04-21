@@ -1,25 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:freelancing_platform/core/constants/user_status.dart';
 
-enum UserStatus { incomplete, pending, approved, rejected }
+// enum UserStatus { incomplete, pending, approved, rejected }
 
-String statusToString(UserStatus status) {
-  switch (status) {
-    case UserStatus.incomplete:
-      return 'incomplete';
-    case UserStatus.pending:
-      return 'pending';
-    case UserStatus.approved:
-      return 'approved';
-    case UserStatus.rejected:
-      return 'rejected';
-  }
-}
+// String statusToString(UserStatus status) {
+//   switch (status) {
+//     case UserStatus.incomplete:
+//       return 'incomplete';
+//     case UserStatus.pending:
+//       return 'pending';
+//     case UserStatus.approved:
+//       return 'approved';
+//     case UserStatus.rejected:
+//       return 'rejected';
+//   }
+// }
 
 class UserModel {
   final String uid;
   final String fname;
   final String lname;
   final String username;
+  final String status;
   final String? gender;
   final String? countryCode;
   final DateTime? birthDate;
@@ -28,7 +30,6 @@ class UserModel {
   final String photoUrl;
   final String bio;
   final List<String> skills; //هي لازم غيرها بس اعمل صف المهارات
-  final UserStatus status;
   final double rating;
   final int completedProjects;
   final int points;
@@ -39,6 +40,7 @@ class UserModel {
     required this.fname,
     required this.lname,
     required this.username,
+    this.status = UserStatus.incomplete,
     this.gender,
     this.countryCode,
     this.birthDate,
@@ -47,7 +49,6 @@ class UserModel {
     this.photoUrl = '',
     this.bio = '',
     this.skills = const [],
-    this.status = UserStatus.incomplete,
     this.rating = 0.0,
     this.completedProjects = 0,
     this.points = 0,
@@ -60,6 +61,7 @@ class UserModel {
       'fname': fname,
       'lname': lname,
       'username': username,
+      'status': status,
       'gender': gender,
       'countryCode': countryCode,
       'birthDate': birthDate != null ? Timestamp.fromDate(birthDate!) : null,
@@ -82,6 +84,7 @@ class UserModel {
       fname: map['fname'] ?? '',
       lname: map['lname'] ?? '',
       username: map['username'] ?? '',
+      status: map['status'] ?? UserStatus.incomplete,
       gender: map['gender'], //?? null,
 
       countryCode: map['countryCode'],

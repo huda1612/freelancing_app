@@ -19,7 +19,7 @@ void main() async {
   );
 
   // استدعاء تهيئة البيانات قبل تشغيل التطبيق
-  AppInitializer.init();
+  await AppInitializer.init();
   runApp(const MyApp());
 }
 
@@ -39,6 +39,9 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.freelancerWorkAndCertificates,
         //  initialRoute: AppRoutes.splash,
+
+         
+        
           getPages: AppPages.pages,
         );
       },

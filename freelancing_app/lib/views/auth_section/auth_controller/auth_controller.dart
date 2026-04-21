@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
+import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
@@ -32,6 +33,13 @@ class AuthController extends GetxController {
   final canResend = true.obs;
   final resendSeconds = 0.obs;
   Timer? _resendTimer;
+
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   email.value = '';
+  //   password.value = '';
+  // }
 
   void _startCooldown({int seconds = 30}) {
     _resendTimer?.cancel(); // مهم جداً
@@ -147,14 +155,16 @@ class AuthController extends GetxController {
 
       await _authService.login(email: email.value, password: password.value);
       Get.snackbar("نجاح", "تم تسجيل الدخول");
-      if (!_authService.currentUser!.emailVerified) {
-        //مؤقته للتجربه
-        // Get.toNamed(AppRoutes.personalInfo);
-        Get.offAllNamed(AppRoutes.verifyEmail);
-      } else {
-        Get.offAllNamed(AppRoutes.personalInfo);
-        //هون لازم اعمل التوجيه حسب حالة الطلب عنده!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      }
+      var nextRoute = await RouteHandler.firstRoutHandler();
+      Get.offAllNamed(nextRoute);
+      // if (!_authService.currentUser!.emailVerified) {
+      //   //مؤقته للتجربه
+      //   // Get.toNamed(AppRoutes.personalInfo);
+      //   // Get.offAllNamed(AppRoutes.verifyEmail);
+      // } else {
+      //   Get.offAllNamed(AppRoutes.personalInfo);
+      //   //هون لازم اعمل التوجيه حسب حالة الطلب عنده!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // }
     } on FirebaseAuthException catch (e) {
       // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + e.toString());
       String message;

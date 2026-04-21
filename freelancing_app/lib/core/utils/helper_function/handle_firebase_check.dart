@@ -18,7 +18,7 @@ Future<bool> handleFirebaseCheck({bool loginRequired = true}) async {
 
     if (loginRequired) {
       //لو مطلوب تسجيل الدخول مشان نفذ الاستعلام
-      if (!checkLogin()) {
+      if (!isLogin()) {
         //لو المستخدم ما مسجل دخوله
         Get.snackbar("unauthorized", "يرجى تسجيل الدخول أولاً");
         Get.offAllNamed(AppRoutes.login);
@@ -33,5 +33,3 @@ Future<bool> handleFirebaseCheck({bool loginRequired = true}) async {
     return false;
   }
 }
-
-

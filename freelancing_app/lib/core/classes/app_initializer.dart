@@ -5,8 +5,7 @@ class AppInitializer {
   static Future<void> init() async {
     // LocalStorageService.setConstantUid();
     // LocalStorageService.setConstantRole();
-    UserSession.load();
-    LocalStorageService.setConstantFirstOpen();
-    // LocalStorageService.setConstantLang();
+   await UserSession.load();
+   await LocalStorageService.setConstantFirstOpen();
   }
 }

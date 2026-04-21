@@ -1,9 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+// import 'package:flutter/material.dart';
 // import 'package:freelancing_platform/core/classes/post_type.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 
+//كأني ما عالجت حاله عدم تسجيل الدخول بالunauthrized !!!!!!!!!!!!!!!!
+//الا لو بس خلص رح اعتمد عالmiddleware
+//ممكن وحده نسخه الfirebasefirestore بس بهالحاله لازم احقنها واعمل تابع تهيئه الها !!!!!!!!!!!!!!!!!!!!!
+
+//لاستخدمه
+// final crud = Get.find<FirebaseCrud>();
 class FirebaseCrud {
   // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -14,6 +21,12 @@ class FirebaseCrud {
     // if (await checkInternet()) {
     try {
       final snapshot = await query.get();
+
+      //لو البيانات كانت من الكاش ومافي بيانات يعني فاضيه فيعني مافي نت
+      //هي مشان ما نلغي دعم الاوف لاين ويقدر يجيب بيانات من الكاش وبنفس الوقت لو مافي شي بالكاش نطلعله ان مافي نت
+      if (snapshot.metadata.isFromCache && snapshot.docs.isEmpty) {
+        return Left(StatusClasses.offlineError);
+      }
 
       final data = snapshot.docs.map((doc) {
         return fromMap(doc.data(), doc.id);
@@ -29,7 +42,8 @@ class FirebaseCrud {
     //   return Left(StatusClasses.offlineError);
     // }
   }
-  //how to use
+
+  //****************************how to use******************************************************
 //   final query = FirebaseFirestore.instance
 //     .collection("requests")
 //     .where("status", isEqualTo: "pending");
@@ -38,6 +52,31 @@ class FirebaseCrud {
 //   query: query,
 //   fromMap: (data, id) => RequestModel.fromMap(data, id),
 // );
+//ملاحظة : لو تابع fromMap عندي اله برامتر واحد فيني استخدمه هيك
+// final result = await runGetQuery<SpecializationModel>(query: query, fromMap: (data, id) {
+//     return SpecializationModel.fromMap(data);
+//   },);
+
+//مثال كامل عن التنفيذ
+// Future<void> loadData() async {
+//   status = StatusClasses.isloading;
+//   update();
+
+//   final result = await runGetQuery(...);
+
+//   result.fold(
+//     (error) {
+//       status = error;
+//     },
+//     (data) {
+//       myList = data;
+//       status = StatusClasses.success;
+//     },
+//   );
+
+//   update();
+// }
+  //**********************************************************************************************
 
   static Future<Either<StatusClasses, T>> fetchDocument<T>({
     required DocumentReference<Map<String, dynamic>> docRef,
@@ -51,10 +90,14 @@ class FirebaseCrud {
         return Left(StatusClasses.notFound);
       }
 
+      print("4444444444444444444444${doc.id}");
       return Right(fromMap(doc.data()!, doc.id));
     } on FirebaseException catch (e) {
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
       return Left(mapFirestoreError(e));
     } catch (e) {
+      print("!!!!!!!!!!!!7687687!!!!!!!!!!!!!!!!!!!$e");
+
       return Left(StatusClasses.customError(e.toString()));
     }
     // } else {
@@ -165,66 +208,52 @@ StatusClasses mapFirestoreError(FirebaseException e) {
   }
 }
 
+// Future<StatusClasses> postFirebaseData({
+//   required CollectionReference<Map<String, dynamic>> collection,
+//   required PostType type,
+//   String? docId,
+//   Map<String, dynamic>? body,
+// }) async {
+//   if (await checkInternet()) {
+//     try {
+//       //لو النوع ما حذف فلازم اتأكد ان في جسم للطلب
+//       if (body == null && type != PostType.delete) {
+//         return StatusClasses.invalidData;
+//       }
 
+//       //لو كان تحديث او حذف فلازم يعطيني رقم المستند
+//       if (docId == null &&
+//           (type == PostType.update || type == PostType.delete)) {
+//         return StatusClasses.invalidData;
+//       }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  // Future<StatusClasses> postFirebaseData({
-  //   required CollectionReference<Map<String, dynamic>> collection,
-  //   required PostType type,
-  //   String? docId,
-  //   Map<String, dynamic>? body,
-  // }) async {
-  //   if (await checkInternet()) {
-  //     try {
-  //       //لو النوع ما حذف فلازم اتأكد ان في جسم للطلب
-  //       if (body == null && type != PostType.delete) {
-  //         return StatusClasses.invalidData;
-  //       }
-
-  //       //لو كان تحديث او حذف فلازم يعطيني رقم المستند
-  //       if (docId == null &&
-  //           (type == PostType.update || type == PostType.delete)) {
-  //         return StatusClasses.invalidData;
-  //       }
-
-  //       //التصرف حسب نوع العملية
-  //       switch (type) {
-  //         case PostType.add:
-  //           // await _firestore.collection(path).add(body!);
-  //           //لو ما مدخل رقم فبضيفه عادي وبيتولد الرقم لحاله اما لو مدخل رقم فبضيفه بهالرقم
-  //           docId == null
-  //               ? await collection.add(body!)
-  //               : await collection
-  //                   .doc(docId)
-  //                   .set(body!, SetOptions(merge: true));
-  //           break;
-  //         case PostType.update:
-  //           // await _firestore.collection(path).doc(docId).update(body!);
-  //           await collection.doc(docId).update(body!);
-  //           break;
-  //         case PostType.delete:
-  //           // await _firestore.collection(path).doc(docId).delete();
-  //           await collection.doc(docId).delete();
-  //           break;
-  //       }
-  //       return StatusClasses.success;
-  //     } on FirebaseException catch (e) {
-  //       return mapFirestoreError(e);
-  //     } catch (e) {
-  //       return StatusClasses.customError(e.toString());
-  //     }
-  //   } else {
-  //     return StatusClasses.offlineError;
-  //   }
-  // }
+//       //التصرف حسب نوع العملية
+//       switch (type) {
+//         case PostType.add:
+//           // await _firestore.collection(path).add(body!);
+//           //لو ما مدخل رقم فبضيفه عادي وبيتولد الرقم لحاله اما لو مدخل رقم فبضيفه بهالرقم
+//           docId == null
+//               ? await collection.add(body!)
+//               : await collection
+//                   .doc(docId)
+//                   .set(body!, SetOptions(merge: true));
+//           break;
+//         case PostType.update:
+//           // await _firestore.collection(path).doc(docId).update(body!);
+//           await collection.doc(docId).update(body!);
+//           break;
+//         case PostType.delete:
+//           // await _firestore.collection(path).doc(docId).delete();
+//           await collection.doc(docId).delete();
+//           break;
+//       }
+//       return StatusClasses.success;
+//     } on FirebaseException catch (e) {
+//       return mapFirestoreError(e);
+//     } catch (e) {
+//       return StatusClasses.customError(e.toString());
+//     }
+//   } else {
+//     return StatusClasses.offlineError;
+//   }
+// }
