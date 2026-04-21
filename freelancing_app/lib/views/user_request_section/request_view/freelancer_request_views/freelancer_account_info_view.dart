@@ -9,16 +9,17 @@ import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/core/widgets/search_field.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_controller/request_controller.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_widgets/selected_skills_box.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_widgets/skill_tile.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_widgets/sub_skill_result_item.dart';
+import 'package:freelancing_platform/views/user_request_section/request_controller/freelancer_request_controller.dart';
+import 'package:freelancing_platform/views/user_request_section/request_widgets/selected_skills_box.dart';
+import 'package:freelancing_platform/views/user_request_section/request_widgets/skill_tile.dart';
+import 'package:freelancing_platform/views/user_request_section/request_widgets/sub_skill_result_item.dart';
 import 'package:get/get.dart';
 
 class FreelancerAccountInfoView extends StatelessWidget {
   FreelancerAccountInfoView({super.key});
 
-  final RequestController controller = Get.put(RequestController());
+  final FreelancerRequestController controller =
+      Get.put(FreelancerRequestController(), permanent: false);
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,7 @@
 import 'package:freelancing_platform/core/bindings/auth_binding.dart';
+import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
+import 'package:freelancing_platform/core/bindings/request_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
 import 'package:freelancing_platform/views/account_setup/account_setup_view/personal_info_view.dart';
@@ -11,19 +13,15 @@ import 'package:freelancing_platform/views/auth_section/auth_views/login_view/we
 import 'package:freelancing_platform/views/auth_section/auth_views/no_internet_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/register_view/join_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/register_view/register_view.dart';
-// import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verify_email_view.dart';
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
-import 'package:freelancing_platform/views/user_request_section/client_request/client_request_views/client_account_info_view.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
-
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_work_and_certificates_view.dart';
-
-import 'package:freelancing_platform/views/user_request_section/shared_pages/shared_pages_views/entry_test.dart';
-import 'package:freelancing_platform/views/user_request_section/shared_pages/shared_pages_views/pending_view.dart';
-import 'package:freelancing_platform/views/user_request_section/shared_pages/shared_pages_views/rejected_view.dart';
-
+import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/freelancer_request_views/freelancer_account_info_view.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/freelancer_request_views/freelancer_work_and_certificates_view.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/entry_test.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/pending_view.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/rejected_view.dart';
 import 'package:get/get.dart';
 
 import 'app_routes.dart';
@@ -85,10 +83,7 @@ class AppPages {
     //     middlewares: [HomeMiddleware()]
     //     // binding: SplashBinding(),
     //   ),
-    GetPage(
-      name: AppRoutes.freelancerAccountInfo,
-      page: () => FreelancerAccountInfoView(),
-    ),
+   
     GetPage(
       name: AppRoutes.error,
       page: () => ErrorView(),
@@ -99,19 +94,28 @@ class AppPages {
       page: () => NoInternetView(),
     ),
     //**********************************************request pages****************************************
+    //صفحات المستقل
     GetPage(
       name: AppRoutes.freelancerAccountInfo,
       page: () => FreelancerAccountInfoView(),
+      binding: FreelancerRequestBinding(),
       middlewares: [AuthMiddleware()],
     ),
+
+    //صفحات العميل
     GetPage(
       name: AppRoutes.clientAccountInfo,
       page: () => ClientAccountInfoView(),
+      // binding: ClientRequestBinding(),
+
       middlewares: [AuthMiddleware()],
     ),
+
+    //صفحات مشتركه
     GetPage(
       name: AppRoutes.entryTest,
       page: () => EntryTestView(),
+      binding: EntryTestBinding(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(

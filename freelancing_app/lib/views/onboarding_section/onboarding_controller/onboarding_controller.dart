@@ -34,23 +34,23 @@ class OnboardingController extends GetxController {
   var currentIndex = 0.obs;
   final pageController = PageController();
 
-  void nextPage() {
+  void nextPage() async {
     if (currentIndex.value < pages.length - 1) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      finish();
+      await finish();
     }
   }
 
-  void skip() => finish();
+  void skip() async => await finish();
 
-  void finish() {
+  Future<void> finish() async {
     //بدي خزن قيمه لاعرف اذا اول مره بيفتح التطبيق بعدين
-    LocalStorageService.setStringValue(AppKeys.firstOpen, "1");
-    LocalStorageService.setConstantFirstOpen();
+    await LocalStorageService.setStringValue(AppKeys.firstOpen, "1");
+    await LocalStorageService.setConstantFirstOpen();
     Get.offNamed(AppRoutes.join);
   }
 

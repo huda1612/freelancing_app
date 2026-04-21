@@ -1,4 +1,4 @@
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/helper_function/validators.dart';
+import 'package:freelancing_platform/views/user_request_section/helper_function/validators.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -7,10 +7,35 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class WorkCertController extends GetxController {
   // الأعمال
-  RxList<Map<String, dynamic>> workItems = <Map<String, dynamic>>[].obs;
-
-  // الشهادات
-  RxList<Map<String, dynamic>> certItems = <Map<String, dynamic>>[].obs;
+ RxList<Map<String, Object>> workItems = [
+  {"title": "", "description": "", "image": "", "valid": false},
+  {"title": "", "description": "", "image": "", "valid": false},
+].obs;
+//الشهادات 
+RxList<Map<String, Object>> certItems = [
+  {
+    "image": "",
+    "title": "",
+    "description": "",
+    "date": "",
+    "url": "",
+    "id": "",
+    "skills": <String>[],
+    "expanded": false,
+    "valid": false,
+  },
+  {
+    "image": "",
+    "title": "",
+    "description": "",
+    "date": "",
+    "url": "",
+    "id": "",
+    "skills": <String>[],
+    "expanded": false,
+    "valid": false,
+  },
+].obs;
 
   // المهارات القادمة من الشاشة السابقة
   RxList<String> selectedSubSkills = <String>[].obs;
@@ -25,7 +50,7 @@ class WorkCertController extends GetxController {
 
   // ---------------- إضافة عمل ----------------
   void addWorkItem() {
-    workItems.add({
+    workItems.add(<String, Object>{
       "image": "",
       "title": "",
       "description": "",
@@ -40,7 +65,7 @@ class WorkCertController extends GetxController {
 
   // ---------------- إضافة شهادة ----------------
   void addCertificateItem() {
-    certItems.add({
+    certItems.add(<String, Object>{
       "image": "",
       "title": "",
       "description": "",
@@ -60,20 +85,21 @@ class WorkCertController extends GetxController {
 
   // ---------------- توسيع الشهادة ----------------
   void toggleExpand(int index) {
-    certItems[index]["expanded"] = !certItems[index]["expanded"];
-    certItems.refresh();
+final current = certItems[index]["expanded"] == true;
+    certItems[index]["expanded"] = !current;
+        certItems.refresh();
   }
 
   // ---------------- اختيار مهارة ----------------
   void toggleSkill(int certIndex, String skill) {
-    List skills = certItems[certIndex]["skills"];
+    final skills = (certItems[certIndex]["skills"] as List).cast<String>();
 
     if (skills.contains(skill)) {
       skills.remove(skill);
     } else {
       skills.add(skill);
     }
-
+certItems[certIndex]["skills"] = skills;
     certItems.refresh();
   }
 
@@ -110,13 +136,13 @@ class WorkCertController extends GetxController {
     final item = workItems[index];
     item["valid"] = Validators.validateWork(item);
     workItems.refresh();
-    return item["valid"];
+     return item["valid"] as bool? ?? false;
   }
 
   bool validateCertificate(int index) {
     final item = certItems[index];
     item["valid"] = Validators.validateCertificate(item);
     certItems.refresh();
-    return item["valid"];
+     return item["valid"] as bool? ?? false;
   }
 }

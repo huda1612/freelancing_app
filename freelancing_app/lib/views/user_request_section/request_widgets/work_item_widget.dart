@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_controller/work_cert_controller.dart';
+import 'package:freelancing_platform/views/user_request_section/request_controller/work_cert_controller.dart';
 import 'package:get/get.dart';
 
 
@@ -14,7 +14,14 @@ class WorkItemWidget extends StatelessWidget {
     
 
     return Obx(() {
+      if (index < 0 || index >= controller.workItems.length) {
+        return const SizedBox.shrink();
+      }
+
       final item = controller.workItems[index];
+
+      final isValid = item["valid"] == true;
+      final imageUrl = (item["image"] ?? "").toString();
 
       return Container(
         margin: EdgeInsets.only(bottom: 16),
@@ -22,8 +29,8 @@ class WorkItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: item["valid"] ? Colors.green : Colors.grey.shade300,
-            width: item["valid"] ? 2 : 1,
+            color: isValid ? Colors.green : Colors.grey.shade300,
+            width: isValid ? 2 : 1,
           ),
         ),
         child: Column(
@@ -42,9 +49,9 @@ class WorkItemWidget extends StatelessWidget {
                     width: 70,
                     height: 70,
                     color: Colors.grey.shade200,
-                    child: item["image"] == ""
+                     child: imageUrl.isEmpty
                         ? Icon(Icons.add_a_photo)
-                        : Image.network(item["image"], fit: BoxFit.cover),
+                        : Image.network(imageUrl, fit: BoxFit.cover),
                   ),
                 ),
 

@@ -1,19 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
-import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
 import 'package:freelancing_platform/models/skill_collections/new_skill_model.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
-import 'package:freelancing_platform/models/user_collections/admission_questions.dart';
 import 'package:get/get.dart';
 
-class RequestController extends GetxController {
+class FreelancerRequestController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final SpecialSkillsService specialSkillsService = SpecialSkillsService();
 
@@ -40,17 +35,15 @@ class RequestController extends GetxController {
   RxList<SubspecialModel> sugustSubSpecials = <SubspecialModel>[].obs;
   RxList<String> selectedSkills = <String>[].obs;
 
-  //متغيرات اختبار القبول
-  List<AdmissionQuestionModel> questions = [];
-  StatusClasses testPageState = StatusClasses.isloading;
-  Map<int, int> answers = {};
-
   @override
   void onInit() {
     super.onInit();
 
     //احضار البيانات من السيرفر وتجهيزها بالمتغيرات
-    Future.wait([fetchSpecializations(), fetchQuestions()]);
+    Future.wait([
+      fetchSpecializations(),
+    ]);
+    // fetchQuestions()]);
   }
 
   Future<void> fetchSpecializations() async {
@@ -192,50 +185,50 @@ class RequestController extends GetxController {
       selectedSkills.isNotEmpty ||
       sugustSubSpecials.any((s) => s.selectedSubSkills.isNotEmpty);
 
+  Future sendRequest() async {}
+
   //**********************************************************توابع اسئلة الاختبار*********************************************************
 
-  Future<void> fetchQuestions() async {
-    testPageState = StatusClasses.isloading;
-    update();
-    final query = FirebaseFirestore.instance
-        .collection(CollectionsNames.admission_questions)
-        .where("targetRole", isEqualTo: UserSession.role);
-    final response = await FirebaseCrud.runGetQuery(
-        query: query,
-        fromMap: (data, id) => AdmissionQuestionModel.fromMap(data, id));
-    response.fold((errorState) {
-      testPageState = errorState;
-      update();
-    }, (data) {
-      questions = data;
-      testPageState = StatusClasses.success;
-      update();
-    });
-  }
+  // Future<void> fetchQuestions() async {
+  //   testPageState = StatusClasses.isloading;
+  //   update();
+  //   final query = FirebaseFirestore.instance
+  //       .collection(CollectionsNames.admission_questions)
+  //       .where("targetRole", isEqualTo: UserSession.role);
+  //   final response = await FirebaseCrud.runGetQuery(
+  //       query: query,
+  //       fromMap: (data, id) => AdmissionQuestionModel.fromMap(data, id));
+  //   response.fold((errorState) {
+  //     testPageState = errorState;
+  //     update();
+  //   }, (data) {
+  //     questions = data;
+  //     testPageState = StatusClasses.success;
+  //     update();
+  //   });
+  // }
 
-  void istestCorrect() async {
-    for (int i = 0; i < questions.length; i++) {
-      final selectedAnswer = answers[i];
+  // void istestCorrect() async {
+  //   for (int i = 0; i < questions.length; i++) {
+  //     final selectedAnswer = answers[i];
 
-      // إذا ما جاوب أصلاً أو الجواب غلط
-      if (selectedAnswer == null ||
-          selectedAnswer != questions[i].correctAnswerIndex) {
-        Get.snackbar("اجابات خاطئة",
-            "يوجد لديك اجابات خاطئة لايمكنك الاستمرار ، الرجاء تصحيح جميع الاجابات");
-        return;
-      }
-    }
-    //هون لازم يتم ارسال الطلب والانتقال لصفحة تم التقديم وتعديل الحاله للمستخدم
-    await sendRequest();
-    Get.offAllNamed(AppRoutes.pending);
-    return; // كل الإجابات صحيح
-  }
+  //     // إذا ما جاوب أصلاً أو الجواب غلط
+  //     if (selectedAnswer == null ||
+  //         selectedAnswer != questions[i].correctAnswerIndex) {
+  //       Get.snackbar("اجابات خاطئة",
+  //           "يوجد لديك اجابات خاطئة لايمكنك الاستمرار ، الرجاء تصحيح جميع الاجابات");
+  //       return;
+  //     }
+  //   }
+  //   //هون لازم يتم ارسال الطلب والانتقال لصفحة تم التقديم وتعديل الحاله للمستخدم
+  //   await sendRequest();
+  //   Get.offAllNamed(AppRoutes.pending);
+  //   return; // كل الإجابات صحيح
+  // }
 
-  void selectAnswer(int questionIndex, int answerIndex) {
-    answers[questionIndex] = answerIndex;
-    update(); // GetX
-  }
+  // void selectAnswer(int questionIndex, int answerIndex) {
+  //   answers[questionIndex] = answerIndex;
+  //   update(); // GetX
+  // }
   //************************************************************************************************************************* */
-
-  Future sendRequest() async {}
 }
