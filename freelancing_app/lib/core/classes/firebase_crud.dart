@@ -93,10 +93,10 @@ class FirebaseCrud {
       print("4444444444444444444444${doc.id}");
       return Right(fromMap(doc.data()!, doc.id));
     } on FirebaseException catch (e) {
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + e.toString());
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
       return Left(mapFirestoreError(e));
     } catch (e) {
-      print("!!!!!!!!!!!!7687687!!!!!!!!!!!!!!!!!!!" + e.toString());
+      print("!!!!!!!!!!!!7687687!!!!!!!!!!!!!!!!!!!$e");
 
       return Left(StatusClasses.customError(e.toString()));
     }

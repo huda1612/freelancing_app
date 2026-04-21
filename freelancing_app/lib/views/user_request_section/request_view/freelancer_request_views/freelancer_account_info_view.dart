@@ -79,7 +79,7 @@ class FreelancerAccountInfoView extends StatelessWidget {
                                       key: ValueKey(
                                         '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
                                       ),
-                                      value: controller
+                                      initialValue: controller
                                           .specializationDropdownValue,
                                       isExpanded: true,
                                       decoration: unifiedDecoration('التخصص'),

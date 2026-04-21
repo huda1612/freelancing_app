@@ -50,6 +50,9 @@ dependencies:
   http: ^1.6.0
   dartz: ^0.10.1
   modal_progress_hud_nsn: ^0.5.1
+  image_picker: ^1.2.1
+
+
 
  
 

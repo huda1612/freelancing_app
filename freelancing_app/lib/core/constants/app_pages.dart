@@ -17,13 +17,13 @@ import 'package:freelancing_platform/views/auth_section/auth_views/verification_
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
-import 'package:freelancing_platform/views/user_request_section/request_controller/freelancer_request_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/freelancer_request_views/freelancer_account_info_view.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/freelancer_request_views/freelancer_work_and_certificates_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/entry_test.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/pending_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/rejected_view.dart';
 import 'package:get/get.dart';
-// import '../middleware/onboarding_middleware.dart';
+
 import 'app_routes.dart';
 
 class AppPages {
@@ -83,10 +83,7 @@ class AppPages {
     //     middlewares: [HomeMiddleware()]
     //     // binding: SplashBinding(),
     //   ),
-    GetPage(
-      name: AppRoutes.freelancerAccountInfo,
-      page: () => FreelancerAccountInfoView(),
-    ),
+   
     GetPage(
       name: AppRoutes.error,
       page: () => ErrorView(),
@@ -136,6 +133,15 @@ class AppPages {
     GetPage(
         name: AppRoutes.personalInfo,
         page: () => const PersonalInfoView(),
-        middlewares: [AuthMiddleware()])
+        middlewares: [AuthMiddleware()]),
+
+
+
+
+    GetPage(
+  name: AppRoutes.freelancerWorkAndCertificates,
+  page: () => FreelancerWorkAndCertificatesView(),
+),
+
   ];
 }
