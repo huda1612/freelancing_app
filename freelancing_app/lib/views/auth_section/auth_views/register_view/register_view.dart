@@ -5,6 +5,7 @@ import 'package:freelancing_platform/core/constants/app_icons.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
@@ -137,8 +138,10 @@ class RegisterView extends StatelessWidget {
                         RoleOption(
                           label: "client",
                           icon: Icons.person_outline,
-                          isSelected: controller.userRole.value == "client",
-                          onTap: () => controller.userRole.value = "client",
+                          isSelected:
+                              controller.userRole.value == UserRole.client,
+                          onTap: () =>
+                              controller.userRole.value = UserRole.client,
                         ),
 
                         SizedBox(width: 16.w),
@@ -147,8 +150,10 @@ class RegisterView extends StatelessWidget {
                         RoleOption(
                           label: "freelancer",
                           icon: Icons.work_outline,
-                          isSelected: controller.userRole.value == "freelancer",
-                          onTap: () => controller.userRole.value = "freelancer",
+                          isSelected:
+                              controller.userRole.value == UserRole.freelancer,
+                          onTap: () =>
+                              controller.userRole.value = UserRole.freelancer,
                         ),
                       ],
                     )),

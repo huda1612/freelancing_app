@@ -6,6 +6,7 @@ import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
+import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/constants/user_status.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
@@ -26,7 +27,7 @@ class RouteHandler {
     // return AppRoutes.entryTest;
 
     //نتحقق اذا ادمن مناخده فورا على صفحته
-    if (UserSession.role == "admin") {
+    if (UserSession.role == UserRole.admin) {
       return AppRoutes.admin_home;
     }
 
@@ -58,7 +59,7 @@ class RouteHandler {
       switch (status) {
         case UserStatus.incomplete:
           {
-            return UserSession.role == "freelancer"
+            return UserSession.role == UserRole.freelancer
                 ? AppRoutes.freelancerAccountInfo
                 : AppRoutes.clientAccountInfo;
           }

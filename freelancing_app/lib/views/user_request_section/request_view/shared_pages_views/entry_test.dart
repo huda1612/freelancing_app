@@ -4,11 +4,8 @@ import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
-import 'package:freelancing_platform/views/user_request_section/client_request/client_request_views/client_account_info_view.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_controller/entry_test_controller.dart';
-import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_controller/freelancer_request_controller.dart';
-import 'package:freelancing_platform/views/user_request_section/shared_pages/shared_pages_controllers/entry_test_controller.dart';
-import 'package:freelancing_platform/views/user_request_section/shared_pages/shared_pages_widgets/question_card.dart';
+import 'package:freelancing_platform/views/user_request_section/request_controller/entry_test_controller.dart';
+import 'package:freelancing_platform/views/user_request_section/request_widgets/question_card.dart';
 import 'package:get/get.dart';
 
 class EntryTestView extends StatelessWidget {
@@ -19,7 +16,6 @@ class EntryTestView extends StatelessWidget {
     return BaseScreen(
       body: SafeArea(
         child: GetBuilder<EntryTestController>(
-            // init: EntryTestController(),
             init: Get.find<EntryTestController>(),
             builder: (controller) {
               return UiStateHandler(
