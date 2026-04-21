@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
+import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/models/user_collections/admission_questions.dart';
 import 'package:freelancing_platform/views/user_request_section/client_request/client_request_controller/client_request_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_controller/freelancer_request_controller.dart';
@@ -68,10 +69,10 @@ class EntryTestController extends GetxController {
 
   //بيستدعي ارسال الطلب حسب نوع المستخدم
   Future<void> finishExam() async {
-    if (UserSession.role == "freelancer") {
+    if (UserSession.role == UserRole.freelancer) {
       final request = Get.find<FreelancerRequestController>();
       await request.sendRequest();
-    } else if (UserSession.role == "client") {
+    } else if (UserSession.role ==  UserRole.client) {
       final request = Get.find<ClientRequestController>();
       await request.sendRequest();
     }
