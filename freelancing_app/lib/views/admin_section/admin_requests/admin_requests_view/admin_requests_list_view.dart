@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/request_shortcut.dart';
+import 'package:get/get.dart';
 
 class AdminRequestsListView extends StatelessWidget {
   const AdminRequestsListView({super.key});
@@ -16,7 +18,7 @@ class AdminRequestsListView extends StatelessWidget {
               backgroundColor: AppColors
                   .white, //هي لازمها تعديل بالappBar نفسه نخليهم كلهم جوا التطبيق ابيض افتراضيا
               title: "All Requests",
-              trailingIcon: Icon(Icons.search),
+              leadingIcon: Icon(Icons.search),
               bottom: const TabBar(tabs: [
                 Tab(
                   text: "معلقة",
@@ -40,7 +42,41 @@ class AdminRequestsListView extends StatelessWidget {
                         // return RequestShortcut(id , RequestStatus , usrename , date);
                         return RequestShortcut(
                           id: "",
+                          requestStatus: RequestStatus.pending,
+                          usrename: "HudaAhmed",
+                          date: "",
+                          onTab: () {
+                            Get.toNamed(AppRoutes.adminRequestDetails + "/id=");
+                          },
+                        );
+                      }),
+                ),
+                //-----tab2-----------
+                Container(
+                  color: AppColors.veryLightGrey,
+                  child: ListView.builder(
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        // return RequestShortcut(id , RequestStatus , usrename , date);
+                        return RequestShortcut(
+                          id: "",
                           requestStatus: RequestStatus.approved,
+                          usrename: "HudaAhmed",
+                          date: "",
+                          onTab: () {},
+                        );
+                      }),
+                ),
+                //-----tab3-----------
+                Container(
+                  color: AppColors.veryLightGrey,
+                  child: ListView.builder(
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        // return RequestShortcut(id , RequestStatus , usrename , date);
+                        return RequestShortcut(
+                          id: "",
+                          requestStatus: RequestStatus.rejected,
                           usrename: "HudaAhmed",
                           date: "",
                           onTab: () {},

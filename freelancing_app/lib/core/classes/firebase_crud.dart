@@ -146,7 +146,7 @@ class FirebaseCrud {
 
 //تحديث مستند
   static Future<StatusClasses> updateDocument({
-    required CollectionReference<Map<String, dynamic>> collection,
+    required CollectionReference<Map<String, dynamic>> collectionRef,
     required String docId,
     required Map<String, dynamic> body,
   }) async {
@@ -155,7 +155,7 @@ class FirebaseCrud {
       //   return StatusClasses.invalidData;
       // }
 
-      await collection.doc(docId).update(body);
+      await collectionRef.doc(docId).update(body);
 
       return StatusClasses.success;
     } on FirebaseException catch (e) {
@@ -167,11 +167,11 @@ class FirebaseCrud {
 
 //حذف مستند
   static Future<StatusClasses> deleteDocument({
-    required CollectionReference<Map<String, dynamic>> collection,
+    required CollectionReference<Map<String, dynamic>> collectionRef,
     required String docId,
   }) async {
     try {
-      await collection.doc(docId).delete();
+      await collectionRef.doc(docId).delete();
 
       return StatusClasses.success;
     } on FirebaseException catch (e) {
