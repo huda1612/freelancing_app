@@ -154,6 +154,21 @@ class FreelancerAccountInfoView extends StatelessWidget {
                                               Validators.validateJobTitle,
                                           onChanged: (v) =>
                                               controller.jobTitle.value = v,
+                                      );
+                                    }
+                                    return DropdownButtonFormField<String>(
+                                      key: ValueKey(
+                                        '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
+                                      ),
+                                      initialValue: controller
+                                          .specializationDropdownValue,
+                                      isExpanded: true,
+                                      decoration: unifiedDecoration('التخصص'),
+                                      hint: Text(
+                                        'اختر التخصص',
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: Colors.black54,
                                         ),
                                         SizedBox(
                                             height: AppSpaces.heightMedium2),

@@ -45,6 +45,11 @@ class MyApp extends StatelessWidget {
           // initialRoute: AppRoutes.pending,
           // initialRoute: AppRoutes.rejected,
           // initialRoute: AppRoutes.approved
+          initialRoute: AppRoutes.freelancerWorkAndCertificates,
+        //  initialRoute: AppRoutes.splash,
+
+         
+        
           getPages: AppPages.pages,
         );
       },

@@ -20,6 +20,8 @@ class AppRoutes {
 
   //request route
   static const freelancerAccountInfo = '/freelancer_account_info';
+  static const freelancerWorkAndCertificates = '/freelancer_work_and_certificates';
+
   static const clientAccountInfo = '/client_account_info';
   static const entryTest = '/entryTest';
 
@@ -29,4 +31,5 @@ class AppRoutes {
 
   //settings routes
   static const personalInfo = '/personal_info';
+
 }

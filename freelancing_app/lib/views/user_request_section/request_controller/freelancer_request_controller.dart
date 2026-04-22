@@ -52,7 +52,7 @@ class FreelancerRequestController extends GetxController {
     Either<StatusClasses, List<SpecializationModel>> response =
         await specialSkillsService.getAllSpecializations();
     response.fold((left) {
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + left.type);
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!${left.type}");
 
       pageState.value = left;
     }, (right) {
