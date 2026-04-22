@@ -29,7 +29,7 @@ class EntryTestController extends GetxController {
     testPageState = StatusClasses.isloading;
     update();
     final query = FirebaseFirestore.instance
-        .collection(CollectionsNames.admission_questions)
+        .collection(CollectionsNames.admissionQuestions)
         .where("targetRole", isEqualTo: UserSession.role);
     final response = await FirebaseCrud.runGetQuery(
         query: query,

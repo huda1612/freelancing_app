@@ -36,11 +36,11 @@ class RequestShortcut extends StatelessWidget {
         child: Column(
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(
-                "created At : day/month/year",
-              ),
               RequestType(
                 requestStatus,
+              ),
+              Text(
+                "created At : day/month/year",
               ),
             ]),
             Divider(

@@ -1,10 +1,14 @@
 import 'package:freelancing_platform/core/bindings/auth_binding.dart';
+import 'package:freelancing_platform/core/bindings/client_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
-import 'package:freelancing_platform/core/bindings/request_binding.dart';
+import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
+import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
 import 'package:freelancing_platform/views/account_setup/account_setup_view/personal_info_view.dart';
+import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
+import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/admin_requests_list_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/error_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/privacy_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/terms_view.dart';
@@ -83,6 +87,7 @@ class AppPages {
     //     middlewares: [HomeMiddleware()]
     //     // binding: SplashBinding(),
     //   ),
+
    
     GetPage(
       name: AppRoutes.error,
@@ -106,8 +111,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.clientAccountInfo,
       page: () => ClientAccountInfoView(),
-      // binding: ClientRequestBinding(),
-
+      binding: ClientRequestBinding(),
       middlewares: [AuthMiddleware()],
     ),
 
@@ -129,6 +133,23 @@ class AppPages {
       middlewares: [AuthMiddleware()],
     ),
 
+    //**********************************************request pages****************************************
+    // GetPage(
+    //   name: AppRoutes.adminHome,
+    //   page: () => AdminHome(),
+    //   middlewares: [AdminMiddleware()],
+    // ),
+     GetPage(
+      name: AppRoutes.adminRequests,
+      page: () => AdminRequestsListView(),
+      middlewares: [AdminMiddleware()],
+    ),
+     GetPage(
+      name: AppRoutes.adminRequestDetails,
+      page: () => AdimnRequestDetailView(),
+      middlewares: [AdminMiddleware()],
+    ),
+    
     //**********************************************settings pages****************************************
     GetPage(
         name: AppRoutes.personalInfo,

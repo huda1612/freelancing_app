@@ -28,7 +28,8 @@ class RouteHandler {
 
     //نتحقق اذا ادمن مناخده فورا على صفحته
     if (UserSession.role == UserRole.admin) {
-      return AppRoutes.admin_home;
+      // return AppRoutes.adminHome;
+      return AppRoutes.adminRequests;
     }
 
     //منتحقق من الايميل
@@ -77,7 +78,9 @@ class RouteHandler {
             return AppRoutes.pending;
           }
         default:
-          return AppRoutes.freelancerAccountInfo;
+          return UserSession.role == UserRole.freelancer
+              ? AppRoutes.freelancerAccountInfo
+              : AppRoutes.clientAccountInfo;
       }
     });
   }

@@ -14,14 +14,16 @@ class AppRoutes {
   static const noInternet = '/no_interner';
 
   //admin routes
-  static const admin_home = '/admin_home'; //لسا ما حطيتلها صفحه
+  static const adminHome = '/admin_home'; //لسا ما حطيتلها صفحه
+  static const adminRequests = '/admin_requests';
+  static const adminRequestDetails = '/admin_requests_details';
 
   //request route
   static const freelancerAccountInfo = '/freelancer_account_info';
   static const freelancerWorkAndCertificates = '/freelancer_work_and_certificates';
 
   static const clientAccountInfo = '/client_account_info';
-    static const entryTest = '/entryTest';
+  static const entryTest = '/entryTest';
 
   static const pending = '/pending/';
   static const approved = '/approved';
