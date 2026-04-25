@@ -86,7 +86,7 @@ class FreelancerRequestController extends GetxController {
         certificates: certificates);
 
     final response = await requestService.addUserRequest(
-        uid: UserSession.uid!,
+        uId: UserSession.uid!,
         userType: UserRole.freelancer,
         snapshot: snapshot);
     if (response == StatusClasses.success) {

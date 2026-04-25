@@ -107,7 +107,7 @@ class ClientRequestController extends GetxController {
     );
 
     final response = await requestService.addUserRequest(
-        uid: UserSession.uid!, userType: UserRole.client, snapshot: snapshot);
+        uId: UserSession.uid!, userType: UserRole.client, snapshot: snapshot);
     if (response == StatusClasses.success) {
       Get.snackbar("نجاح", "لقد تم إرسال طلبك بنجاح");
 

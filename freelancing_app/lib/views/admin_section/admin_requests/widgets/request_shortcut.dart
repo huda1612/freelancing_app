@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/classes/app_date_formatter.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_icons.dart';
+import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/request_type.dart';
 
 class RequestShortcut extends StatelessWidget {
-  final String id;
+  // final String id; //ماله داعي !!!!
   final String requestStatus;
   final String usrename;
   final VoidCallback? onTab;
@@ -14,7 +18,7 @@ class RequestShortcut extends StatelessWidget {
   final Timestamp? date;
   const RequestShortcut({
     super.key,
-    required this.id,
+    // required this.id,
     required this.requestStatus,
     required this.usrename,
     required this.onTab,
@@ -50,7 +54,20 @@ class RequestShortcut extends StatelessWidget {
               thickness: 1,
             ),
             Row(
-              children: [Icon(Icons.list_alt), Text(usrename)],
+              children: [
+                SizedBox(
+                    height: 40.h,
+                    width: 40.w,
+                    child: Image.asset(AppIcons.docIcon)),
+                // Icon(Icons.list_alt)
+                SizedBox(
+                  width: AppSpaces.heightSmall,
+                ),
+                Text(
+                  usrename,
+                  style: AppTextStyles.body.copyWith(color: AppColors.black),
+                )
+              ],
             )
           ],
         ),

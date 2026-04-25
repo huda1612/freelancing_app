@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
@@ -32,6 +33,14 @@ class UserService {
     } catch (_) {
       rethrow;
     }
+  }
+
+  Future<Either<StatusClasses, UserModel>> fetchUserData2(String uid) async {
+    final docRef =
+        _firebaseFirestore.collection(CollectionsNames.users).doc(uid);
+    final response = await FirebaseCrud.fetchDocument<UserModel>(
+        docRef: docRef, fromMap: (data, id) => UserModel.fromMap(data, id));
+    return response;
   }
 
   Future<void> updateUserData(Map<String, dynamic> newUser, String uid) async {

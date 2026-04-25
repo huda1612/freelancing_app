@@ -24,7 +24,7 @@ class RequestService {
 
   //اضافة طلب جديد
   Future<StatusClasses> addUserRequest(
-      {required String uid,
+      {required String uId,
       required String userType,
       required UserRequestSnapshotModel snapshot,
       Timestamp? createdAt}) async {
@@ -33,7 +33,7 @@ class RequestService {
         _firebaseFirestore.collection(CollectionsNames.userRequests);
 
     var requestBody = {
-      "uid": uid,
+      "uId": uId,
       "userType": userType,
       "snapshot": snapshot.toMap(),
       "status": RequestStatus.pending,

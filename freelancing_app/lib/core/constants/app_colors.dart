@@ -5,6 +5,9 @@ class AppColors {
   // بنفسجي
   static const Color purple = Color(0xFF6C63FF); // بنفسجي رئيسي
   static const Color lightPurple = Color(0xFFB3A9FF); // بنفسجي فاتح
+  static const Color veryLightPurple =
+      Color.fromARGB(255, 219, 214, 253); // بنفسجي فاتح
+
   static const Color softPurple =
       Color.fromARGB(255, 178, 145, 254); // بنفسجي ناعم إضافي
   static const Color vividPurple =
