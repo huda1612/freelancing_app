@@ -1,16 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/classes/app_date_formatter.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
-import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/request_type.dart';
 
 class RequestShortcut extends StatelessWidget {
   final String id;
-  final RequestStatus requestStatus;
+  final String requestStatus;
   final String usrename;
   final VoidCallback? onTab;
 
-  final String date;
+  final Timestamp? date;
   const RequestShortcut({
     super.key,
     required this.id,
@@ -21,6 +22,7 @@ class RequestShortcut extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    String dateFormatted = AppDateFormatter.ymdHm(date);
     return GestureDetector(
       onTap: onTab,
       child: Container(
@@ -40,7 +42,7 @@ class RequestShortcut extends StatelessWidget {
                 requestStatus,
               ),
               Text(
-                "created At : day/month/year",
+                "created At : $dateFormatted",
               ),
             ]),
             Divider(

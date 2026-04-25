@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/constants/reuest_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
-import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/request_type.dart';
 import 'package:get/get.dart';
@@ -89,7 +89,7 @@ class AdimnRequestDetailView extends StatelessWidget {
                 spacing: 8,
                 children: controller.skills
                     .map((e) => Chip(
-                        label: Text(e), backgroundColor: AppColors.softPurple))
+                        label: Text(e), backgroundColor: AppColors.lightPurple))
                     .toList(),
               ),
 

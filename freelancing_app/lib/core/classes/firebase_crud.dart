@@ -204,7 +204,8 @@ StatusClasses mapFirestoreError(FirebaseException e) {
       return StatusClasses.invalidData;
 
     default:
-      return StatusClasses.unknown;
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
+      return StatusClasses.customError(e.toString());
   }
 }
 

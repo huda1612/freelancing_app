@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class WorksamplesModel {
-  final String id;
+class WorksampleModel {
+  final String? id;
   final String title;
   final String description;
   final String imageUrl;
   final Timestamp? createdAt;
 
-  WorksamplesModel({
-    required this.id,
+  WorksampleModel({
+    this.id,
     required this.title,
     required this.description,
     this.imageUrl = '',
@@ -20,13 +20,13 @@ class WorksamplesModel {
       'title': title,
       'description': description,
       'imageUrl': imageUrl,
-      'createdAt': createdAt ?? FieldValue.serverTimestamp(),
+      'createdAt': createdAt ?? Timestamp.now(),
     };
   }
 
   // 🔹 تحويل من Firestore إلى Object
-  factory WorksamplesModel.fromMap(Map<String, dynamic> map, String docId) {
-    return WorksamplesModel(
+  factory WorksampleModel.fromMap(Map<String, dynamic> map, String docId) {
+    return WorksampleModel(
       id: docId,
       title: map['title'],
       description: map['description'] ?? '',

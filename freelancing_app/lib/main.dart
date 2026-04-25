@@ -40,16 +40,14 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splash,
 
-          // initialRoute: AppRoutes.clientAccountInfo,
+          // initialRoute: AppRoutes.clinetWork,
           // initialRoute: AppRoutes.personalInfo,
           // initialRoute: AppRoutes.pending,
           // initialRoute: AppRoutes.rejected,
           // initialRoute: AppRoutes.approved
-          initialRoute: AppRoutes.freelancerWorkAndCertificates,
-        //  initialRoute: AppRoutes.splash,
+          // initialRoute: AppRoutes.freelancerWorkAndCertificates,
+          //  initialRoute: AppRoutes.splash,
 
-         
-        
           getPages: AppPages.pages,
         );
       },

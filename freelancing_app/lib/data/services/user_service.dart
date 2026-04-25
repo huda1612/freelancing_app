@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freelancing_platform/core/classes/firebase_crud.dart';
+import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 // import 'package:get/get_core/src/get_main.dart';
@@ -37,6 +39,14 @@ class UserService {
         .collection(CollectionsNames.users)
         .doc(uid)
         .update(newUser);
+  }
+
+  Future<StatusClasses> updateUserData2(
+      Map<String, dynamic> newUser, String uid) async {
+    final collection = _firebaseFirestore.collection(CollectionsNames.users);
+    final StatusClasses response = await FirebaseCrud.updateDocument(
+        collectionRef: collection, docId: uid, body: newUser);
+    return response;
   }
 
   Future<void> updateUsernameCollection(
