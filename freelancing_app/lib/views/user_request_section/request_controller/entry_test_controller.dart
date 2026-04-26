@@ -36,6 +36,8 @@ class EntryTestController extends GetxController {
         fromMap: (data, id) => AdmissionQuestionModel.fromMap(data, id));
     response.fold((errorState) {
       testPageState = errorState;
+      Get.snackbar(
+          errorState.type, errorState.message ?? "حدث خطأ في جلب الاسئلة");
       update();
     }, (data) {
       questions = data;
@@ -56,9 +58,12 @@ class EntryTestController extends GetxController {
         return;
       }
     }
+    testPageState = StatusClasses.isloading;
+    update();
     //هون لازم يتم ارسال الطلب والانتقال لصفحة تم التقديم وتعديل الحاله للمستخدم
     await finishExam();
-    Get.offAllNamed(AppRoutes.pending);
+    testPageState = StatusClasses.idle;
+    update();
     return; // كل الإجابات صحيح
   }
 
@@ -72,7 +77,7 @@ class EntryTestController extends GetxController {
     if (UserSession.role == UserRole.freelancer) {
       final request = Get.find<FreelancerRequestController>();
       await request.sendRequest();
-    } else if (UserSession.role ==  UserRole.client) {
+    } else if (UserSession.role == UserRole.client) {
       final request = Get.find<ClientRequestController>();
       await request.sendRequest();
     }

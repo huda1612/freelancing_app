@@ -1,38 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CertificateModel {
-  final String id;
+  final String? id;
   final String title;
-  final String source;
+  final String? description;
+
+  final String? source;
   final Timestamp? createdAt;
   final Timestamp? date;
-  final String credentialURL;
-  final String credentialID;
-  final String description;
-  final String imageURL;
-  final List<String> skills; //هي يمكن لازم تتغير بس اعمل صف للمهارات
-  final String projectID;
+  final String? credentialURL;
+  final String? credentialID;
+  final String? imageURL;
+  final List<String> skills;
+  final String? projectID;
 
   CertificateModel({
-    required this.id,
+    this.id,
     required this.title,
-    required this.source,
+     this.source,
     this.createdAt,
     this.date,
-    this.credentialURL = '',
-    this.credentialID = '',
-    this.description = '',
-    this.imageURL = '',
+    this.credentialURL,
+    this.credentialID,
+    this.description,
+    this.imageURL,
     this.skills = const [],
-    this.projectID = '',
+    this.projectID,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'source': source,
-      'createdAt': createdAt ?? FieldValue.serverTimestamp(),
-      'date': date,
+      'createdAt': createdAt ?? Timestamp.now(),
+      'date': date  ,
       'credentialURL': credentialURL,
       'credentialID': credentialID,
       'description': description,
@@ -46,16 +47,16 @@ class CertificateModel {
     return CertificateModel(
       id: docId,
       title: map['title'] ?? '',
-      source: map['source'] ?? '',
+      source: map['source'] ,
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
       date: map['date'] is Timestamp ? map['date'] as Timestamp : null,
-      credentialURL: map['credentialURL'] ?? '',
-      credentialID: map['credentialID'] ?? '',
-      description: map['description'] ?? '',
-      imageURL: map['imageURL'] ?? '',
+      credentialURL: map['credentialURL'],
+      credentialID: map['credentialID'],
+      description: map['description'],
+      imageURL: map['imageURL'],
       skills: List<String>.from(map['skills'] ?? []),
-      projectID: map['projectID'] ?? '',
+      projectID: map['projectID'],
     );
   }
 }

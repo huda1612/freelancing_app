@@ -1,3 +1,4 @@
+import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/entry_test_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/freelancer_request_controller.dart';
@@ -10,6 +11,9 @@ class FreelancerRequestBinding extends Bindings {
     Get.lazyPut<FreelancerRequestController>(
         () => FreelancerRequestController(),
         fenix: true);
+    Get.lazyPut<ImageUploadController>(() => ImageUploadController(),
+        fenix: true);
+
     Get.lazyPut<EntryTestController>(() => EntryTestController(), fenix: true);
   }
 }

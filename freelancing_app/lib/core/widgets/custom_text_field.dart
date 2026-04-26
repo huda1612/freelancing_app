@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 
 class CustomTextField extends StatefulWidget {
+  final String? initialValue;
   final String? hintText;
   final TextEditingController? controller;
   final bool obscureText;
@@ -19,6 +20,7 @@ class CustomTextField extends StatefulWidget {
 
   const CustomTextField({
     super.key,
+    this.initialValue,
     this.hintText,
     this.controller,
     this.obscureText = false,
@@ -54,7 +56,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-final bool isMultiline = widget.keyboardType == TextInputType.multiline;
+    final bool isMultiline = widget.keyboardType == TextInputType.multiline;
     final Widget? suffixIcon = widget.obscureText
         ? IconButton(
             icon: Icon(
@@ -66,11 +68,11 @@ final bool isMultiline = widget.keyboardType == TextInputType.multiline;
           )
         : widget.suffixIcon;
 
-    
     return SizedBox(
       width: widget.width!.w,
-     // height: widget.height!.h,
+      // height: widget.height!.h,
       child: TextFormField(
+        initialValue:widget.initialValue ,
         controller: widget.controller,
         obscureText: _obscure,
         keyboardType: widget.keyboardType,
@@ -83,11 +85,10 @@ final bool isMultiline = widget.keyboardType == TextInputType.multiline;
           color: Colors.black87,
           fontWeight: FontWeight.w500,
         ),
-textDirection: TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         decoration: unifiedDecoration(widget.hintText ?? "").copyWith(
-  suffixIcon: suffixIcon,
-),
-
+          suffixIcon: suffixIcon,
+        ),
       ),
     );
   }

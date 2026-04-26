@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-// import 'package:flutter/material.dart';
-// import 'package:freelancing_platform/core/classes/post_type.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 
@@ -180,6 +178,69 @@ class FirebaseCrud {
       return StatusClasses.customError(e.toString());
     }
   }
+
+  //تابع لتنفيذ المناقلات
+  static Future<StatusClasses> runTransaction({
+    required Future<void> Function(Transaction transaction) action,
+  }) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+
+      await firestore.runTransaction((transaction) async {
+        await action(transaction);
+      });
+
+      return StatusClasses.success;
+    } on FirebaseException catch (e) {
+      return mapFirestoreError(e);
+    } catch (e) {
+      return StatusClasses.customError(e.toString());
+    }
+  }
+  //معالجه حالات الخطأ عم تصير هون كلها
+  //مافي داعي عالح الخطأ داخل المناقله اللي بكتبها بعدين لو في حالة بدها خطـ بعمل رمي للخطأ فبتوقف و هون بينلقط الخطأ
+  //هام !! جوا المناقله لا تعدلي الواجهة ولا تعملي update ولا تستندي حاله لمتغير الحاله فقط ارمي خطأ لو بدك يصير خطأ
+  // ولا تستخدمي return جوا المناقله فقط ارمي خطأ لو بدك تطلعي منها
+// **************************** HOW TO USE ********************************
+// هذا التابع يستخدم لتنفيذ عدة عمليات على Firestore بشكل "ذري" (Atomic)
+// يعني: يا تنجح كل العمليات مع بعض، يا تفشل كلها.
+// ملاحظة مهمة:
+// - يجب استخدام transaction.get / transaction.update / transaction.set فقط
+// - لا توابع FirebaseCrud العادية داخل transaction
+// مثال:
+//
+// final result = await FirebaseCrud.runTransaction(
+//   action: (transaction) async {
+//     final firestore = FirebaseFirestore.instance;
+//
+//     final requestRef = firestore.collection('requests').doc(requestId);
+//     final userRef = firestore.collection('users').doc(userId);
+//
+//     /// قراءة البيانات (مهم داخل transaction)
+//     final requestSnap = await transaction.get(requestRef);
+//
+//     if (!requestSnap.exists) {
+//       throw Exception("Request not found");
+//     }
+//
+//     /// تحديث الطلب
+//     transaction.update(requestRef, {
+//       'status': 'rejected',
+//       'rejectComment': 'Not valid',
+//     });
+//
+//     /// تحديث المستخدم
+//     transaction.update(userRef, {
+//       'requestStatus': 'rejected',
+//     });
+//   },
+// );
+//
+// if (result == StatusClasses.success) {
+//   print("Transaction done successfully");
+// } else {
+//   print("Error: $result");
+// }
 }
 
 StatusClasses mapFirestoreError(FirebaseException e) {
@@ -204,9 +265,38 @@ StatusClasses mapFirestoreError(FirebaseException e) {
       return StatusClasses.invalidData;
 
     default:
-      return StatusClasses.unknown;
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
+      return StatusClasses.customError(e.toString());
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Future<StatusClasses> postFirebaseData({
 //   required CollectionReference<Map<String, dynamic>> collection,

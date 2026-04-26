@@ -3,6 +3,8 @@ import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
+import 'package:freelancing_platform/core/constants/reuest_status.dart';
+import 'package:freelancing_platform/models/user_collections/user_request_snapshot_model.dart';
 import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 
 class RequestService {
@@ -22,16 +24,18 @@ class RequestService {
 
   //اضافة طلب جديد
   Future<StatusClasses> addUserRequest(
-      {required String uid,
-      required Map<String, dynamic> snapshot,
+      {required String uId,
+      required String userType,
+      required UserRequestSnapshotModel snapshot,
       Timestamp? createdAt}) async {
     var now = Timestamp.now();
     var collection =
         _firebaseFirestore.collection(CollectionsNames.userRequests);
 
     var requestBody = {
-      "uid": uid,
-      "snapshot": snapshot,
+      "uId": uId,
+      "userType": userType,
+      "snapshot": snapshot.toMap(),
       "status": RequestStatus.pending,
       "createdAt": now
     };

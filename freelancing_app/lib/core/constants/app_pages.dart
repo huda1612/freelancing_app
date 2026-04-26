@@ -7,8 +7,11 @@ import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
 import 'package:freelancing_platform/views/account_setup/account_setup_view/personal_info_view.dart';
+import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
+import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_requests_list_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/admin_requests_list_view.dart';
+import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/error_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/privacy_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/legal_views/terms_view.dart';
@@ -21,6 +24,7 @@ import 'package:freelancing_platform/views/auth_section/auth_views/verification_
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
+import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_work_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/freelancer_request_views/freelancer_account_info_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/freelancer_request_views/freelancer_work_and_certificates_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/entry_test.dart';
@@ -88,7 +92,6 @@ class AppPages {
     //     // binding: SplashBinding(),
     //   ),
 
-   
     GetPage(
       name: AppRoutes.error,
       page: () => ErrorView(),
@@ -106,11 +109,23 @@ class AppPages {
       binding: FreelancerRequestBinding(),
       middlewares: [AuthMiddleware()],
     ),
+    GetPage(
+      name: AppRoutes.freelancerWorkAndCertificates,
+      page: () => FreelancerWorkAndCertificatesView(),
+      binding: FreelancerRequestBinding(),
+      // middlewares: [AuthMiddleware()],
+    ),
 
     //صفحات العميل
     GetPage(
       name: AppRoutes.clientAccountInfo,
       page: () => ClientAccountInfoView(),
+      binding: ClientRequestBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.clinetWork,
+      page: () => ClientWorkView(),
       binding: ClientRequestBinding(),
       middlewares: [AuthMiddleware()],
     ),
@@ -122,47 +137,54 @@ class AppPages {
       binding: EntryTestBinding(),
       middlewares: [AuthMiddleware()],
     ),
+
     GetPage(
       name: AppRoutes.pending,
       page: () => PendingView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SignOutController());
+      }),
       middlewares: [AuthMiddleware()],
     ),
+
     GetPage(
       name: AppRoutes.rejected,
       page: () => RejectedView(),
       middlewares: [AuthMiddleware()],
     ),
 
-    //**********************************************request pages****************************************
+    //**********************************************admin pages****************************************
     // GetPage(
     //   name: AppRoutes.adminHome,
     //   page: () => AdminHome(),
     //   middlewares: [AdminMiddleware()],
     // ),
-     GetPage(
+    GetPage(
       name: AppRoutes.adminRequests,
       page: () => AdminRequestsListView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => AdminRequestsListController());
+      }),
       middlewares: [AdminMiddleware()],
     ),
-     GetPage(
+    GetPage(
       name: AppRoutes.adminRequestDetails,
       page: () => AdimnRequestDetailView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => AdminRequestDatailsController());
+      }),
       middlewares: [AdminMiddleware()],
     ),
-    
+
     //**********************************************settings pages****************************************
     GetPage(
         name: AppRoutes.personalInfo,
         page: () => const PersonalInfoView(),
         middlewares: [AuthMiddleware()]),
 
-
-
-
     GetPage(
-  name: AppRoutes.freelancerWorkAndCertificates,
-  page: () => FreelancerWorkAndCertificatesView(),
-),
-
+      name: AppRoutes.freelancerWorkAndCertificates,
+      page: () => FreelancerWorkAndCertificatesView(),
+    ),
   ];
 }
