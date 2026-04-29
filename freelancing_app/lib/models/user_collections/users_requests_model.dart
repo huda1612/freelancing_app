@@ -11,6 +11,7 @@ class UserRequestModel {
   final String? rejectComment;
   final UserRequestSnapshotModel snapshot;
   final String status;
+  final Timestamp? updatedAt;
   final Timestamp? createdAt;
 
   UserRequestModel({
@@ -20,6 +21,7 @@ class UserRequestModel {
     this.rejectComment,
     required this.snapshot,
     this.status = RequestStatus.pending,
+    this.updatedAt,
     this.createdAt,
   });
 
@@ -30,6 +32,7 @@ class UserRequestModel {
       'rejectComment': rejectComment,
       'snapshot': snapshot.toMap(),
       'status': status, // pending, approved, rejected
+      'updatedAt': updatedAt,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
     };
   }
@@ -42,6 +45,8 @@ class UserRequestModel {
       rejectComment: map['rejectComment'],
       snapshot: UserRequestSnapshotModel.fromMap(map['snapshot'] ?? {}),
       status: map['status'] ?? RequestStatus.pending,
+      updatedAt:
+          map['updatedAt'] is Timestamp ? map['updatedAt'] as Timestamp : null,
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );

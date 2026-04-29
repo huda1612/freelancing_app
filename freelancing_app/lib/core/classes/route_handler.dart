@@ -53,6 +53,7 @@ class RouteHandler {
       if (error == StatusClasses.unauthorized) {
         return AppRoutes.login;
       }
+      print(error.message);
       return AppRoutes.error;
     }, (user) {
       //لو تم جلب بيانات المستخدم بنجاح منتأكد من حالته

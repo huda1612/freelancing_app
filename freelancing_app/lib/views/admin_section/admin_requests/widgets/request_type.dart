@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/reuest_status.dart';
-import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 
 class RequestType extends StatelessWidget {
   final String requestStatus;

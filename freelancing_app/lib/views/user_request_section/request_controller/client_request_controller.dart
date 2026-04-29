@@ -15,11 +15,17 @@ import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/data/services/work_sample_service.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
 import 'package:freelancing_platform/models/user_collections/user_request_snapshot_model.dart';
+import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 import 'package:freelancing_platform/models/user_collections/worksamples_model.dart';
 import 'package:get/get.dart';
 
 class ClientRequestController extends GetxController {
+  //متغيرات الحالة
   var pageState = StatusClasses.isloading;
+  var fetchSpecialState = StatusClasses.isloading;
+  var fetchOldRequestState = StatusClasses.isloading;
+
+  //متغيرات اول صفحة
   var allSpecializations = <SpecializationModel>[];
   final formKey = GlobalKey<FormState>();
   var selectedSpecial = RxnString();
@@ -30,30 +36,93 @@ class ClientRequestController extends GetxController {
   final SpecialSkillsService specialSkillsService = SpecialSkillsService();
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
 
     //احضار البيانات من السيرفر وتجهيزها بالمتغيرات
-    Future.wait([
+    await Future.wait([fetchPageData()]);
+  }
+
+  Future<void> fetchPageData() async {
+    pageState = StatusClasses.isloading;
+    update();
+    await Future.wait([
+      fetchOldRequestData(),
       fetchSpecializations(),
     ]);
+
+    if (fetchOldRequestState != StatusClasses.success) {
+      pageState = fetchOldRequestState;
+      update();
+      return;
+    }
+    if (fetchSpecialState != StatusClasses.success) {
+      pageState = fetchSpecialState;
+      update();
+      return;
+    }
+
+    pageState = StatusClasses.success;
+    update();
   }
 
   Future<void> fetchSpecializations() async {
-    pageState = StatusClasses.isloading;
-    update();
+    fetchSpecialState = StatusClasses.isloading;
+    // update();
 
     Either<StatusClasses, List<SpecializationModel>> response =
         await specialSkillsService.getAllSpecializations();
     response.fold((left) {
-      pageState = left;
-      update();
+      fetchSpecialState = left;
+      // update();
     }, (right) {
       //التخصصات الكليةالموجوده
       allSpecializations = right;
+ 
 
-      pageState = StatusClasses.success;
-      update();
+      fetchSpecialState = StatusClasses.success;
+      // update();
+    });
+  }
+
+  Future<void> fetchOldRequestData() async {
+    if (UserSession.uid == null) {
+      fetchOldRequestState = StatusClasses.unauthorized;
+      Get.offAllNamed(AppRoutes.login);
+      Get.snackbar(fetchOldRequestState.type, fetchOldRequestState.message!);
+      return;
+    }
+
+    fetchOldRequestState = StatusClasses.isloading;
+    RequestService requestService = RequestService();
+
+    Either<StatusClasses, UserRequestModel> response =
+        await requestService.fetchRequest(UserSession.uid!);
+
+    response.fold((left) {
+      if (left == StatusClasses.notFound) {
+        //بحال ما عنده طلب قديم عادي
+        fetchOldRequestState = StatusClasses.success;
+        return;
+      }
+      fetchOldRequestState = left;
+    }, (oldRequest) {
+      selectedSpecial.value = oldRequest.snapshot.specialization;
+      jobTitle.value = oldRequest.snapshot.jobTitle;
+      bio.value = oldRequest.snapshot.bio;
+
+      workItems.value = oldRequest.snapshot.workSamples
+          .map((w) => {
+                "title": w.title,
+                "description": w.description,
+                "image": w.imageUrl,
+                "localImage": null,
+                "valid": true,
+                "uploading": false,
+              })
+          .toList();
+
+      fetchOldRequestState = StatusClasses.success;
     });
   }
 
@@ -81,7 +150,7 @@ class ClientRequestController extends GetxController {
   String? get specializationDropdownValue {
     final v = selectedSpecial.value;
     if (v == null || v.isEmpty) return null;
-    final ok = allSpecializations.any((o) => o.name == v);
+    final ok = allSpecializations.any((o) => o.slug == v);
     return ok ? v : null;
   }
 
@@ -132,6 +201,8 @@ class ClientRequestController extends GetxController {
               "خطأ", workResponse.message ?? "حدث خطأ ما عند اضافة الاعمال");
         }
       }
+      Get.offAllNamed(AppRoutes.pending);
+      return;
     } else {
       Get.snackbar("خطأ", response.message ?? "حدث خطأ ما عند ارسال الطلب");
       return;

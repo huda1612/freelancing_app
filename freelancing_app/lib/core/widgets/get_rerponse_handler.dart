@@ -50,7 +50,7 @@ class UiStateHandler extends StatelessWidget {
     if (status == StatusClasses.isloading) {
       return CustomLoading();
     }
-
+    print(status.type);
     return CustomErrorWidget(
       title: status.type,
       message: status.message,
