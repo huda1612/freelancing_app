@@ -33,9 +33,9 @@ class RouteHandler {
     }
 
     //منتحقق من الايميل
-    // if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-    //   return AppRoutes.verifyEmail;
-    // }
+    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+      return AppRoutes.verifyEmail;
+    }
 
     //اذا ما ادمن فمنتحقق من حالة المستخدم
     final docRef = FirebaseFirestore.instance

@@ -94,12 +94,13 @@ class AdimnRequestDetailView extends StatelessWidget {
                       controller.request.snapshot.specialization != null
                           ? _infoRow("الاختصاص",
                               controller.request.snapshot.specialization!.name)
-                          : SizedBox.shrink(),
-                      controller.request.userType == UserRole.freelancer
-                          ? _infoRow("المسمى الوظيفي",
-                              controller.request.snapshot.jobTitle)
-                          : _infoRow("مجال العمل",
-                              controller.request.snapshot.jobTitle),
+                          : _infoRow("نوع العميل",
+                              controller.request.snapshot.clientType!),
+                      _infoRow(
+                          controller.request.userType == UserRole.freelancer
+                              ? "المسمى الوظيفي"
+                              : "مجال العمل",
+                          controller.request.snapshot.jobTitle),
 
                       const SizedBox(height: 10),
 
