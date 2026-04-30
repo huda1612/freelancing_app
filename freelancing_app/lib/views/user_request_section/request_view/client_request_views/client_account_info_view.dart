@@ -45,7 +45,7 @@ class ClientAccountInfoView extends StatelessWidget {
                     builder: (controller) {
                       return UiStateHandler(
                         status: controller.pageState,
-                        fetchDataFun: controller.fetchPageData,
+                        fetchDataFun: controller.fetchOldRequestData,
                         child: Column(children: [
                           Expanded(
                             child: Padding(
@@ -61,75 +61,76 @@ class ClientAccountInfoView extends StatelessWidget {
                                       SizedBox(height: AppSpaces.heightMedium),
 
                                       // التخصص الجديد الاختيار
-                                      SizedBox(
-                                          width: 380.w,
-                                          child: controller
-                                                  .allSpecializations.isEmpty
-                                              ? Text(
-                                                  'لا توجد تخصصات. تأكد من اتصالك بالانترنت ',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 13.sp,
-                                                    color: AppColors.black,
-                                                  ),
-                                                )
-                                              : DropdownButtonFormField<String>(
-                                                  key: ValueKey(
-                                                    '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
-                                                  ),
-                                                  initialValue: controller
-                                                      .specializationDropdownValue,
-                                                  isExpanded: true,
-                                                  decoration: unifiedDecoration(
-                                                      'مجال العمل'),
-                                                  hint: Text(
-                                                    'اختر مجال عملك',
-                                                    style: TextStyle(
-                                                      fontSize: 14.sp,
-                                                      color: Colors.black54,
-                                                    ),
-                                                  ),
-                                                  icon: Icon(
-                                                    Icons.keyboard_arrow_down,
-                                                    color:
-                                                        AppColors.vividPurple,
-                                                  ),
-                                                  style: TextStyle(
-                                                    fontSize: 14.sp,
-                                                    color: Colors.black87,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  items: controller
-                                                      .allSpecializations
-                                                      .map(
-                                                        (o) => DropdownMenuItem<
-                                                            String>(
-                                                          value: o.slug,
-                                                          child: Text(
-                                                            o.name,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            textDirection:
-                                                                TextDirection
-                                                                    .rtl,
-                                                          ),
-                                                        ),
-                                                      )
-                                                      .toList(),
-                                                  onChanged: controller
-                                                          .allSpecializations
-                                                          .isEmpty
-                                                      ? null
-                                                      : (v) => controller
-                                                          .selectedSpecial
-                                                          .value = v,
-                                                  validator: Validators
-                                                      .validateSpecialization,
-                                                )),
-                                      SizedBox(height: AppSpaces.heightMedium2),
+                                      // SizedBox(
+                                      //     width: 380.w,
+                                      //     child: controller
+                                      //             .allSpecializations.isEmpty
+                                      //         ? Text(
+                                      //             'لا توجد تخصصات. تأكد من اتصالك بالانترنت ',
+                                      //             textAlign: TextAlign.center,
+                                      //             style: TextStyle(
+                                      //               fontSize: 13.sp,
+                                      //               color: AppColors.black,
+                                      //             ),
+                                      //           )
+                                      //         : DropdownButtonFormField<String>(
+                                      //             key: ValueKey(
+                                      //               '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
+                                      //             ),
+                                      //             value: controller
+                                      //                 .specializationDropdownValue,
+                                      //             isExpanded: true,
+                                      //             decoration: unifiedDecoration(
+                                      //                 'مجال العمل'),
+                                      //             hint: Text(
+                                      //               'اختر مجال عملك',
+                                      //               style: TextStyle(
+                                      //                 fontSize: 14.sp,
+                                      //                 color: Colors.black54,
+                                      //               ),
+                                      //             ),
+                                      //             icon: Icon(
+                                      //               Icons.keyboard_arrow_down,
+                                      //               color:
+                                      //                   AppColors.vividPurple,
+                                      //             ),
+                                      //             style: TextStyle(
+                                      //               fontSize: 14.sp,
+                                      //               color: Colors.black87,
+                                      //               fontWeight: FontWeight.w500,
+                                      //             ),
+                                      //             items: controller
+                                      //                 .allSpecializations
+                                      //                 .map(
+                                      //                   (o) => DropdownMenuItem<
+                                      //                       String>(
+                                      //                     value: o.slug,
+                                      //                     child: Text(
+                                      //                       o.name,
+                                      //                       overflow:
+                                      //                           TextOverflow
+                                      //                               .ellipsis,
+                                      //                       textDirection:
+                                      //                           TextDirection
+                                      //                               .rtl,
+                                      //                     ),
+                                      //                   ),
+                                      //                 )
+                                      //                 .toList(),
+                                      //             onChanged: controller
+                                      //                     .allSpecializations
+                                      //                     .isEmpty
+                                      //                 ? null
+                                      //                 : (v) => controller
+                                      //                     .selectedSpecial
+                                      //                     .value = v,
+                                      //             validator: Validators
+                                      //                 .validateSpecialization,
+                                      //           )),
+                                      // SizedBox(height: AppSpaces.heightMedium2),
                                       CustomTextField(
-                                        hintText: "المسمى الوظيفي",
+                                        initialValue: controller.jobTitle.value,
+                                        hintText: "مجال العمل",
                                         keyboardType: TextInputType.name,
                                         validator: Validators.validateJobTitle,
                                         onChanged: (v) =>
@@ -137,6 +138,7 @@ class ClientAccountInfoView extends StatelessWidget {
                                       ),
                                       SizedBox(height: AppSpaces.heightMedium2),
                                       CustomTextField(
+                                        initialValue: controller.bio.value,
                                         hintText: "نبذة",
                                         keyboardType: TextInputType.multiline,
                                         validator: Validators.validateBio,

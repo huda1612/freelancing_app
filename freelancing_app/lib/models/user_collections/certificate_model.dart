@@ -17,7 +17,7 @@ class CertificateModel {
   CertificateModel({
     this.id,
     required this.title,
-     this.source,
+    this.source,
     this.createdAt,
     this.date,
     this.credentialURL,
@@ -33,7 +33,7 @@ class CertificateModel {
       'title': title,
       'source': source,
       'createdAt': createdAt ?? Timestamp.now(),
-      'date': date  ,
+      'date': date,
       'credentialURL': credentialURL,
       'credentialID': credentialID,
       'description': description,
@@ -47,7 +47,7 @@ class CertificateModel {
     return CertificateModel(
       id: docId,
       title: map['title'] ?? '',
-      source: map['source'] ,
+      source: map['source'],
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
       date: map['date'] is Timestamp ? map['date'] as Timestamp : null,

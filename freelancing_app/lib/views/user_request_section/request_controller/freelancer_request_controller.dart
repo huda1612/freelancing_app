@@ -37,7 +37,7 @@ class FreelancerRequestController extends GetxController {
   //معلومات الحساب
   //التخصص :
   var selectedSpecial = RxnString();
-
+  // var selectedSpecial = Rxn<SpecializationSnapshot>();
   //هدول بدهم شيل لو رجعت على القائمه الثابته***********************
   // var customSpecial = RxnString();
   // var elseSpecial = false.obs;
@@ -95,9 +95,20 @@ class FreelancerRequestController extends GetxController {
     final List<WorksampleModel> works = _getWorkSampelsModleList();
     final List<CertificateModel> certificates = _getCertificatesList();
 
+    final selected = allSpecializations.firstWhereOrNull(
+      (s) => s.slug == selectedSpecial.value,
+    );
+    if (selected == null) {
+      Get.snackbar("خطأ", "التخصص غير موجود");
+      return;
+    }
+
     final UserRequestSnapshotModel snapshot = UserRequestSnapshotModel(
-        specialization: selectedSpecial.value!,
-        // specialization: finalSpecialization!,
+        // specialization: selectedSpecial.value!,
+        specialization: SpecializationSnapshot(
+          slug: selected.slug,
+          name: selected.name,
+        ),
         jobTitle: jobTitle.value!,
         bio: bio.value!,
         skills: selectedSkills,
@@ -113,8 +124,11 @@ class FreelancerRequestController extends GetxController {
 
       Map<String, dynamic> newUserData = {
         "status": UserStatus.pending,
-        "specialization": selectedSpecial.value!,
-        // "specialization": finalSpecialization!,
+        // "specialization": selectedSpecial.value!,
+        "specialization": {
+          "slug": selected.slug,
+          "name": selected.name,
+        },
         "bio": bio.value!,
         "skills": selectedSkills,
       };
@@ -249,7 +263,7 @@ class FreelancerRequestController extends GetxController {
       }
       fetchOldRequestState.value = left;
     }, (oldRequest) {
-      selectedSpecial.value = oldRequest.snapshot.specialization;
+      selectedSpecial.value = oldRequest.snapshot.specialization?.slug;
       jobTitle.value = oldRequest.snapshot.jobTitle;
       bio.value = oldRequest.snapshot.bio;
 
@@ -310,15 +324,16 @@ class FreelancerRequestController extends GetxController {
   }
 
   //هلأ مشان المهارات المقترحه تنعرض من التخصصات الفرعيه من التخصص اللي هو اختاره
-  void onSpecialChange(String? val) {
-    selectedSpecial.value = val;
+  void onSpecialChange(String? slug) {
     //بدنا نغير المهارات المقترحه حسب التخصص المختار
-    if (val == null || val.isEmpty) {
+    if (slug == null || slug.isEmpty) {
+      selectedSpecial.value = null;
       sugustSubSpecials.clear();
       return;
     }
+    selectedSpecial.value = slug;
 
-    final found = allSpecializations.where((s) => s.slug == val).toList();
+    final found = allSpecializations.where((s) => s.slug == slug).toList();
     if (found.isNotEmpty) {
       sugustSubSpecials.value = found.first.subspecializations;
     } else {
@@ -565,7 +580,7 @@ class FreelancerRequestController extends GetxController {
   Future<void> pickAndUploadImage(int index, String typeImage) async {
     File? file = await ImageService.pickImage();
     if (file == null) {
-      Get.snackbar("خطأ", "لم يتم اختيار صورة");
+      Get.snackbar("تنبيه", "لم يتم اختيار صورة");
       return;
     }
     if (typeImage == "work") {

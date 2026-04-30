@@ -32,21 +32,27 @@ class ProfileWorkCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              width: 66.w,
-              height: 66.h,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [AppColors.softPurple, AppColors.softBlue])
-                  // AppColors.gradientColor
-                  ),
-              child: CachedNetworkImage(
-                imageUrl: work.imageUrl,
-                placeholder: (context, url) => const CustomLoading(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                fit: BoxFit.cover,
-              ),
-              // child: const Icon(Icons.work_outline, color: Colors.white),
-            ),
+                width: 66.w,
+                height: 66.h,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [AppColors.softPurple, AppColors.softBlue])
+                    // AppColors.gradientColor
+                    ),
+                child: work.imageUrl != null && work.imageUrl!.trim().isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: work.imageUrl!,
+                        placeholder: (context, url) => const CustomLoading(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                        fit: BoxFit.cover,
+                      )
+                    : Icon(
+                        Icons.no_photography_rounded,
+                        color: AppColors.white,
+                      )
+                // child: const Icon(Icons.work_outline, color: Colors.white),
+                ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -108,7 +114,8 @@ class ProfileCertificateTile extends StatelessWidget {
                     // AppColors.gradientColor
                     ),
                 // child: const Icon(Icons.workspace_premium, color: Colors.white),
-                child: certificate.imageURL != null
+                child: certificate.imageURL != null &&
+                        certificate.imageURL!.trim().isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: certificate.imageURL!,
                         placeholder: (context, url) => const CustomLoading(),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
@@ -122,6 +123,8 @@ class RejectedView extends StatelessWidget {
                                     onTap: () async {
                                       await controller.deleteUserAndRequest();
                                       await signOutController.signOut();
+                                      await FirebaseAuth.instance.currentUser
+                                          ?.delete();
                                     },
                                     prefix: Icon(
                                       Icons.delete,
