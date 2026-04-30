@@ -14,7 +14,7 @@ import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/location_field.dart';
 import 'package:freelancing_platform/core/widgets/gender_field.dart';
 import 'package:freelancing_platform/core/widgets/birth_date_field.dart';
-import 'package:freelancing_platform/views/account_setup/account_setup_controller/personal_info_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/personal_info_controller.dart';
 import 'package:get/get.dart';
 
 class PersonalInfoView extends StatelessWidget {

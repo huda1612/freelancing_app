@@ -2,6 +2,14 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static LinearGradient gradientColor= LinearGradient(
+          colors: [
+            AppColors.softPurple,
+            AppColors.softBlue,
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        );
   // بنفسجي
   static const Color purple = Color(0xFF6C63FF); // بنفسجي رئيسي
   static const Color lightPurple = Color(0xFFB3A9FF); // بنفسجي فاتح

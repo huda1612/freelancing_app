@@ -6,7 +6,7 @@ import 'package:freelancing_platform/core/bindings/freelancer_request_binding.da
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
-import 'package:freelancing_platform/views/account_setup/account_setup_view/personal_info_view.dart';
+import 'package:freelancing_platform/views/profile_section/profile_views/personal_info_view.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_requests_list_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
