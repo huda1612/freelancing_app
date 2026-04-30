@@ -195,6 +195,7 @@ class ClientRequestController extends GetxController {
       Map<String, dynamic> newUserData = {
         "status": UserStatus.pending,
         "bio": bio.value!,
+        "jobTitle": jobTitle.value!,
         "clientType": clientType.value
       };
       final userResponse =

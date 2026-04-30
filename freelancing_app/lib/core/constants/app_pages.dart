@@ -22,6 +22,7 @@ import 'package:freelancing_platform/views/auth_section/auth_views/register_view
 import 'package:freelancing_platform/views/auth_section/auth_views/register_view/register_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verify_email_view.dart';
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
+import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/rejected_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
@@ -95,7 +96,7 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.error,
-       binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.lazyPut(() => SignOutController());
       }),
       page: () => ErrorView(),
@@ -117,7 +118,7 @@ class AppPages {
       name: AppRoutes.freelancerWorkAndCertificates,
       page: () => FreelancerWorkAndCertificatesView(),
       binding: FreelancerRequestBinding(),
-      // middlewares: [AuthMiddleware()],
+      middlewares: [AuthMiddleware()],
     ),
 
     //صفحات العميل
@@ -185,15 +186,15 @@ class AppPages {
       middlewares: [AdminMiddleware()],
     ),
 
-    //**********************************************settings pages****************************************
+    //**********************************************profile pages****************************************
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => ProfileView(),
+      middlewares: [AuthMiddleware()],
+    ),
     GetPage(
         name: AppRoutes.personalInfo,
         page: () => const PersonalInfoView(),
         middlewares: [AuthMiddleware()]),
-
-    GetPage(
-      name: AppRoutes.freelancerWorkAndCertificates,
-      page: () => FreelancerWorkAndCertificatesView(),
-    ),
   ];
 }

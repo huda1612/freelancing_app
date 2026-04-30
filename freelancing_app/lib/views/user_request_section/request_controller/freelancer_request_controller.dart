@@ -130,6 +130,7 @@ class FreelancerRequestController extends GetxController {
           "name": selected.name,
         },
         "bio": bio.value!,
+        "jobTitle": jobTitle.value!,
         "skills": selectedSkills,
       };
       final userResponse =

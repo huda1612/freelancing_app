@@ -31,6 +31,7 @@ class UserModel {
   final String photoUrl;
   final SpecializationSnapshot? specialization;
   final String bio;
+  final String jobTitle;
   final List<String> skills; //هي لازم غيرها بس اعمل صف المهارات
   final double rating;
   final int completedProjects;
@@ -54,6 +55,7 @@ class UserModel {
     this.photoUrl = '',
     this.specialization,
     this.bio = '',
+    this.jobTitle = '',
     this.skills = const [],
     this.rating = 0.0,
     this.completedProjects = 0,
@@ -79,6 +81,7 @@ class UserModel {
       'photoUrl': photoUrl,
       'specialization': specialization?.toMap(),
       'bio': bio,
+      'jobTitle': jobTitle,
       'skills': skills,
       'rating': rating,
       'completed_projects': completedProjects,
@@ -113,11 +116,9 @@ class UserModel {
       email: map['email'] ?? '',
       role: map['role'] ?? '',
       photoUrl: map['photoUrl'] ?? '',
-      // specialization: map['specialization'] != null
-      //     ? SpecializationSnapshot.fromMap(map['specialization'])
-      //     : null,
       specialization: specialization,
       bio: map['bio'] ?? '',
+      jobTitle: map['jobTitle'] ?? '',
       skills: List<String>.from(map['skills'] ?? []),
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
       completedProjects: map['completed_projects'] ?? 0,

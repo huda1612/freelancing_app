@@ -92,47 +92,22 @@ class FreelancerAccountInfoView extends StatelessWidget {
                                                 ),
                                               );
                                             }
-
-                                            return DropdownButtonFormField<
-                                                String>(
-                                              key: ValueKey(
-                                                '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
-                                              ),
-                                              initialValue: controller
-                                                  .specializationDropdownValue,
-                                              isExpanded: true,
-                                              decoration:
-                                                  unifiedDecoration('التخصص'),
-                                              hint: Text(
-                                                'اختر التخصص',
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              icon: Icon(
-                                                Icons.keyboard_arrow_down,
-                                                color: AppColors.vividPurple,
-                                              ),
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              items: controller
-                                                  .allSpecializations
-                                                  .map(
-                                                    (o) => DropdownMenuItem<
-                                                        String>(
-                                                      value: o.name,
-                                                      child: Text(
-                                                        o.name,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textDirection:
-                                                            TextDirection.rtl,
-                                                      ),
-
+                                            return Column(
+                                              children: [
+                                                DropdownButtonFormField<String>(
+                                                  key: ValueKey(
+                                                    '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
+                                                  ),
+                                                  value: controller
+                                                      .specializationDropdownValue,
+                                                  isExpanded: true,
+                                                  decoration: unifiedDecoration(
+                                                      'التخصص'),
+                                                  hint: Text(
+                                                    'اختر التخصص',
+                                                    style: TextStyle(
+                                                      fontSize: 14.sp,
+                                                      color: Colors.black54,
                                                     ),
                                                   ),
                                                   icon: Icon(
