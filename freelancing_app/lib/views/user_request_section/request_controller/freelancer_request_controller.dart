@@ -1,12 +1,26 @@
+import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_image_cloud.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/constants/user_status.dart';
+import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
+import 'package:freelancing_platform/data/services/certificate_service.dart';
+import 'package:freelancing_platform/data/services/request_service.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
+import 'package:freelancing_platform/data/services/user_service.dart';
+import 'package:freelancing_platform/data/services/work_sample_service.dart';
 import 'package:freelancing_platform/models/skill_collections/new_skill_model.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
+import 'package:freelancing_platform/models/user_collections/certificate_model.dart';
+import 'package:freelancing_platform/models/user_collections/user_request_snapshot_model.dart';
+import 'package:freelancing_platform/models/user_collections/worksamples_model.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FreelancerRequestController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -46,13 +60,130 @@ class FreelancerRequestController extends GetxController {
     // fetchQuestions()]);
   }
 
+  //تابع ارسال الطلب
+  Future<void> sendRequest() async {
+    final RequestService requestService = RequestService();
+    final UserService userService = UserService();
+    final WorkSampleService workSampleService = WorkSampleService();
+    final CertificateService certificateService = CertificateService();
+
+    if (UserSession.uid == null) {
+      Get.snackbar("unathorized", "لا يمكنك ارسال طلب بدون تسجيل الدخول !");
+      Get.offAllNamed(AppRoutes.login);
+      return;
+    }
+
+    //منعمل السناب شوت للطلب
+    final List<WorksampleModel> works = _getWorkSampelsModleList();
+    final List<CertificateModel> certificates = _getCertificatesList();
+
+    final UserRequestSnapshotModel snapshot = UserRequestSnapshotModel(
+        specialization: selectedSpecial.value!,
+        jobTitle: jobTitle.value!,
+        bio: bio.value!,
+        skills: selectedSkills,
+        workSamples: works,
+        certificates: certificates);
+
+    final response = await requestService.addUserRequest(
+        uId: UserSession.uid!,
+        userType: UserRole.freelancer,
+        snapshot: snapshot);
+    if (response == StatusClasses.success) {
+      Get.snackbar("نجاح", "لقد تم إرسال طلبك بنجاح");
+
+      Map<String, dynamic> newUserData = {
+        "status": UserStatus.pending,
+        "specialization": selectedSpecial.value!,
+        "bio": bio.value!,
+        "skills": selectedSkills,
+      };
+      final userResponse =
+          await userService.updateUserData2(newUserData, UserSession.uid!);
+      if (userResponse != StatusClasses.success) {
+        Get.snackbar("خطأ",
+            userResponse.message ?? "حدث خطأ ما عند تحديث بيانات المستخدم");
+      }
+      //اسا لازم ضيف الاعمال لمجموعة اعماله والشهادات لمجموعه شهاداته  للمستخدم
+      for (WorksampleModel w in works) {
+        final workResponse = await workSampleService.addWorkSample(
+            uid: UserSession.uid!, workSample: w);
+        if (workResponse != StatusClasses.success) {
+          Get.snackbar(
+              "خطأ", workResponse.message ?? "حدث خطأ ما عند اضافة الاعمال");
+        }
+      }
+      for (CertificateModel c in certificates) {
+        final certificateResponse = await certificateService.addCertificate(
+            uid: UserSession.uid!, certificate: c);
+        if (certificateResponse != StatusClasses.success) {
+          Get.snackbar("خطأ",
+              certificateResponse.message ?? "حدث خطأ ما عند اضافة شهادة");
+        }
+      }
+
+      Get.offAllNamed(AppRoutes.pending);
+      return;
+    } else {
+      Get.snackbar("خطأ", response.message ?? "حدث خطأ ما");
+    }
+  }
+
+  List<WorksampleModel> _getWorkSampelsModleList() {
+    List<WorksampleModel> list = [];
+    for (int i = 0; i < workItems.length; i++) {
+      if (!validateWork(i)) {
+        continue;
+      }
+      // for (Map<String, Object?> map in workItems) {
+      String title = workItems[i]['title'] as String;
+      String description = workItems[i]['description'] as String;
+      String image = workItems[i]['image'] as String;
+
+      list.add(WorksampleModel(
+        title: title,
+        description: description,
+        imageUrl: image,
+      ));
+    }
+    return list;
+  }
+
+  List<CertificateModel> _getCertificatesList() {
+    List<CertificateModel> list = [];
+    for (int i = 0; i < certItems.length; i++) {
+      if (!validateCertificate(i)) {
+        continue;
+      }
+      String title = certItems[i]['title'] as String;
+      String description = certItems[i]['description'] as String;
+      String image = certItems[i]['image'] as String;
+      Timestamp? date = certItems[i]['date'] as Timestamp?;
+      String? url = certItems[i]['url'] as String?;
+      String? id = certItems[i]['id'] as String?;
+      List<String>? skills = certItems[i]['skills'] as List<String>?;
+      String? source = certItems[i]['source'] as String?;
+
+      list.add(CertificateModel(
+          title: title,
+          description: description,
+          imageURL: image,
+          source: source,
+          date: date,
+          credentialURL: url,
+          credentialID: id,
+          skills: skills ?? []));
+    }
+    return list;
+  }
+
   Future<void> fetchSpecializations() async {
     pageState.value = StatusClasses.isloading;
 
     Either<StatusClasses, List<SpecializationModel>> response =
         await specialSkillsService.getAllSpecializations();
     response.fold((left) {
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!${left.type}");
+      // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!${left.type}");
 
       pageState.value = left;
     }, (right) {
@@ -158,21 +289,30 @@ class FreelancerRequestController extends GetxController {
     sugustSubSpecials.refresh();
   }
 
+// إذا الـ controller persistent (ما ينحذف بين الصفحات):
+
+// ➡️ رح يحتفظ بـ formKey قديم مربوط بـ widget اختفى
+// وهذا بحد ذاته يسبب:
+
+// currentState == null
   void firstNextBottonOnPressed() {
-    if (!formKey.currentState!.validate()) {
-      var jobTitleError = Validators.validateJobTitle(jobTitle.value);
-      var bioError = Validators.validateBio(bio.value);
-      final msg = jobTitleError ?? bioError ?? 'يرجى تعبئة الحقول بشكل صحيح';
+    var specializationError =
+        Validators.validateSpecialization(selectedSpecial.value);
+    var jobTitleError = Validators.validateJobTitle(jobTitle.value);
+    var bioError = Validators.validateBio(bio.value);
+    if (jobTitleError != null ||
+        bioError != null ||
+        specializationError != null) {
+      final msg = specializationError ??
+          jobTitleError ??
+          bioError ??
+          'يرجى تعبئة الحقول بشكل صحيح';
       Get.snackbar('خطأ', msg);
       return;
     }
 
-    //   // 3) حفظ البيانات
-    //   //  controller.saveProfileInfo();
-
-    //   // 4) الانتقال للخطوة التالية
-    Get.toNamed(AppRoutes.entryTest);
-    // }
+    // الانتقال للخطوة التالية
+    Get.toNamed(AppRoutes.freelancerWorkAndCertificates);
   }
 
   bool get canSubmit =>
@@ -185,50 +325,188 @@ class FreelancerRequestController extends GetxController {
       selectedSkills.isNotEmpty ||
       sugustSubSpecials.any((s) => s.selectedSubSkills.isNotEmpty);
 
-  Future sendRequest() async {}
+  //**********************************************************توابع صفحة الاعمال و الشهادات***********************************
+  RxList<Map<String, Object?>> workItems = [
+    {
+      "title": "",
+      "description": "",
+      "image": "",
+      "localImage":
+          null, //بس مشان اعرضله ياها مباشره ما يستنى رفع الصوره فبخزن مسارها بالجهاز
+      "valid": false,
+      "uploading": false,
+    },
+    {
+      "title": "",
+      "description": "",
+      "image": "",
+      "localImage": null,
+      "valid": false,
+      "uploading": false,
+    },
+  ].obs;
 
-  //**********************************************************توابع اسئلة الاختبار*********************************************************
+//الشهادات
+  RxList<Map<String, Object?>> certItems = [
+    {
+      "image": "",
+      "localImage": null,
+      "uploading": false,
+      "title": "",
+      "description": "",
+      "date": null,
+      "source": "",
+      "url": "",
+      "id": "",
+      "skills": <String>[],
+      "expanded": false,
+      "valid": false,
+    },
+    {
+      "image": "",
+      "localImage": null,
+      "uploading": false,
+      "title": "",
+      "description": "",
+      "date": null,
+      "source": "",
+      "url": "",
+      "id": "",
+      "skills": <String>[],
+      "expanded": false,
+      "valid": false,
+    },
+  ].obs;
 
-  // Future<void> fetchQuestions() async {
-  //   testPageState = StatusClasses.isloading;
-  //   update();
-  //   final query = FirebaseFirestore.instance
-  //       .collection(CollectionsNames.admission_questions)
-  //       .where("targetRole", isEqualTo: UserSession.role);
-  //   final response = await FirebaseCrud.runGetQuery(
-  //       query: query,
-  //       fromMap: (data, id) => AdmissionQuestionModel.fromMap(data, id));
-  //   response.fold((errorState) {
-  //     testPageState = errorState;
-  //     update();
-  //   }, (data) {
-  //     questions = data;
-  //     testPageState = StatusClasses.success;
-  //     update();
-  //   });
-  // }
+  // ---------------- إضافة عمل ----------------
+  void addWorkItem() {
+    workItems.add(<String, Object?>{
+      "image": "",
+      "localImage": null,
+      "title": "",
+      "description": "",
+      "valid": false,
+      "uploading": false,
+    });
+  }
 
-  // void istestCorrect() async {
-  //   for (int i = 0; i < questions.length; i++) {
-  //     final selectedAnswer = answers[i];
+  // ---------------- حذف عمل ----------------
+  void removeWorkItem(int index) {
+    workItems.length > 3 ? workItems.removeAt(index) : null;
+  }
 
-  //     // إذا ما جاوب أصلاً أو الجواب غلط
-  //     if (selectedAnswer == null ||
-  //         selectedAnswer != questions[i].correctAnswerIndex) {
-  //       Get.snackbar("اجابات خاطئة",
-  //           "يوجد لديك اجابات خاطئة لايمكنك الاستمرار ، الرجاء تصحيح جميع الاجابات");
-  //       return;
-  //     }
-  //   }
-  //   //هون لازم يتم ارسال الطلب والانتقال لصفحة تم التقديم وتعديل الحاله للمستخدم
-  //   await sendRequest();
-  //   Get.offAllNamed(AppRoutes.pending);
-  //   return; // كل الإجابات صحيح
-  // }
+  // ---------------- إضافة شهادة ----------------
+  void addCertificateItem() {
+    certItems.add(<String, Object?>{
+      "image": "",
+      "localImage": null,
+      "uploading": false,
+      "title": "",
+      "description": "",
+      "date": null,
+      "source": "",
+      "url": "",
+      "id": "",
+      "skills": <String>[],
+      "expanded": false,
+      "valid": false,
+    });
+  }
 
-  // void selectAnswer(int questionIndex, int answerIndex) {
-  //   answers[questionIndex] = answerIndex;
-  //   update(); // GetX
-  // }
+  // ---------------- حذف شهادة ----------------
+  void removeCertificateItem(int index) {
+    certItems.removeAt(index);
+  }
+
+  // ---------------- توسيع الشهادة ----------------
+  void toggleExpand(int index) {
+    final current = certItems[index]["expanded"] == true;
+    certItems[index]["expanded"] = !current;
+    certItems.refresh();
+  }
+
+  // ---------------- اختيار مهارة ----------------
+  void toggleRelatedSkill(int certIndex, String skill) {
+    final skills = (certItems[certIndex]["skills"] as List).cast<String>();
+
+    if (skills.contains(skill)) {
+      skills.remove(skill);
+    } else {
+      skills.add(skill);
+    }
+    certItems[certIndex]["skills"] = skills;
+    certItems.refresh();
+  }
+
+  // ---------------- رفع صورة Firebase ----------------
+  //هالتابع برد الصوره بالرابط
+  Future<void> pickAndUploadImage(int index, String typeImage) async {
+    File? file = await ImageService.pickImage();
+    if (file == null) {
+      Get.snackbar("خطأ", "لم يتم اختيار صورة");
+      return;
+    }
+    if (typeImage == "work") {
+      // 🔥 عرض الصورة مباشرة
+      workItems[index]["localImage"] = file;
+      workItems[index]["uploading"] = true;
+      workItems.refresh();
+
+      //رفع الصورة
+      final result = await ImageService.uploadImage(
+          AppImagePreset.workSamplesPreset, file);
+      result.fold(
+        (error) {
+          workItems[index]["uploading"] = false;
+          workItems.refresh();
+        },
+        (url) {
+          workItems[index]["image"] = url;
+          workItems[index]["localImage"] = null;
+          workItems[index]["uploading"] = false;
+          validateWork(index);
+          workItems.refresh();
+        },
+      );
+    } else {
+      // 🔥 عرض الصورة مباشرة
+      certItems[index]["localImage"] = file;
+      certItems[index]["uploading"] = true;
+      certItems.refresh();
+
+      //رفع الصورة
+      final result = await ImageService.uploadImage(
+          AppImagePreset.certificatePreset, file);
+      result.fold(
+        (error) {
+          certItems[index]["uploading"] = false;
+          certItems.refresh();
+        },
+        (url) {
+          certItems[index]["image"] = url;
+          certItems[index]["localImage"] = null;
+          certItems[index]["uploading"] = false;
+          validateCertificate(index);
+          certItems.refresh();
+        },
+      );
+    }
+  }
+
+  // ---------------- Validation ----------------
+  bool validateWork(int index) {
+    final item = workItems[index];
+    item["valid"] = Validators.validateWork(item);
+    workItems.refresh();
+    return item["valid"] as bool? ?? false;
+  }
+
+  bool validateCertificate(int index) {
+    final item = certItems[index];
+    item["valid"] = Validators.validateCertificate(item);
+    certItems.refresh();
+    return item["valid"] as bool? ?? false;
+  }
+
   //************************************************************************************************************************* */
 }

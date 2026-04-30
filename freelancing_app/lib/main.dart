@@ -4,7 +4,11 @@ import 'package:freelancing_platform/core/classes/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
+
+
+// import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
+// import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
+// import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -33,17 +37,24 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
+       
         
         
         return GetMaterialApp(
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),
           debugShowCheckedModeBanner: false,
-          //initialRoute: AppRoutes.freelancerWorkAndCertificates,
+
           initialRoute: AppRoutes.splash,
 
-         
-        
+          // initialRoute: AppRoutes.clinetWork,
+          // initialRoute: AppRoutes.personalInfo,
+          // initialRoute: AppRoutes.pending,
+          // initialRoute: AppRoutes.rejected,
+          // initialRoute: AppRoutes.approved
+          // initialRoute: AppRoutes.freelancerWorkAndCertificates,
+          //  initialRoute: AppRoutes.splash,
+
           getPages: AppPages.pages,
         );
       },

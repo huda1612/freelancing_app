@@ -28,12 +28,16 @@ class UserModel {
   final String email;
   final String role;
   final String photoUrl;
+  final String? specialization;
   final String bio;
   final List<String> skills; //هي لازم غيرها بس اعمل صف المهارات
   final double rating;
   final int completedProjects;
   final int points;
   final Timestamp? createdAt;
+
+  //بحال كان عميل بس
+  final String? clientType;
 
   UserModel({
     required this.uid,
@@ -47,12 +51,16 @@ class UserModel {
     required this.email,
     required this.role,
     this.photoUrl = '',
+    this.specialization,
     this.bio = '',
     this.skills = const [],
     this.rating = 0.0,
     this.completedProjects = 0,
     this.points = 0,
     this.createdAt,
+
+    //بحال كان عميل بس
+    this.clientType,
   });
 
   // 🔹 تحويل من Object إلى Map (للتخزين)
@@ -68,12 +76,14 @@ class UserModel {
       'email': email,
       'role': role,
       'photoUrl': photoUrl,
+      'specialization': specialization,
       'bio': bio,
       'skills': skills,
       'rating': rating,
       'completed_projects': completedProjects,
       'points': points,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
+      'clientType': clientType
     };
   }
 
@@ -94,6 +104,7 @@ class UserModel {
       email: map['email'] ?? '',
       role: map['role'] ?? '',
       photoUrl: map['photoUrl'] ?? '',
+      specialization: map['specialization'],
       bio: map['bio'] ?? '',
       skills: List<String>.from(map['skills'] ?? []),
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
@@ -101,6 +112,9 @@ class UserModel {
       points: map['points'] ?? 0,
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
+
+      //بحال كان عميل بس
+      clientType: map['clientType'],
     );
   }
 }

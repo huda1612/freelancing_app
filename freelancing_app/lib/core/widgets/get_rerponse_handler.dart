@@ -43,7 +43,7 @@ class UiStateHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (status == StatusClasses.success) {
+    if (status == StatusClasses.success || status == StatusClasses.idle) {
       return child;
     }
 

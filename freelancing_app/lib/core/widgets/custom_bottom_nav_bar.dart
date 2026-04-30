@@ -46,7 +46,7 @@ class CustomBottomNavBar extends StatelessWidget {
               if (isClient)
                 _buildFabButton(gradientColors)
               else
-                const SizedBox(width: 60),
+                const SizedBox(width: 20),
               _buildNavItem(
                 icon: Icons.chat_bubble_outline,
                 index: 2,

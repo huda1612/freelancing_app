@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
@@ -28,13 +27,14 @@ class RouteHandler {
 
     //نتحقق اذا ادمن مناخده فورا على صفحته
     if (UserSession.role == UserRole.admin) {
-      return AppRoutes.admin_home;
+      // return AppRoutes.adminHome;
+      return AppRoutes.adminRequests;
     }
 
     //منتحقق من الايميل
-    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-      return AppRoutes.verifyEmail;
-    }
+    // if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+    //   return AppRoutes.verifyEmail;
+    // }
 
     //اذا ما ادمن فمنتحقق من حالة المستخدم
     final docRef = FirebaseFirestore.instance
@@ -77,7 +77,9 @@ class RouteHandler {
             return AppRoutes.pending;
           }
         default:
-          return AppRoutes.freelancerAccountInfo;
+          return UserSession.role == UserRole.freelancer
+              ? AppRoutes.freelancerAccountInfo
+              : AppRoutes.clientAccountInfo;
       }
     });
   }

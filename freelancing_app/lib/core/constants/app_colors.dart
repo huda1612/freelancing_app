@@ -2,11 +2,22 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static LinearGradient gradientColor= LinearGradient(
+          colors: [
+            AppColors.softPurple,
+            AppColors.softBlue,
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        );
   // بنفسجي
   static const Color purple = Color(0xFF6C63FF); // بنفسجي رئيسي
   static const Color lightPurple = Color(0xFFB3A9FF); // بنفسجي فاتح
+  static const Color veryLightPurple =
+      Color.fromARGB(255, 219, 214, 253); // بنفسجي فاتح
+
   static const Color softPurple =
-      Color.fromARGB(150, 178, 145, 254); // بنفسجي ناعم إضافي
+      Color.fromARGB(255, 178, 145, 254); // بنفسجي ناعم إضافي
   static const Color vividPurple =
       Color.fromARGB(255, 121, 92, 235); // بنفسجي مشبع
   static const Color ovividPurple =
@@ -21,7 +32,7 @@ class AppColors {
       Color.fromARGB(255, 163, 196, 250); // أزرق فاتح
 
   static const Color softBlue =
-      Color.fromARGB(151, 143, 186, 255); // أزرق ناعم إضافي
+      Color.fromARGB(255, 143, 186, 255); // أزرق ناعم إضافي
 
   // خلفية رمادية غامقة
   static const Color darkBackground = Color(0xFF2C2C2E); // رمادي غامق جداً

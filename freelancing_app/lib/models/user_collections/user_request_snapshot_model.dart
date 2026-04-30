@@ -5,15 +5,15 @@ class UserRequestSnapshotModel {
   final String specialization;
   final String jobTitle;
   final String bio;
-  final List<String> skills; //بدها تعديل هي !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  final List<WorksamplesModel> workSamples;
+  final List<String>? skills; 
+  final List<WorksampleModel> workSamples;
   final List<CertificateModel> certificates;
 
   UserRequestSnapshotModel({
     required this.specialization,
     required this.jobTitle,
     required this.bio,
-    required this.skills,
+     this.skills,
     required this.workSamples,
     this.certificates = const [],
   });
@@ -34,10 +34,10 @@ class UserRequestSnapshotModel {
       specialization: map['specialization'] ?? '',
       jobTitle: map['jobTitle'] ?? '',
       bio: map['bio'] ?? '',
-      skills: List<String>.from(map['skills'] ?? []),
+      skills:map['skills'] !=null ? List<String>.from(map['skills'] ) : null,
       workSamples: map['workSamples'] != null
-          ? List<WorksamplesModel>.from(map['workSamples']
-              .map((x) => WorksamplesModel.fromMap(x, x['id'] ?? '')))
+          ? List<WorksampleModel>.from(map['workSamples']
+              .map((x) => WorksampleModel.fromMap(x, x['id'] ?? '')))
           : [],
       certificates: map['certificates'] != null
           ? List<CertificateModel>.from(map['certificates']
