@@ -22,13 +22,13 @@ import 'package:get/get.dart';
 class ClientRequestController extends GetxController {
   //متغيرات الحالة
   var pageState = StatusClasses.isloading;
-  var fetchSpecialState = StatusClasses.isloading;
-  var fetchOldRequestState = StatusClasses.isloading;
+  // var fetchSpecialState = StatusClasses.isloading;
+  // var fetchOldRequestState = StatusClasses.isloading;
 
   //متغيرات اول صفحة
   var allSpecializations = <SpecializationModel>[];
   final formKey = GlobalKey<FormState>();
-  var selectedSpecial = RxnString();
+  // var selectedSpecial = RxnString();
   var jobTitle = RxnString();
   var bio = RxnString();
   var clientType = RxnString();
@@ -40,60 +40,59 @@ class ClientRequestController extends GetxController {
     super.onInit();
 
     //احضار البيانات من السيرفر وتجهيزها بالمتغيرات
-    await Future.wait([fetchPageData()]);
+    await Future.wait([fetchOldRequestData()]);
   }
 
-  Future<void> fetchPageData() async {
-    pageState = StatusClasses.isloading;
-    update();
-    await Future.wait([
-      fetchOldRequestData(),
-      fetchSpecializations(),
-    ]);
+  // Future<void> fetchPageData() async {
+  //   pageState = StatusClasses.isloading;
+  //   update();
+  //   await fetchOldRequestData();
 
-    if (fetchOldRequestState != StatusClasses.success) {
-      pageState = fetchOldRequestState;
-      update();
-      return;
-    }
-    if (fetchSpecialState != StatusClasses.success) {
-      pageState = fetchSpecialState;
-      update();
-      return;
-    }
+  //   // if (fetchOldRequestState != StatusClasses.success) {
+  //   //   pageState = fetchOldRequestState;
+  //   //   update();
+  //   //   return;
+  //   // }
+  //   // if (fetchSpecialState != StatusClasses.success) {
+  //   //   pageState = fetchSpecialState;
+  //   //   update();
+  //   //   return;
+  //   // }
 
-    pageState = StatusClasses.success;
-    update();
-  }
+  //   pageState = StatusClasses.success;
+  //   update();
+  // }
 
-  Future<void> fetchSpecializations() async {
-    fetchSpecialState = StatusClasses.isloading;
-    // update();
+  // Future<void> fetchSpecializations() async {
+  //   fetchSpecialState = StatusClasses.isloading;
+  //   // update();
 
-    Either<StatusClasses, List<SpecializationModel>> response =
-        await specialSkillsService.getAllSpecializations();
-    response.fold((left) {
-      fetchSpecialState = left;
-      // update();
-    }, (right) {
-      //التخصصات الكليةالموجوده
-      allSpecializations = right;
- 
+  //   Either<StatusClasses, List<SpecializationModel>> response =
+  //       await specialSkillsService.getAllSpecializations();
+  //   response.fold((left) {
+  //     fetchSpecialState = left;
+  //     // update();
+  //   }, (right) {
+  //     //التخصصات الكليةالموجوده
+  //     allSpecializations = right;
 
-      fetchSpecialState = StatusClasses.success;
-      // update();
-    });
-  }
+  //     fetchSpecialState = StatusClasses.success;
+  //     // update();
+  //   });
+  // }
 
   Future<void> fetchOldRequestData() async {
     if (UserSession.uid == null) {
-      fetchOldRequestState = StatusClasses.unauthorized;
+      // pageState = StatusClasses.unauthorized;
+      // update();
       Get.offAllNamed(AppRoutes.login);
-      Get.snackbar(fetchOldRequestState.type, fetchOldRequestState.message!);
+      Get.snackbar(pageState.type, pageState.message!);
       return;
     }
 
-    fetchOldRequestState = StatusClasses.isloading;
+    pageState = StatusClasses.isloading;
+    update();
+
     RequestService requestService = RequestService();
 
     Either<StatusClasses, UserRequestModel> response =
@@ -102,15 +101,18 @@ class ClientRequestController extends GetxController {
     response.fold((left) {
       if (left == StatusClasses.notFound) {
         //بحال ما عنده طلب قديم عادي
-        fetchOldRequestState = StatusClasses.success;
+        pageState = StatusClasses.success;
+        print("not FOUND !!!!");
+        update();
         return;
       }
-      fetchOldRequestState = left;
+      pageState = left;
+      update();
+      return;
     }, (oldRequest) {
-      selectedSpecial.value = oldRequest.snapshot.specialization;
       jobTitle.value = oldRequest.snapshot.jobTitle;
       bio.value = oldRequest.snapshot.bio;
-
+      clientType.value = oldRequest.snapshot.clientType;
       workItems.value = oldRequest.snapshot.workSamples
           .map((w) => {
                 "title": w.title,
@@ -122,13 +124,15 @@ class ClientRequestController extends GetxController {
               })
           .toList();
 
-      fetchOldRequestState = StatusClasses.success;
+      pageState = StatusClasses.success;
+      update();
+      return;
     });
   }
 
   bool get canSubmit =>
       (jobTitle.value?.isNotEmpty ?? false) &&
-      (selectedSpecial.value?.isNotEmpty ?? false) &&
+      // (selectedSpecial.value?.isNotEmpty ?? false) &&
       (bio.value?.isNotEmpty ?? false) &&
       (clientType.value?.isNotEmpty ?? false);
 
@@ -147,12 +151,12 @@ class ClientRequestController extends GetxController {
   }
 
   /// القيمة المعروضة في القائمة المنسدلة (null إذا غير موجودة في القائمة).
-  String? get specializationDropdownValue {
-    final v = selectedSpecial.value;
-    if (v == null || v.isEmpty) return null;
-    final ok = allSpecializations.any((o) => o.slug == v);
-    return ok ? v : null;
-  }
+  // String? get specializationDropdownValue {
+  //   final v = selectedSpecial.value;
+  //   if (v == null || v.isEmpty) return null;
+  //   final ok = allSpecializations.any((o) => o.slug == v);
+  //   return ok ? v : null;
+  // }
 
   Future sendRequest() async {
     final RequestService requestService = RequestService();
@@ -169,9 +173,9 @@ class ClientRequestController extends GetxController {
     final List<WorksampleModel> works = _getWorkSampelsModleList();
 
     final UserRequestSnapshotModel snapshot = UserRequestSnapshotModel(
-      specialization: selectedSpecial.value!,
       jobTitle: jobTitle.value!,
       bio: bio.value!,
+      clientType: clientType.value,
       workSamples: works,
     );
 
@@ -183,7 +187,6 @@ class ClientRequestController extends GetxController {
       //تحديث بيانات المستخدم
       Map<String, dynamic> newUserData = {
         "status": UserStatus.pending,
-        "specialization": selectedSpecial.value!,
         "bio": bio.value!,
       };
       final userResponse =
@@ -269,7 +272,7 @@ class ClientRequestController extends GetxController {
   Future<void> pickAndUploadImage(int index, String typeImage) async {
     File? file = await ImageService.pickImage();
     if (file == null) {
-      Get.snackbar("خطأ", "لم يتم اختيار صورة");
+      Get.snackbar("تنبيه", "لم يتم اختيار صورة");
       return;
     }
 

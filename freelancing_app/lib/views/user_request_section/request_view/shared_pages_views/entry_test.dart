@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
-import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
@@ -25,20 +24,30 @@ class EntryTestView extends StatelessWidget {
                 status: controller.testPageState,
                 fetchDataFun: controller.fetchQuestions,
                 child: Column(
+                  // mainAxisSize: MainAxisSize.min,
                   children: [
                     // Header
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Container(
                         padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.person_search_rounded,
-                          color: AppColors.purple,
-                          size: 40,
+                        // decoration: BoxDecoration(
+                        //   color: Colors.white,
+                        //   shape: BoxShape.circle,
+                        // ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.person_search_rounded,
+                              color: AppColors.purple,
+                              size: 40,
+                            ),
+                            Text(
+                              "  اختبار السلوك المهني",
+                              style: AppTextStyles.heading
+                                  .copyWith(color: AppColors.purple),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -46,7 +55,7 @@ class EntryTestView extends StatelessWidget {
                     // Questions List
                     Expanded(
                       child: controller.questions.isEmpty
-                          ? Text("لا يوجد اسئلة")
+                          ? Center(child: Text("لا يوجد اسئلة"))
                           : Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               child: ListView.builder(

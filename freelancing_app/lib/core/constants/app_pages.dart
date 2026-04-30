@@ -95,6 +95,9 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.error,
+       binding: BindingsBuilder(() {
+        Get.lazyPut(() => SignOutController());
+      }),
       page: () => ErrorView(),
     ),
 

@@ -4,14 +4,14 @@ class WorksampleModel {
   final String? id;
   final String title;
   final String description;
-  final String imageUrl;
+  final String? imageUrl;
   final Timestamp? createdAt;
 
   WorksampleModel({
     this.id,
     required this.title,
     required this.description,
-    this.imageUrl = '',
+    this.imageUrl,
     this.createdAt,
   });
   // 🔹 تحويل من Object إلى Map (للتخزين)
@@ -30,7 +30,7 @@ class WorksampleModel {
       id: docId,
       title: map['title'],
       description: map['description'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
+      imageUrl: map['imageUrl'] ,
       // createdAt: map['createdAt'],
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,

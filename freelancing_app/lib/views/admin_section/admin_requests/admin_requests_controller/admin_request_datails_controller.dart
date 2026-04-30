@@ -1,14 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
-import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/core/constants/reuest_status.dart';
 import 'package:freelancing_platform/core/constants/user_status.dart';
+import 'package:freelancing_platform/data/services/request_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
-import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_requests_list_controller.dart';
-import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/admin_requests_list_view.dart';
 import 'package:get/get.dart';
 
 class AdminRequestDatailsController extends GetxController {
@@ -35,6 +33,7 @@ class AdminRequestDatailsController extends GetxController {
     final UserService us = UserService();
     final response = await us.fetchUserData2(request.uId);
     response.fold((error) {
+      Get.snackbar(error.type, error.message ?? "");
       nameLoadingState = error;
       update();
     }, (user) {
@@ -196,6 +195,43 @@ class AdminRequestDatailsController extends GetxController {
 
       return;
     }
+  }
+
+ 
+
+  Future<void> deleteUserAndRequest() async {
+    sendingState = StatusClasses.isloading;
+    update();
+
+    final rs = RequestService();
+    final us = UserService();
+
+    // 1. حذف الطلب أولاً
+    final requestResponse = await rs.deleteUserRequest(id: request.id);
+
+    if (requestResponse != StatusClasses.success) {
+      sendingState = requestResponse;
+      Get.snackbar("خطأ", requestResponse.message ?? "فشل حذف الطلب");
+      update();
+      return;
+    }
+
+    // 2. حذف المستخدم
+    final userResponse = await us.deleteUser(request.uId);
+
+    if (userResponse != StatusClasses.success) {
+      sendingState = userResponse;
+      Get.snackbar("خطأ", userResponse.message ?? "فشل حذف المستخدم");
+      update();
+      return;
+    }
+
+    // 3. نجاح كامل
+    sendingState = StatusClasses.success;
+    update();
+
+    Get.back(result: true);
+    Get.snackbar("نجاح", "تم حذف المستخدم والطلب بنجاح");
   }
 
   void onWorkExpend(int i) {

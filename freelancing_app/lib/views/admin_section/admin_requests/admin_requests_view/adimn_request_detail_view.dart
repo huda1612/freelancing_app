@@ -5,6 +5,7 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/reuest_status.dart';
+import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_bottom_sheet_container.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
@@ -62,13 +63,16 @@ class AdimnRequestDetailView extends StatelessWidget {
                                 ),
                                 SizedBox(width: AppSpaces.heightSmall),
                                 Text(
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                     controller.nameLoadingState ==
                                             StatusClasses.success
                                         ? "${controller.fname} ${controller.lname}"
                                         : controller.nameLoadingState ==
                                                 StatusClasses.isloading
                                             ? "جار التحميل...."
-                                            : "حدث خطأ ${controller.nameLoadingState.message}",
+                                            : "حدث خطأ !",
+                                    // ${controller.nameLoadingState.message}",
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold))
@@ -87,11 +91,15 @@ class AdimnRequestDetailView extends StatelessWidget {
 
                       // Request Details
                       _sectionTitle("تفاصيل الطلب"),
-
-                      _infoRow("الاختصاص",
-                          controller.request.snapshot.specialization),
-                      _infoRow("المسمى الوظيفي",
-                          controller.request.snapshot.jobTitle),
+                      controller.request.snapshot.specialization != null
+                          ? _infoRow("الاختصاص",
+                              controller.request.snapshot.specialization!.name)
+                          : SizedBox.shrink(),
+                      controller.request.userType == UserRole.freelancer
+                          ? _infoRow("المسمى الوظيفي",
+                              controller.request.snapshot.jobTitle)
+                          : _infoRow("مجال العمل",
+                              controller.request.snapshot.jobTitle),
 
                       const SizedBox(height: 10),
 
@@ -258,22 +266,41 @@ class AdimnRequestDetailView extends StatelessWidget {
                           ],
                         ),
                       )
-                    : Padding(
-                        padding: EdgeInsets.all(AppSpaces.paddingLarge),
-                        child: CustomButton(
-                            color: AppColors.red,
-                            text: "حذف الطلب",
-                            prefix: Icon(
-                              Icons.delete_forever,
-                              color: AppColors.white,
-                            ),
-                            onTap: () => Get.defaultDialog(
-                                title: "تحذير",
-                                middleText: "هل انت متأكد من حذف الطلب ؟",
-                                textConfirm: "حذف",
-                                textCancel: "إلغاء",
-                                onConfirm: controller.deleteRequest)),
-                      )),
+                    : controller.request.status == RequestStatus.approved
+                        ? Padding(
+                            padding: EdgeInsets.all(AppSpaces.paddingLarge),
+                            child: CustomButton(
+                                color: AppColors.red,
+                                text: "حذف الطلب",
+                                prefix: Icon(
+                                  Icons.delete_forever,
+                                  color: AppColors.white,
+                                ),
+                                onTap: () => Get.defaultDialog(
+                                    title: "تحذير",
+                                    middleText: "هل انت متأكد من حذف الطلب ؟",
+                                    textConfirm: "حذف",
+                                    textCancel: "إلغاء",
+                                    onConfirm: controller.deleteRequest)),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.all(AppSpaces.paddingLarge),
+                            child: CustomButton(
+                                color: AppColors.red,
+                                text: "حذف الطلب و المستخدم",
+                                prefix: Icon(
+                                  Icons.delete_forever,
+                                  color: AppColors.white,
+                                ),
+                                onTap: () => Get.defaultDialog(
+                                    title: "تحذير",
+                                    middleText:
+                                        "هل انت متأكد من حذف المستخدم والطلب ؟",
+                                    textConfirm: "حذف",
+                                    textCancel: "إلغاء",
+                                    onConfirm:
+                                        controller.deleteUserAndRequest)),
+                          )),
           );
         });
   }

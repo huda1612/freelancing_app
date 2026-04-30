@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freelancing_platform/core/constants/user_status.dart';
+import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
 
 // enum UserStatus { incomplete, pending, approved, rejected }
 
@@ -28,7 +29,7 @@ class UserModel {
   final String email;
   final String role;
   final String photoUrl;
-  final String? specialization;
+  final SpecializationSnapshot? specialization;
   final String bio;
   final List<String> skills; //هي لازم غيرها بس اعمل صف المهارات
   final double rating;
@@ -76,7 +77,7 @@ class UserModel {
       'email': email,
       'role': role,
       'photoUrl': photoUrl,
-      'specialization': specialization,
+      'specialization': specialization?.toMap(),
       'bio': bio,
       'skills': skills,
       'rating': rating,
@@ -89,6 +90,14 @@ class UserModel {
 
   // 🔹 تحويل من Firestore إلى Object
   factory UserModel.fromMap(Map<String, dynamic> map, String docId) {
+    final specializationData = map['specialization'];
+    final specialization = specializationData is Map
+        ? SpecializationSnapshot.fromMap(
+            Map<String, dynamic>.from(specializationData))
+        : SpecializationSnapshot(
+            slug: specializationData?.toString() ?? '',
+            name: '',
+          );
     return UserModel(
       uid: docId,
       fname: map['fname'] ?? '',
@@ -104,7 +113,10 @@ class UserModel {
       email: map['email'] ?? '',
       role: map['role'] ?? '',
       photoUrl: map['photoUrl'] ?? '',
-      specialization: map['specialization'],
+      // specialization: map['specialization'] != null
+      //     ? SpecializationSnapshot.fromMap(map['specialization'])
+      //     : null,
+      specialization: specialization,
       bio: map['bio'] ?? '',
       skills: List<String>.from(map['skills'] ?? []),
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,

@@ -26,3 +26,27 @@ class SpecializationModel {
     );
   }
 }
+
+class SpecializationSnapshot {
+  final String slug;
+  final String name;
+
+  SpecializationSnapshot({
+    required this.slug,
+    required this.name,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'slug': slug,
+      'name': name,
+    };
+  }
+
+  factory SpecializationSnapshot.fromMap(Map<String, dynamic> map) {
+    return SpecializationSnapshot(
+      slug: map['slug'] ?? '',
+      name: map['name'] ?? '',
+    );
+  }
+}
