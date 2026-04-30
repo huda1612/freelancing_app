@@ -6,7 +6,6 @@ import 'package:freelancing_platform/models/user_collections/users_requests_mode
 import 'package:get/get.dart';
 
 class AdminRequestsListController extends GetxController {
-  // var arg = Get.arguments[0]  ;
   List<UserRequestModel> allRequests = [];
 
   List<UserRequestModel> pendingRequests = [];
@@ -18,12 +17,44 @@ class AdminRequestsListController extends GetxController {
   String selectedFilter = "all";
 
   StatusClasses pageState = StatusClasses.isloading;
+
+  bool cleanupLoading = false;
+
   @override
-  void onInit() {
-    Future.wait([fetchAllRequests()]);
+  void onInit() async {
     super.onInit();
+    await fetchAllRequests();
   }
-  
+
+  void runCleanup() {
+    cleanupLoading = true;
+    update();
+    Future(() async {
+      try {
+        final RequestService rs = RequestService();
+        final e1 = await rs.cleanOldAcceptedRequest();
+        if (e1 != StatusClasses.success) {
+          Get.snackbar(
+              "حطأ : ${e1.type}", "حدث خطأ اثناء الحذف : ${e1.message}");
+        }
+        final e2 = await rs.cleanOldRejectedRequestesAndUsers();
+        if (e2 != StatusClasses.success) {
+          Get.snackbar(
+              "حطأ : ${e2.type}", "حدث خطأ اثناء الحذف : ${e2.message}");
+          return;
+        }
+
+        await fetchAllRequests();
+      } catch (e) {
+        print("error + $e");
+      } finally {
+        await fetchAllRequests();
+        cleanupLoading = false;
+        update();
+      }
+    });
+  }
+
   Future<void> fetchAllRequests() async {
     pageState = StatusClasses.isloading;
     update();

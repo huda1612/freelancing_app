@@ -5,8 +5,6 @@ import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
-// import 'package:get/get_core/src/get_main.dart';
-// import 'package:get/get_navigation/get_navigation.dart';
 
 //لازم المستخدم يكون مسجل دخول لاقدر استخدم هالصف
 class UserService {
@@ -18,8 +16,10 @@ class UserService {
 
   Future<UserModel?> fetchUserData(String uid) async {
     try {
-      final userDoc =
-          await _firebaseFirestore.collection("Users").doc(uid).get();
+      final userDoc = await _firebaseFirestore
+          .collection(CollectionsNames.users)
+          .doc(uid)
+          .get();
 
       if (!userDoc.exists) {
         return null;
@@ -58,6 +58,23 @@ class UserService {
     return response;
   }
 
+  //لحذف مستخدم
+  Future<StatusClasses> deleteUser(String uid) async {
+    final usersCollection =
+        _firebaseFirestore.collection(CollectionsNames.users);
+    final userDoc = usersCollection.doc(uid);
+    //اول شي بحذف كل المجموعات الفرعيه بالمستخدم
+    const subCollections = [
+      CollectionsNames.workSamples,
+      CollectionsNames.certificate,
+      CollectionsNames.reviews,
+      CollectionsNames.suggestions,
+      CollectionsNames.activities,
+    ];
+    return await FirebaseCrud.deleteDocumentWithChildren(
+        docRef: userDoc, subCollections: subCollections);
+  }
+
   Future<void> updateUsernameCollection(
       String newUsername, String oldUsername) async {
     //اولا بحذف القديم
@@ -73,3 +90,43 @@ class UserService {
         .set({"uid": uid});
   }
 }
+
+
+  //  Future<StatusClasses> deleteUser(String uid) async {
+  //   final usersCollection =
+  //       _firebaseFirestore.collection(CollectionsNames.users);
+  //   final userDoc = usersCollection.doc(uid);
+  // try {
+  //   final collections = [
+  //     CollectionsNames.workSamples,
+  //     CollectionsNames.certificate,
+  //     CollectionsNames.reviews,
+  //     CollectionsNames.suggestions,
+  //     CollectionsNames.activities,
+  //   ];
+
+  //   for (final c in collections) {
+  //     await _deleteSubCollection(userDoc, c);
+  //   }
+
+  //   //اخر شي حذف المستخدم
+  //   final StatusClasses response = await FirebaseCrud.deleteDocument(
+  //     collectionRef: usersCollection,
+  //     docId: uid,
+  //   );
+  //   return response;
+  // } catch (e) {
+  //   return StatusClasses.customError(e.toString());
+  // }
+  // }
+
+  // Future<void> _deleteSubCollection(
+  //     DocumentReference userDoc, String name) async {
+  //   final batch = _firebaseFirestore.batch();
+  //   final snapshot = await userDoc.collection(name).get();
+
+  //   for (var doc in snapshot.docs) {
+  //     batch.delete(doc.reference);
+  //   }
+  //   await batch.commit();
+  // }

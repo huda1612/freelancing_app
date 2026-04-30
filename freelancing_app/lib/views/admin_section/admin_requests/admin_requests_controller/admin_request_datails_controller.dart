@@ -19,29 +19,10 @@ class AdminRequestDatailsController extends GetxController {
   final expendedcertificate = RxInt(-1);
   String rejectComment = '';
 
-  // البيانات الأساسية
-  // final specialization = '';
-  // final jobTitle = '';
-  // final bio = '';
-  // final skills = <String>[];
-
-  // // الملفات
-  // final workSamples = <String>[]; // روابط ملفات/صور
-  // final certificates = <String>[];
-
   @override
   void onInit() {
     super.onInit();
     Future.wait([fetchRequestedUserData()]);
-
-    // workSamples.assignAll([
-    //   "https://example.com/work1.pdf",
-    //   "https://example.com/work2.pdf",
-    // ]);
-
-    // certificates.assignAll([
-    //   "https://example.com/cert1.pdf",
-    // ]);
   }
 
   Future<void> fetchRequestedUserData() async {
@@ -60,10 +41,6 @@ class AdminRequestDatailsController extends GetxController {
       update();
     });
   }
-
-  // void onCommentChange(val) {
-  //   rejectComment = val;
-  // }
 
   Future<void> onReject() async {
     if (rejectComment.isEmpty) {
@@ -103,6 +80,7 @@ class AdminRequestDatailsController extends GetxController {
       transaction.update(requestRef, {
         'status': RequestStatus.rejected,
         'rejectComment': rejectComment,
+        'updateStateAt': Timestamp.now()
       });
 
       /// تحديث المستخدم
@@ -163,6 +141,7 @@ class AdminRequestDatailsController extends GetxController {
       transaction.update(requestRef, {
         'status': RequestStatus.approved,
         // 'rejectComment': null,
+        'updateStateAt': Timestamp.now()
       });
 
       /// تحديث المستخدم

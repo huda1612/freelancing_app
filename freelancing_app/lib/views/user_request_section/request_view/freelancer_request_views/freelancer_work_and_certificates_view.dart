@@ -20,37 +20,40 @@ class FreelancerWorkAndCertificatesView extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: BaseScreen(
-        appBar: CustomAppBar(
-          title: "الأعمال والشهادات",
-          bottom: const TabBar(
-            labelColor: AppColors.white,
-            unselectedLabelColor: AppColors.grey,
-            indicatorColor: AppColors.white,
-            tabs: [
-              Tab(text: "الأعمال"),
-              Tab(text: "الشهادات"),
+          appBar: CustomAppBar(
+            title: "الأعمال والشهادات",
+            bottom: const TabBar(
+              labelColor: AppColors.white,
+              unselectedLabelColor: AppColors.grey,
+              indicatorColor: AppColors.white,
+              tabs: [
+                Tab(text: "الأعمال"),
+                Tab(text: "الشهادات"),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              _buildWorksTab(),
+              _buildCertificatesTab(),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _buildWorksTab(),
-            _buildCertificatesTab(),
-          ],
-        ),
-        floatingActionButton: Obx(() {
-          final enabled =
-              controller.workItems.where((e) => e["valid"] == true).length >= 2;
-          return Padding(
+          floatingActionButton:
+              //  Obx(() {
+              // final enabled =
+              //     controller.workItems.where((e) => e["valid"] == true).length >= 2;
+              // return
+              Padding(
             padding: const EdgeInsets.all(12),
             child: Align(
               alignment: Alignment.bottomLeft, // ← هون صار على اليمين
               child: ElevatedButton(
-                onPressed: enabled
-                    ? () {
-                        Get.toNamed(AppRoutes.entryTest);
-                      }
-                    : null,
+                onPressed:
+                    // enabled
+                    () {
+                  Get.toNamed(AppRoutes.entryTest);
+                },
+                // : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.vividPurple,
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
@@ -68,9 +71,9 @@ class FreelancerWorkAndCertificatesView extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        }),
-      ),
+          )
+          // }),
+          ),
     );
   }
 
@@ -111,7 +114,7 @@ class FreelancerWorkAndCertificatesView extends StatelessWidget {
             ...List.generate(
               controller.certItems.length,
               (i) => CertificateItemWidget(
-                key: ValueKey(controller.certItems[i]), // 🔥 مهم
+                key: ValueKey(controller.certItems[i]), //  مهم
                 index: i,
               ),
             ),
