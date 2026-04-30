@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 
@@ -88,7 +89,7 @@ class FirebaseCrud {
         return Left(StatusClasses.notFound);
       }
 
-      print("4444444444444444444444${doc.id}");
+      // print("4444444444444444444444${doc.id}");
       return Right(fromMap(doc.data()!, doc.id));
     } on FirebaseException catch (e) {
       print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
@@ -179,6 +180,67 @@ class FirebaseCrud {
     }
   }
 
+  // ملاحظة : هذا التابع يحذف المستوى الأول فقط
+  static Future<StatusClasses> deleteDocumentWithChildren(
+      {required DocumentReference<Map<String, dynamic>> docRef,
+      required List<String> subCollections}) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      //لان في خد للعمليات الممكن تنفيذها بالbatchالواحد بس 500 واقل
+      const int batchLimit = 500;
+
+      for (final sub in subCollections) {
+        final snapshot = await docRef.collection(sub).get();
+
+        if (snapshot.docs.isEmpty) continue;
+
+        for (int i = 0; i < snapshot.docs.length; i += batchLimit) {
+          final batch = firestore.batch();
+
+          final chunk = snapshot.docs.skip(i).take(batchLimit).toList();
+
+          for (var doc in chunk) {
+            batch.delete(doc.reference);
+          }
+
+          await batch.commit();
+        }
+      }
+      // for (final sub in subCollections) {
+      //   final snapshot = await docRef.collection(sub).get();
+      //   if (snapshot.docs.isEmpty) continue;
+      //   final batch = FirebaseFirestore.instance.batch();
+
+      //   for (var doc in snapshot.docs) {
+      //     batch.delete(doc.reference);
+      //   }
+      //   await batch.commit();
+      // }
+      await docRef.delete();
+      return StatusClasses.success;
+    } on FirebaseException catch (e) {
+      return mapFirestoreError(e);
+    } catch (e) {
+      return StatusClasses.customError(e.toString());
+    }
+  }
+
+  // static Future<void> _deleteChildren(
+  //     DocumentReference<Map<String, dynamic>> docRef,
+  //     List<String> subCollections) async {
+  //   for (final sub in subCollections) {
+  //     final batch = FirebaseFirestore.instance.batch();
+
+  //     final snapshot = await docRef.collection(sub).get();
+  //     for (var doc in snapshot.docs) {
+  //       batch.delete(doc.reference);
+  //     }
+  //     await batch.commit();
+  //   }
+
+  //   await docRef.delete();
+  // }
+
   //تابع لتنفيذ المناقلات
   static Future<StatusClasses> runTransaction({
     required Future<void> Function(Transaction transaction) action,
@@ -251,17 +313,21 @@ StatusClasses mapFirestoreError(FirebaseException e) {
       return StatusClasses.offlineError;
 
     case 'permission-denied':
+      print(e);
       return StatusClasses.permissionDenied;
 
     // case 'unavailable':
     //   return StatusClasses.unavailable;
     case 'not-found':
+      print(e);
       return StatusClasses.notFound;
 
     case 'failed-precondition':
+      print(e);
       return StatusClasses.indexRequired;
 
     case 'invalid-argument':
+      print(e);
       return StatusClasses.invalidData;
 
     default:

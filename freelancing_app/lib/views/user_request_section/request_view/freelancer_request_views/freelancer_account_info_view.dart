@@ -55,7 +55,7 @@ class FreelancerAccountInfoView extends StatelessWidget {
                 body: Obx(() {
                   return UiStateHandler(
                     status: controller.pageState.value,
-                    fetchDataFun: controller.fetchSpecializations,
+                    fetchDataFun: controller.fetchPageData,
                     child: Column(
                       children: [
                         Expanded(
@@ -92,57 +92,78 @@ class FreelancerAccountInfoView extends StatelessWidget {
                                                 ),
                                               );
                                             }
-                                            return DropdownButtonFormField<
-                                                String>(
-                                              key: ValueKey(
-                                                '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
-                                              ),
-                                              value: controller
-                                                  .specializationDropdownValue,
-                                              isExpanded: true,
-                                              decoration:
-                                                  unifiedDecoration('التخصص'),
-                                              hint: Text(
-                                                'اختر التخصص',
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              icon: Icon(
-                                                Icons.keyboard_arrow_down,
-                                                color: AppColors.vividPurple,
-                                              ),
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              items: controller
-                                                  .allSpecializations
-                                                  .map(
-                                                    (o) => DropdownMenuItem<
-                                                        String>(
-                                                      value: o.name,
-                                                      child: Text(
-                                                        o.name,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textDirection:
-                                                            TextDirection.rtl,
-                                                      ),
+                                            return Column(
+                                              children: [
+                                                DropdownButtonFormField<String>(
+                                                  key: ValueKey(
+                                                    '${controller.specializationDropdownValue}_${controller.allSpecializations.length}',
+                                                  ),
+                                                  value: controller
+                                                      .specializationDropdownValue,
+                                                  isExpanded: true,
+                                                  decoration: unifiedDecoration(
+                                                      'التخصص'),
+                                                  hint: Text(
+                                                    'اختر التخصص',
+                                                    style: TextStyle(
+                                                      fontSize: 14.sp,
+                                                      color: Colors.black54,
                                                     ),
-                                                  )
-                                                  .toList(),
-                                              onChanged: controller
+                                                  ),
+                                                  icon: Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    color:
+                                                        AppColors.vividPurple,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  items: controller
                                                       .allSpecializations
-                                                      .isEmpty
-                                                  ? null
-                                                  : controller.onSpecialChange,
-                                              // : (v) =>
-                                              //     controller.selectedSpecial.value = v,
-                                              validator: Validators
-                                                  .validateSpecialization,
+                                                      .map(
+                                                        (o) => DropdownMenuItem<
+                                                            String>(
+                                                          value: o.slug,
+                                                          child: Text(
+                                                            o.name,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            textDirection:
+                                                                TextDirection
+                                                                    .rtl,
+                                                          ),
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                  onChanged: controller
+                                                          .allSpecializations
+                                                          .isEmpty
+                                                      ? null
+                                                      : controller
+                                                          .onSpecialChange,
+                                                  validator: Validators
+                                                      .validateSpecialization,
+                                                ),
+                                                // controller.elseSpecial.value
+                                                //     ? CustomTextField(
+                                                //         initialValue: controller
+                                                //             .customSpecial
+                                                //             .value,
+                                                //         hintText:
+                                                //             "ادخل اسم الاختصاص",
+                                                //         keyboardType:
+                                                //             TextInputType.name,
+                                                //         validator: Validators
+                                                //             .validateSpecialization,
+                                                //         onChanged: (v) =>
+                                                //             controller
+                                                //                 .customSpecial
+                                                //                 .value = v)
+                                                //     : SizedBox.shrink()
+                                              ],
                                             );
                                           }),
                                         ),

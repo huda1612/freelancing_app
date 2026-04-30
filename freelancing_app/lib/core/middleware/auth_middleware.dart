@@ -8,13 +8,10 @@ class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null ||
-        UserSession.uid == null ||
-        UserSession.role == null) {
-      // if (user == null) {
-      Get.snackbar("وصول غير مصرح به",
-          "لا يمكنك الوصول الى هذه الصفحه ، يرجى تسجيل الدخول اولا");
-      return RouteSettings(name: AppRoutes.login);
+    if (user == null || UserSession.uid == null || UserSession.role == null) {
+      // Get.snackbar("وصول غير مصرح به",
+      //     "لا يمكنك الوصول الى هذه الصفحه ، يرجى تسجيل الدخول اولا");
+      return RouteSettings(name: AppRoutes.login , arguments: {"reason": "unauthorized"},);
     }
     return super.redirect(route);
   }

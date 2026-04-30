@@ -45,7 +45,7 @@ class ClientAccountInfoView extends StatelessWidget {
                     builder: (controller) {
                       return UiStateHandler(
                         status: controller.pageState,
-                        fetchDataFun: controller.fetchSpecializations,
+                        fetchDataFun: controller.fetchPageData,
                         child: Column(children: [
                           Expanded(
                             child: Padding(
@@ -104,7 +104,7 @@ class ClientAccountInfoView extends StatelessWidget {
                                                       .map(
                                                         (o) => DropdownMenuItem<
                                                             String>(
-                                                          value: o.name,
+                                                          value: o.slug,
                                                           child: Text(
                                                             o.name,
                                                             overflow:

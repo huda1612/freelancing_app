@@ -18,6 +18,7 @@ import 'package:freelancing_platform/models/skill_collections/new_skill_model.da
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
 import 'package:freelancing_platform/models/user_collections/certificate_model.dart';
 import 'package:freelancing_platform/models/user_collections/user_request_snapshot_model.dart';
+import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 import 'package:freelancing_platform/models/user_collections/worksamples_model.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,9 +31,26 @@ class FreelancerRequestController extends GetxController {
 
   //حالة الصفحه قبل ما يدخلها
   var pageState = StatusClasses.isloading.obs;
+  var fetchSpecialState = StatusClasses.isloading.obs;
+  var fetchOldRequestState = StatusClasses.isloading.obs;
 
   //معلومات الحساب
+  //التخصص :
   var selectedSpecial = RxnString();
+
+  //هدول بدهم شيل لو رجعت على القائمه الثابته***********************
+  // var customSpecial = RxnString();
+  // var elseSpecial = false.obs;
+
+  //ليجيب التخصص الصح
+  // String? get finalSpecialization {
+  //   if (elseSpecial.value == true) {
+  //     return customSpecial.value;
+  //   }
+  //   return selectedSpecial.value;
+  // }
+  //***************************************************************** */
+
   var jobTitle = RxnString();
   var bio = RxnString();
 
@@ -53,11 +71,11 @@ class FreelancerRequestController extends GetxController {
   void onInit() {
     super.onInit();
 
-    //احضار البيانات من السيرفر وتجهيزها بالمتغيرات
-    Future.wait([
-      fetchSpecializations(),
-    ]);
-    // fetchQuestions()]);
+    // احضار البيانات من السيرفر وتجهيزها بالمتغيرات
+    fetchPageData().catchError((error, stack) {
+      print('fetchPageData error: $error');
+      print(stack);
+    });
   }
 
   //تابع ارسال الطلب
@@ -79,6 +97,7 @@ class FreelancerRequestController extends GetxController {
 
     final UserRequestSnapshotModel snapshot = UserRequestSnapshotModel(
         specialization: selectedSpecial.value!,
+        // specialization: finalSpecialization!,
         jobTitle: jobTitle.value!,
         bio: bio.value!,
         skills: selectedSkills,
@@ -95,6 +114,7 @@ class FreelancerRequestController extends GetxController {
       Map<String, dynamic> newUserData = {
         "status": UserStatus.pending,
         "specialization": selectedSpecial.value!,
+        // "specialization": finalSpecialization!,
         "bio": bio.value!,
         "skills": selectedSkills,
       };
@@ -177,17 +197,105 @@ class FreelancerRequestController extends GetxController {
     return list;
   }
 
-  Future<void> fetchSpecializations() async {
+  Future<void> fetchPageData() async {
     pageState.value = StatusClasses.isloading;
+    await Future.wait([
+      fetchOldRequestData(),
+      fetchSpecializations(),
+    ]);
+
+    if (fetchOldRequestState != StatusClasses.success) {
+      pageState.value = fetchOldRequestState.value;
+      return;
+    }
+    if (fetchSpecialState != StatusClasses.success) {
+      pageState.value = fetchSpecialState.value;
+      return;
+    }
+    //مشان الاقتراحات لو كان اصلا عنده تخصص
+    if (selectedSpecial.value != null && selectedSpecial.value!.isNotEmpty) {
+      final found = allSpecializations
+          .where((s) => s.slug == selectedSpecial.value)
+          .toList();
+      if (found.isNotEmpty) {
+        sugustSubSpecials.value = found.first.subspecializations;
+      } else {
+        sugustSubSpecials.clear();
+      }
+    }
+    pageState.value = StatusClasses.success;
+  }
+
+  Future<void> fetchOldRequestData() async {
+    if (UserSession.uid == null) {
+      fetchOldRequestState.value = StatusClasses.unauthorized;
+      Get.offAllNamed(AppRoutes.login);
+      Get.snackbar(
+          fetchOldRequestState.value.type, fetchOldRequestState.value.message!);
+      return;
+    }
+
+    fetchOldRequestState.value = StatusClasses.isloading;
+    RequestService requestService = RequestService();
+
+    Either<StatusClasses, UserRequestModel> response =
+        await requestService.fetchRequest(UserSession.uid!);
+
+    response.fold((left) {
+      if (left == StatusClasses.notFound) {
+        //بحال ما عنده طلب قديم عادي
+        fetchOldRequestState.value = StatusClasses.success;
+        return;
+      }
+      fetchOldRequestState.value = left;
+    }, (oldRequest) {
+      selectedSpecial.value = oldRequest.snapshot.specialization;
+      jobTitle.value = oldRequest.snapshot.jobTitle;
+      bio.value = oldRequest.snapshot.bio;
+
+      selectedSkills.value = oldRequest.snapshot.skills ?? [];
+
+      workItems.value = oldRequest.snapshot.workSamples
+          .map((w) => {
+                "title": w.title,
+                "description": w.description,
+                "image": w.imageUrl,
+                "localImage": null,
+                "valid": true,
+                "uploading": false,
+              })
+          .toList();
+      certItems.value = oldRequest.snapshot.certificates
+          .map((c) => {
+                "image": c.imageURL,
+                "localImage": null,
+                "uploading": false,
+                "title": c.title,
+                "description": c.description,
+                "date": c.date,
+                "source": c.source,
+                "url": c.credentialURL,
+                "id": c.credentialID,
+                "skills": c.skills,
+                "expanded": false,
+                "valid": true,
+              })
+          .toList();
+
+      fetchOldRequestState.value = StatusClasses.success;
+    });
+  }
+
+  Future<void> fetchSpecializations() async {
+    fetchSpecialState.value = StatusClasses.isloading;
 
     Either<StatusClasses, List<SpecializationModel>> response =
         await specialSkillsService.getAllSpecializations();
     response.fold((left) {
-      // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!${left.type}");
-
-      pageState.value = left;
+      fetchSpecialState.value = left;
     }, (right) {
       //التخصصات الكليةالموجوده
+
       allSpecializations.value = right;
 
       //المهارات الكليه مشان يبحث فيها
@@ -197,7 +305,7 @@ class FreelancerRequestController extends GetxController {
           .toSet()
           .toList();
       print("TOTAL SKILLS AFTER LOAD: ${totalSkills.length}");
-      pageState.value = StatusClasses.success;
+      fetchSpecialState.value = StatusClasses.success;
     });
   }
 
@@ -205,18 +313,32 @@ class FreelancerRequestController extends GetxController {
   void onSpecialChange(String? val) {
     selectedSpecial.value = val;
     //بدنا نغير المهارات المقترحه حسب التخصص المختار
-    sugustSubSpecials.value = allSpecializations
-        .where((s) => s.name == val)
-        .toList()
-        .first
-        .subspecializations;
+    if (val == null || val.isEmpty) {
+      sugustSubSpecials.clear();
+      return;
+    }
+
+    final found = allSpecializations.where((s) => s.slug == val).toList();
+    if (found.isNotEmpty) {
+      sugustSubSpecials.value = found.first.subspecializations;
+    } else {
+      sugustSubSpecials.clear();
+    }
+
+    // if (val == "else") {
+    //   elseSpecial.value = true;
+    //   // customSpecial.value = null;
+    // } else {
+    //   elseSpecial.value = false;
+    //   customSpecial.value = null;
+    // }
   }
 
   /// القيمة المعروضة في القائمة المنسدلة (null إذا غير موجودة في القائمة).
   String? get specializationDropdownValue {
     final v = selectedSpecial.value;
     if (v == null || v.isEmpty) return null;
-    final ok = allSpecializations.any((o) => o.name == v);
+    final ok = allSpecializations.any((o) => o.slug == v);
     return ok ? v : null;
   }
 
@@ -392,7 +514,7 @@ class FreelancerRequestController extends GetxController {
 
   // ---------------- حذف عمل ----------------
   void removeWorkItem(int index) {
-    workItems.length > 3 ? workItems.removeAt(index) : null;
+    workItems.removeAt(index);
   }
 
   // ---------------- إضافة شهادة ----------------

@@ -11,6 +11,7 @@ import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 // import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/request_type.dart';
+import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/temp_folder.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -111,15 +112,18 @@ class AdimnRequestDetailView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _sectionTitle("المهارات"),
-                                Wrap(
-                                  spacing: 8,
-                                  children: controller.request.snapshot.skills!
-                                      .map((e) => Chip(
-                                          label: Text(e),
-                                          backgroundColor:
-                                              AppColors.lightPurple))
-                                      .toList(),
-                                )
+                                SkillsCards(
+                                    skills:
+                                        controller.request.snapshot.skills!),
+                                // Wrap(
+                                //   spacing: 8,
+                                //   children: controller.request.snapshot.skills!
+                                //       .map((e) => Chip(
+                                //           label: Text(e),
+                                //           backgroundColor:
+                                //               AppColors.lightPurple))
+                                //       .toList(),
+                                // )
                               ],
                             )
                           : SizedBox.shrink(),
@@ -136,12 +140,14 @@ class AdimnRequestDetailView extends StatelessWidget {
                                   children: List.generate(
                                       controller.request.snapshot.workSamples
                                           .length, (i) {
-                                // final file = controller
-                                //     .request.snapshot.workSamples[i];
                                 if (controller.expendedWork.value == i) {
-                                  //هون مفروض حط ويدجيت عرض العمل!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                  return _fileTile("موسعة",
-                                      () => controller.onWorkExpend(i));
+                                  return InkWell(
+                                    onTap: () => controller.onWorkExpend(i),
+                                    child: ProfileWorkCard(
+                                      work: controller
+                                          .request.snapshot.workSamples[i],
+                                    ),
+                                  );
                                 }
 
                                 return _fileTile(
@@ -151,8 +157,6 @@ class AdimnRequestDetailView extends StatelessWidget {
                               }));
                             })
                           : SizedBox.shrink(),
-                      // ...controller.request.snapshot.workSamples.map(
-                      //     (file) => _fileTile("عنوان العينه", file, "work")),
 
                       const SizedBox(height: 20),
 
@@ -161,23 +165,14 @@ class AdimnRequestDetailView extends StatelessWidget {
                           ? _sectionTitle("الشهادات")
                           : SizedBox.shrink(),
                       controller.request.snapshot.certificates.isNotEmpty
-                          ? Obx(() {
-                              return Column(
-                                  children: List.generate(
-                                      controller.request.snapshot.certificates
-                                          .length, (i) {
-                                if (controller.expendedcertificate.value == i) {
-                                  //هون مفروض حط ويدجيت عرض الشهادة!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                  return _fileTile("موسعة",
-                                      () => controller.onCertificateExpend(i));
-                                }
-
-                                return _fileTile(
-                                    controller
-                                        .request.snapshot.certificates[i].title,
-                                    () => controller.onCertificateExpend(i));
-                              }));
-                            })
+                          ? Column(
+                              children: List.generate(
+                                  controller.request.snapshot.certificates
+                                      .length, (i) {
+                              return ProfileCertificateTile(
+                                  certificate: controller
+                                      .request.snapshot.certificates[i]);
+                            }))
                           : SizedBox.shrink(),
                     ],
                   ),

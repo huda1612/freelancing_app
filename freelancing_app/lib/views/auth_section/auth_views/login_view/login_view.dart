@@ -20,6 +20,16 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reason = Get.arguments?["reason"];
+
+    if (reason == "unauthorized") {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.snackbar(
+          "تنبيه",
+          "يرجى تسجيل الدخول أولاً",
+        );
+      });
+    }
     final controller = Get.find<AuthController>();
     final googleController = Get.find<GoogleSignInController>();
 
