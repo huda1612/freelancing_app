@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/collections_names.dart';
@@ -10,8 +11,6 @@ class CertificateService {
   }) : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firebaseFirestore;
-
-
 
   //اضافة شهادة جديده
   Future<StatusClasses> addCertificate({
@@ -31,6 +30,19 @@ class CertificateService {
     return response;
   }
 
+  Future<Either<StatusClasses, List<CertificateModel>>> getAllUserCertificate({
+    required String uid,
+  }) async {
+    var query = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uid)
+        .collection(CollectionsNames.certificate)
+        .orderBy('createdAt', descending: true);
+    var response = await FirebaseCrud.runGetQuery<CertificateModel>(
+        query: query,
+        fromMap: (data, id) => CertificateModel.fromMap(data, id));
+    return response;
+  }
 
   //حذف شهادة
   // Future<StatusClasses> deleteWorkSample({required String uId , required String wsId }) async {

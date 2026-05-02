@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/constants/app_image_cloud.dart';
+import 'package:freelancing_platform/core/constants/app_image_preset.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/constants/user_status.dart';
@@ -112,6 +112,7 @@ class ClientRequestController extends GetxController {
     }, (oldRequest) {
       jobTitle.value = oldRequest.snapshot.jobTitle;
       bio.value = oldRequest.snapshot.bio;
+      print("clientType :${oldRequest.snapshot.clientType}");
       clientType.value = oldRequest.snapshot.clientType;
       workItems.value = oldRequest.snapshot.workSamples
           .map((w) => {
@@ -137,10 +138,16 @@ class ClientRequestController extends GetxController {
       (clientType.value?.isNotEmpty ?? false);
 
   void firstNextBottonOnPressed() {
-    if (!formKey.currentState!.validate()) {
+    var clientTypeErro =
+        clientType.value == null ? "يرجى اختيار نوع العميل" : null;
+
+    if (!formKey.currentState!.validate() || clientTypeErro != null) {
       var jobTitleError = Validators.validateJobTitle(jobTitle.value);
       var bioError = Validators.validateBio(bio.value);
-      final msg = jobTitleError ?? bioError ?? 'يرجى تعبئة الحقول بشكل صحيح';
+      final msg = jobTitleError ??
+          bioError ??
+          clientTypeErro ??
+          'يرجى تعبئة الحقول بشكل صحيح';
       Get.snackbar('خطأ', msg);
       return;
     }
@@ -188,6 +195,8 @@ class ClientRequestController extends GetxController {
       Map<String, dynamic> newUserData = {
         "status": UserStatus.pending,
         "bio": bio.value!,
+        "jobTitle": jobTitle.value!,
+        "clientType": clientType.value
       };
       final userResponse =
           await userService.updateUserData2(newUserData, UserSession.uid!);

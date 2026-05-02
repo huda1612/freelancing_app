@@ -29,20 +29,24 @@ class ProfileWorkCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              width: 66.w,
-              height: 66.h,
-              decoration: BoxDecoration(
-                  gradient:AppColors.gradientColor),
-              child: CachedNetworkImage(
-                imageUrl: work.imageUrl,
-                placeholder: (context, url) => const CustomLoading(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                fit: BoxFit.cover,
-              ),
-              // child: const Icon(Icons.work_outline, color: Colors.white),
-            ),
+                width: 66.w,
+                height: 66.h,
+                decoration: BoxDecoration(gradient: AppColors.gradientColor),
+                child: work.imageUrl != null && work.imageUrl!.trim().isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: work.imageUrl!,
+                        placeholder: (context, url) => const CustomLoading(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                        fit: BoxFit.cover,
+                      )
+                    : Icon(
+                        Icons.no_photography_rounded,
+                        color: AppColors.white,
+                      )
+                ),
           ),
-           SizedBox(width: 10.w),
+          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,11 +54,10 @@ class ProfileWorkCard extends StatelessWidget {
                 Text(work.title,
                     style: AppTextStyles.inputLabel
                         .copyWith(color: AppColors.vividPurple)),
-                 SizedBox(height: 4.w),
+                SizedBox(height: 4.w),
                 Text(
                   work.description,
-                  style:
-                      AppTextStyles.button.copyWith(color: AppColors.black),
+                  style: AppTextStyles.button.copyWith(color: AppColors.black),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),

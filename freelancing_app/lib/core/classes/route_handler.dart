@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
@@ -22,8 +23,6 @@ class RouteHandler {
     if (!isLogin()) {
       return AppRoutes.welcome;
     }
-    //مؤقتاااااااا
-    // return AppRoutes.entryTest;
 
     //نتحقق اذا ادمن مناخده فورا على صفحته
     if (UserSession.role == UserRole.admin) {
@@ -32,9 +31,9 @@ class RouteHandler {
     }
 
     //منتحقق من الايميل
-    // if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-    //   return AppRoutes.verifyEmail;
-    // }
+    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+      return AppRoutes.verifyEmail;
+    }
 
     //اذا ما ادمن فمنتحقق من حالة المستخدم
     final docRef = FirebaseFirestore.instance
@@ -71,7 +70,8 @@ class RouteHandler {
         case UserStatus.approved:
           {
             //هي بدها تعديل للهوم !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            return AppRoutes.approved;
+            // return AppRoutes.approved;
+            return AppRoutes.profile;
           }
         case UserStatus.pending:
           {

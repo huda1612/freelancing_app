@@ -4,8 +4,10 @@ import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
+import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/personal_info_view.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_requests_list_controller.dart';
@@ -22,6 +24,8 @@ import 'package:freelancing_platform/views/auth_section/auth_views/register_view
 import 'package:freelancing_platform/views/auth_section/auth_views/register_view/register_view.dart';
 import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verify_email_view.dart';
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
+import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
+import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/rejected_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
@@ -95,7 +99,7 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.error,
-       binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.lazyPut(() => SignOutController());
       }),
       page: () => ErrorView(),
@@ -117,7 +121,7 @@ class AppPages {
       name: AppRoutes.freelancerWorkAndCertificates,
       page: () => FreelancerWorkAndCertificatesView(),
       binding: FreelancerRequestBinding(),
-      // middlewares: [AuthMiddleware()],
+      middlewares: [AuthMiddleware()],
     ),
 
     //صفحات العميل
@@ -185,15 +189,25 @@ class AppPages {
       middlewares: [AdminMiddleware()],
     ),
 
-    //**********************************************settings pages****************************************
+    //**********************************************profile pages****************************************
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => ProfileView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => ImageUploadController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
     GetPage(
         name: AppRoutes.personalInfo,
         page: () => const PersonalInfoView(),
         middlewares: [AuthMiddleware()]),
-
     GetPage(
-      name: AppRoutes.freelancerWorkAndCertificates,
-      page: () => FreelancerWorkAndCertificatesView(),
-    ),
+        name: AppRoutes.workDetails,
+        page: () => WorkDetailsView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => WorkDetailsController());
+        }),
+        middlewares: [AuthMiddleware()])
   ];
 }

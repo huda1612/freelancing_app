@@ -32,7 +32,6 @@ class BirthDateField extends StatelessWidget {
         Text(
           " تاريخ الميلاد",
           style: AppTextStyles.button.copyWith(color: AppColors.black),
-          
         ),
         SizedBox(height: AppSpaces.heightMedium),
         Row(
@@ -42,8 +41,8 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                  initialValue: year,
-             // value: year,
+                // initialValue: year,
+                value: year,
                 decoration: unifiedDecoration("السنة"),
 
                 items: List.generate(
@@ -65,8 +64,8 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                   initialValue: month,
-                //value: month,
+                //  initialValue: month,
+                value: month,
                 decoration: unifiedDecoration("الشهر"),
 
                 items: List.generate(
@@ -87,8 +86,8 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                  initialValue: day,
-                //value: day,
+                // initialValue: day,
+                value: day,
                 decoration: unifiedDecoration("اليوم"),
 
                 items: List.generate(

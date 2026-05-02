@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -21,7 +23,8 @@ class CustomBottomNavBar extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            // color: Colors.black12,
+            color: AppColors.grey,
             blurRadius: 8,
             offset: Offset(0, -2),
           ),
@@ -29,7 +32,7 @@ class CustomBottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: SizedBox(
-          height: 70,
+          height: 70.h,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -43,10 +46,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 index: 1,
                 gradientColors: gradientColors,
               ),
-              if (isClient)
-                _buildFabButton(gradientColors)
-              else
-                const SizedBox(width: 20),
+              if (isClient) _buildFabButton(gradientColors),
               _buildNavItem(
                 icon: Icons.chat_bubble_outline,
                 index: 2,

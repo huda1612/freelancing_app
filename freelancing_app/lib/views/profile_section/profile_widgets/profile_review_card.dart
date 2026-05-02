@@ -21,10 +21,9 @@ class ProfileReviewCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(12),
-          
-        ),
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.veryLightPurple, width: 0.5)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
