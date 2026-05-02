@@ -34,6 +34,7 @@ class AppRoutes {
 
   //profile routes
   static const profile = '/profile';
+  static const workDetails = '/work_details';
 
   //settings routes
   static const personalInfo = '/personal_info';

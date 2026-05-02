@@ -1,42 +1,79 @@
 import 'dart:io';
+import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class ImageUploadController extends GetxController {
   File? localImage;
   String imageUrl = "";
 
   bool isUploading = false;
-  String? error;
+  // String? error;
 
   /// اختيار صورة + preview فوري + رفع
-  Future<String?> pickAndUpload(String presetName) async {
-    error = null;
+  Future<Either<StatusClasses, String>> pickAndUpload(
+    String presetName, {
+    // String? groupName,
+    String? publicId,
+    // String? folder,
+    // bool overwrite = false,
+  }) async {
+    // error = null;
 
     final file = await ImageService.pickImage();
-    if (file == null) return null;
-
-    // 🔥 preview فوري
+    if (file == null) {
+      // Get.snackbar("تنبيه", "لم يتم اختيار صورة");
+      // return Left(StatusClasses.idle);
+      return Left(StatusClasses.customError("لم يتم اختيار صورة"));
+    }
+    // preview فوري
     localImage = file;
     isUploading = true;
     update();
 
-    final result = await ImageService.uploadImage(presetName, file);
+    // ضغط الصورة
+    final compressedFile = await ImageService.compressImage(file);
+    // إذا فشل الضغط، استخدم الأصل
+    final fileToUpload = compressedFile ?? file;
+    debugPrint("!!!!!!!!!!!!!Original size: ${file.lengthSync()} bytes");
+    debugPrint("Compressed size: ${fileToUpload.lengthSync()} bytes");
+    // نستخدم التابع اللي عملناه لرفع الصوره لل API
+
+    final result = await ImageService.uploadImage(
+      presetName,
+      fileToUpload,
+      // groupName: groupName,
+      publicId: publicId,
+      // folder: folder,
+      // overwrite: overwrite,
+    );
 
     return result.fold(
       (err) {
-        error = err.message;
+        // error = err.message;
+        localImage = null;
         isUploading = false;
         update();
-        return null;
+        return Left(err);
       },
       (url) {
         imageUrl = url;
+        localImage = null;
         isUploading = false;
         update();
-        return url;
+        return Right(url);
       },
     );
+  }
+
+  void reset() {
+    localImage = null;
+    imageUrl = "";
+    isUploading = false;
+    update();
   }
 
   /// عرض الصورة الحالية (المحلية أو من الإنترنت)
@@ -67,7 +104,7 @@ class ImageUploadController extends GetxController {
 //               const Icon(Icons.add_a_photo),
 
 //             //  loading
-//             if (c.isUploading)
+            // if (c.isUploading)
 //               const Center(child: CircularProgressIndicator()),
 //           ],
 //         ),

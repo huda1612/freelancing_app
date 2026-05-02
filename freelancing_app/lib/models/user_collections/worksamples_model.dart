@@ -36,4 +36,15 @@ class WorksampleModel {
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );
   }
+    WorksampleModel copyWith({
+    String? title,
+    String? description,
+    String? imageUrl,
+  }) {
+    return WorksampleModel(
+      title: title ?? this.title,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
 }

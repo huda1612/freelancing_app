@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/constants/app_image_cloud.dart';
+import 'package:freelancing_platform/core/constants/app_image_preset.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/constants/user_status.dart';

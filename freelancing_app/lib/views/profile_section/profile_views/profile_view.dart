@@ -5,10 +5,11 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/widgets/CustomEmptyDataText.dart';
-import 'package:freelancing_platform/core/widgets/custom_bottom_nav_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/card_container.dart';
@@ -17,6 +18,7 @@ import 'package:freelancing_platform/views/profile_section/profile_widgets/profi
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_skill_chip.dart';
 import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
@@ -102,26 +104,53 @@ class ProfileView extends StatelessWidget {
                 gradient: AppColors.gradientColor,
               ),
               padding: const EdgeInsets.all(3),
-              child: GestureDetector(
-                onTap: controller.isOwnProfile ? () {} : null,
-                child: CircleAvatar(
-                  backgroundColor: AppColors.owhite,
-                  child: controller.user.value != null
-                      ? (controller.user.value!.photoUrl.trim().isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: controller.user.value!.photoUrl,
-                              placeholder: (context, url) =>
-                                  const CustomLoading(),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                              fit: BoxFit.cover,
-                            )
-                          : Icon(Icons.person,
-                              size: 54, color: AppColors.lightPurple))
-                      : Icon(Icons.person,
-                          size: 54, color: AppColors.veryLightPurple),
-                ),
-              ),
+              child: GetBuilder<ImageUploadController>(builder: (c) {
+                return GestureDetector(
+                  onLongPress: controller.isOwnProfile
+                      ? controller.changeProfileImage
+                      : null,
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.owhite,
+                    // child: ClipOval(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        if (c.localImage != null)
+                          ClipOval(
+                              child:
+                                  Image.file(c.localImage!, fit: BoxFit.cover))
+                        else if (controller.profileImage.value.isNotEmpty)
+                          ClipOval(
+                            child: Obx(() => CachedNetworkImage(
+                                  imageUrl: controller.profileImage.value,
+                                  // key: ValueKey(controller.profileImage.value),
+                                  // cacheKey: controller.profileImage.value,
+                                  placeholder: (context, url) =>
+                                      const CustomLoading(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                  fit: BoxFit.cover,
+                                )),
+                          )
+                        else
+                          Icon(Icons.person,
+                              size: 54, color: AppColors.lightPurple),
+                        if (c.isUploading)
+                          const Center(child: CircularProgressIndicator()),
+                        controller.isOwnProfile
+                            ? Align(
+                                alignment: Alignment.bottomRight,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: AppColors.lightPurple,
+                                ),
+                              )
+                            : SizedBox.shrink()
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
           Transform.translate(
@@ -178,7 +207,9 @@ class ProfileView extends StatelessWidget {
           CustomButton(
             text: 'لوحة التحكم',
             textStyle: AppTextStyles.link.copyWith(color: AppColors.white),
-            onTap: () {},
+            onTap: () {
+              // customSnackbar();
+            },
             width: 150.w,
           ),
         ],
@@ -236,53 +267,52 @@ class ProfileView extends StatelessWidget {
           SizedBox(height: 14.h),
           _titleText('التقييمات'),
           SizedBox(
-              height: 116.h,
-              child: controller.reviews.isNotEmpty
-                  ? ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: controller.reviews.take(5).length,
-                      separatorBuilder: (_, __) => SizedBox(width: 10.w),
-                      itemBuilder: (context, index) {
-                        final review = controller.reviews[index];
-                        return ProfileReviewCard(
-                          rating: review.rating,
-                          title: review.comment,
-                        );
-                      },
-                    )
-                  : customEmptyMessage(message: "لا يوجد تقييمات بعد")
-              // : Center(
-              //     child: Text(
-              //       "لا يوجد تقييمات بعد",
-              //       style: AppTextStyles.blacksubheading
-              //           .copyWith(color: AppColors.grey),
-              //     ),
-              //   ),
-              ),
-          const SizedBox(height: 14),
-          _titleText('المهارات'),
-          SizedBox(
-            height: 50.h,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.skills.length,
-              separatorBuilder: (_, __) => SizedBox(width: 8.h),
-              itemBuilder: (context, index) => ProfileSkillChip(
-                skill: controller.skills[index],
-              ),
-            ),
+            height: 116.h,
+            child: controller.reviews.isNotEmpty
+                ? ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.reviews.take(5).length,
+                    separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                    itemBuilder: (context, index) {
+                      final review = controller.reviews[index];
+                      return ProfileReviewCard(
+                        rating: review.rating,
+                        title: review.comment,
+                      );
+                    },
+                  )
+                : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
           ),
-          SizedBox(height: 14.h),
-          _titleText('الشهادات'),
-          Column(
-            children: controller.certificates
-                .map(
-                  (certificate) => ProfileCertificateTile(
-                    certificate: certificate,
-                  ),
+          controller.isFreelancer
+              ? Column(
+                  children: [
+                    const SizedBox(height: 14),
+                    _titleText('المهارات'),
+                    SizedBox(
+                      height: 50.h,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.skills.length,
+                        separatorBuilder: (_, __) => SizedBox(width: 8.h),
+                        itemBuilder: (context, index) => ProfileSkillChip(
+                          skill: controller.skills[index],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 14.h),
+                    _titleText('الشهادات'),
+                    Column(
+                      children: controller.certificates
+                          .map(
+                            (certificate) => ProfileCertificateTile(
+                              certificate: certificate,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ],
                 )
-                .toList(),
-          ),
+              : const SizedBox.shrink(),
         ],
       ),
     );
@@ -303,22 +333,60 @@ class ProfileView extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
       child: Column(
         children: [
-          ...controller.works.map((work) => ProfileWorkCard(work: work)),
+          // ListView.builder(
+          //   physics: NeverScrollableScrollPhysics(),
+          //   itemCount: controller.works.length,
+          //   itemBuilder: (context, index) {
+          //     final work = controller.works[index];
+
+          //     return GestureDetector(
+          //       onTap: () async {
+          //         final result = await Get.toNamed(
+          //           AppRoutes.workDetails,
+          //           arguments: {
+          //             "work": work,
+          //             "isOwnProfile": controller.isOwnProfile,
+          //           },
+          //         );
+
+          //         if (result != null) {
+          //           controller.works[index] = result;
+          //         }
+          //       },
+          //       child: ProfileWorkCard(work: work),
+          //     );
+          //   },
+          // ),
+          ...controller.works.map((work) => GestureDetector(
+              onTap: () async {
+                final result = await Get.toNamed(AppRoutes.workDetails,
+                    arguments: {
+                      "work": work,
+                      "isOwnProfile": controller.isOwnProfile
+                    });
+
+                if (result != null) {
+                  work = result;
+                }
+              },
+              child: ProfileWorkCard(work: work))),
           SizedBox(height: 16.h),
-          SizedBox(
-            width: double.infinity,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: AppColors.gradientColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.add, color: AppColors.white),
-                label: Text('إضافة عمل', style: AppTextStyles.button),
-              ),
-            ),
-          ),
+          controller.isOwnProfile
+              ? SizedBox(
+                  width: double.infinity,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: AppColors.gradientColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.add, color: AppColors.white),
+                      label: Text('إضافة عمل', style: AppTextStyles.button),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
     );

@@ -1,10 +1,10 @@
 import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/services/image_service.dart';
+import 'package:freelancing_platform/core/constants/app_image_preset.dart';
+import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/data/services/certificate_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
@@ -19,21 +19,20 @@ import 'package:get/get.dart';
 class ProfileController extends GetxController {
   final UserService _userService;
   final WorkSampleService _workSampleService;
-  final ImageService _imageService;
 
-  ProfileController(
-      {UserService? userService,
-      WorkSampleService? workSampleService,
-      ImageService? imageService})
-      : _userService = userService ?? UserService(),
-        _workSampleService = workSampleService ?? WorkSampleService(),
-        _imageService = imageService ?? ImageService();
+  ProfileController({
+    UserService? userService,
+    WorkSampleService? workSampleService,
+  })  : _userService = userService ?? UserService(),
+        _workSampleService = workSampleService ?? WorkSampleService();
 
   final pageState = StatusClasses.isloading.obs;
+  // final isProfileImageUploading = false.obs;
   final activeTabIndex = 0.obs;
   String userId = '';
 
   final user = Rxn<UserModel>();
+  final profileImage = ''.obs;
   final reviews = <ReviewModel>[].obs;
   final certificates = <CertificateModel>[].obs;
   final works = <WorksampleModel>[].obs;
@@ -54,6 +53,7 @@ class ProfileController extends GetxController {
     }
 
     loadProfile();
+    // if (role == null) {}
   }
 
   //لو مررت وسيط رقم المستخدم للصفحه وانا عم انتقلها معناها هي ما صفحتي صفحة مستخدم ما
@@ -66,6 +66,10 @@ class ProfileController extends GetxController {
   String? get role {
     if (user.value == null) return null;
     return user.value!.role;
+  }
+
+  bool get isFreelancer {
+    return role == UserRole.freelancer;
   }
 
   String get username {
@@ -120,12 +124,6 @@ class ProfileController extends GetxController {
     // update();
     // isLoading.value = true;
     try {
-      // final uid = _auth.currentUser?.uid;
-      // if (uid == null) {
-      //   _setFallbackData();
-      //   return;
-      // }
-
       final getUserResponse = await _userService.fetchUserData2(userId);
       getUserResponse.fold((error) {
         pageState.value = error;
@@ -133,6 +131,7 @@ class ProfileController extends GetxController {
         return;
       }, (fetchedUser) {
         user.value = fetchedUser;
+        profileImage.value = fetchedUser.photoUrl;
         bioController.text = fetchedUser.bio;
         pageState.value = StatusClasses.success;
         // update();
@@ -202,6 +201,42 @@ class ProfileController extends GetxController {
           works.assignAll(right);
         }
         return StatusClasses.success;
+      },
+    );
+  }
+
+  Future<void> changeProfileImage() async {
+    final imageUploadController = Get.find<ImageUploadController>();
+    final result = await imageUploadController.pickAndUpload(
+        AppImagePreset.profileImagePreset,
+        publicId:
+            "users/$userId/profile_${DateTime.now().millisecondsSinceEpoch}"
+        // groupName: "users",
+        // id: userId,
+        // folder: "profile",
+        );
+
+    result.fold(
+      (err) {
+        Get.snackbar(err.type, err.message ?? "حدث خطأ ما اثناء رفع الصورة");
+      },
+      (url) async {
+        final updateResult = await _userService.updateUserData2({
+          "photoUrl": url,
+        }, userId);
+        if (updateResult != StatusClasses.success) {
+          Get.snackbar(updateResult.type,
+              updateResult.message ?? "حدث خطأ ما في السيرفر");
+          return;
+        } else {
+          print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + url);
+
+          profileImage.value = url;
+        }
+        //  تحديث UI مباشرة بدون fetch
+        // user.value = user.value!.copyWith(photoUrl: url);
+        // profileImage.value = url;
+        // update();
       },
     );
   }

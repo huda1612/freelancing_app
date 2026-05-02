@@ -41,14 +41,29 @@ class WorkSampleService {
     return response;
   }
 
+  Future<StatusClasses> updateWorkSample(
+      {required Map<String, dynamic> newData,
+      required String uid,
+      required String wID}) async {
+    final collection = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uid)
+        .collection(CollectionsNames.workSamples);
+    final StatusClasses response = await FirebaseCrud.updateDocument(
+        collectionRef: collection, docId: wID, body: newData);
+    return response;
+  }
 
   //حذف عينة
-  Future<StatusClasses> deleteWorkSample({required String uId , required String wsId }) async {
-    var collection =
-        _firebaseFirestore.collection(CollectionsNames.users).doc(uId).collection(CollectionsNames.workSamples);
+  Future<StatusClasses> deleteWorkSample(
+      {required String uId, required String wsId}) async {
+    var collection = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uId)
+        .collection(CollectionsNames.workSamples);
 
-    var response =
-        await FirebaseCrud.deleteDocument(collectionRef: collection, docId: wsId);
+    var response = await FirebaseCrud.deleteDocument(
+        collectionRef: collection, docId: wsId);
 
     return response;
   }
