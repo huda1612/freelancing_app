@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_image_preset.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/certificate_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/data/services/work_sample_service.dart';
@@ -27,6 +29,8 @@ class ProfileController extends GetxController {
         _workSampleService = workSampleService ?? WorkSampleService();
 
   final pageState = StatusClasses.isloading.obs;
+  final isLoadingSkills = false.obs;
+
   // final isProfileImageUploading = false.obs;
   final activeTabIndex = 0.obs;
   String userId = '';
@@ -39,6 +43,8 @@ class ProfileController extends GetxController {
   final TextEditingController bioController = TextEditingController();
 
   List<String> get skills => user.value?.skills ?? const <String>[];
+
+  final RxList<WorksampleModel> newWorks = <WorksampleModel>[].obs;
 
   @override
   void onInit() {
@@ -53,7 +59,52 @@ class ProfileController extends GetxController {
     }
 
     loadProfile();
-    // if (role == null) {}
+  }
+
+  void addWork() {
+    // newWorks.add(WorksampleModel(title: "", description: ""));
+  }
+
+  Future<void> editSkills() async {
+    //بنقله على صفحة المهارات
+    final selectedSkills =
+        await Get.toNamed(AppRoutes.skillsSelection, arguments: {
+      'oldSkills': user.value!.skills,
+      'specailization': user.value!.specialization!.slug
+    });
+
+    //لو رجع بلا ما يضغط على حفظ
+    if (selectedSkills == null) {
+      customSnackbar(message: "لم يتم حفظ التعديلات");
+      return;
+    }
+    if (selectedSkills is! List<String>) {
+      customSnackbar(message: "خطأ بنوع البيانات الراجعه");
+      return;
+    }
+    //لو المهارات نفسها مافي داعي غير شي بالداتا
+    // bool isSame = selectedSkills.length == user.value!.skills.length &&
+    //     selectedSkills.toSet().containsAll(user.value!.skills);
+    bool isSame = Set.from(selectedSkills).containsAll(user.value!.skills) &&
+        Set.from(user.value!.skills).containsAll(selectedSkills);
+    if (isSame) {
+      customSnackbar(message: "لم يتم تغيير المهارات");
+      return;
+    }
+    isLoadingSkills.value = true;
+
+    final response = await _userService
+        .updateUserData2({"skills": selectedSkills}, user.value!.uid);
+    if (response != StatusClasses.success) {
+      customSnackbar(
+          message:
+              "خطأ في تحديث المهارات : ${response.type}/${response.message}");
+      isLoadingSkills.value = false;
+      return;
+    }
+    user.value = user.value!.copyWith(skills: selectedSkills);
+    isLoadingSkills.value = false;
+    customSnackbar(message: "تم تحديث المهارات بنجاح");
   }
 
   //لو مررت وسيط رقم المستخدم للصفحه وانا عم انتقلها معناها هي ما صفحتي صفحة مستخدم ما
@@ -142,7 +193,7 @@ class ProfileController extends GetxController {
       await Future.wait([
         // _loadReviews(uid),
         _loadCertificates(userId),
-        _loadWorks(userId),
+        loadWorks(userId),
       ]);
       // if (resultList[0] != StatusClasses.success) {
       //   pageState =
@@ -190,7 +241,7 @@ class ProfileController extends GetxController {
     });
   }
 
-  Future<StatusClasses> _loadWorks(String uid) async {
+  Future<StatusClasses> loadWorks(String uid) async {
     final response = await _workSampleService.getAllUserWorkSample(uid: uid);
     return response.fold(
       (error) {

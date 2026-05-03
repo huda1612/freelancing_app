@@ -1,32 +1,27 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_image_preset.dart';
-import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/work_sample_service.dart';
 import 'package:freelancing_platform/models/user_collections/worksamples_model.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:get/get.dart';
 
 class WorkDetailsController extends GetxController {
-  // var title = "موقع روضة أطفال";
-  // var image = "https://picsum.photos/600/300";
-  // var description = "موقع لإدارة روضة أطفال ومتابعة الأنشطة والواجبات.";
+  final WorkSampleService _workSampleService = WorkSampleService();
   WorksampleModel work = WorksampleModel(title: '', description: '');
   var isEditing = false;
   var isPageLoading = false;
-  var isOwnProfile =
-      false; // لازم تجي من البروفايل عشان اعرف اذا كان يقدر يعدل ولا لأ
-  var hasChanged = false;
-  // var isImageUploading = false;
+  var isOwnProfile = false; // لازم تجي من البروفايل عشان اعرف اذا كان يقدر يعدل
+  // var hasChanged = false;
   //القيم الجديده بعد التعديل
   TextEditingController titleC = TextEditingController();
-  // TextEditingController imageC = TextEditingController();
-  File? newImageFile;
   TextEditingController descC = TextEditingController();
+  File? newImageFile;
+
   @override
   void onInit() {
     super.onInit();
@@ -73,7 +68,7 @@ class WorkDetailsController extends GetxController {
     }
 
     // تغيير بيانات العمل بالفاير ستور بس بشرط ان يكون في شي متغير اصلا عن العمل اللي معي ياه بالمتغير وورك
-    WorkSampleService workSampleService = WorkSampleService();
+    // WorkSampleService workSampleService = WorkSampleService();
     Map<String, dynamic> newData = {};
     newData.addIf(
         titleC.text.trim() != work.title.trim(), 'title', titleC.text);
@@ -87,7 +82,7 @@ class WorkDetailsController extends GetxController {
       customSnackbar(message: "لم يتم تحديث البيانات");
       return;
     }
-    final updateRes = await workSampleService.updateWorkSample(
+    final updateRes = await _workSampleService.updateWorkSample(
         newData: newData, uid: UserSession.uid!, wID: work.id!);
     if (updateRes != StatusClasses.success) {
       isPageLoading = false;
@@ -105,32 +100,12 @@ class WorkDetailsController extends GetxController {
     isEditing = false;
     //
     isPageLoading = false;
-    hasChanged = true;
+    // hasChanged = true;
+
     update();
     customSnackbar(message: "تم حفظ التعديلات بنجاح");
-    // Get.snackbar("تم", "تم حفظ التعديلات");
+    Get.find<ProfileController>().loadWorks(UserSession.uid!);
   }
-
-  // void selectNewImage() async {
-  //   final imageUploadController = Get.find<ImageUploadController>();
-  //   final result = await imageUploadController.pickAndUpload(
-  //     AppImagePreset.workSamplesPreset,
-  //   );
-
-  //   result.fold(
-  //     (err) {
-  //       Get.snackbar(err.type, err.message ?? "حدث خطأ ما اثناء رفع الصورة");
-  //     },
-  //     (url) async {
-  //       newImage = url;
-  //       // هنا المفروض اعمل تحديث للصورة في الواجهة
-  //       update();
-  //     },
-  //   );
-
-  //   update();
-  //   // Get.snackbar("تم", "تم حفظ التعديلات");
-  // }
 
   void selectNewImage() async {
     newImageFile = await ImageService.pickImage();
@@ -151,26 +126,36 @@ class WorkDetailsController extends GetxController {
     }
   }
 
-  void updateImageOnly(String newImageUrl) {
-    // image = newImageUrl;
-    Get.snackbar("تم", "تم تحديث الصورة");
-  }
-
   void deleteWork() {
     Get.defaultDialog(
       title: "تأكيد الحذف",
       middleText: "هل أنت متأكد أنك تريد حذف العمل؟",
       textConfirm: "حذف",
       textCancel: "إلغاء",
-      onConfirm: () {
-        // title = "";
-        // image = "";
-        // description = "";
+      onConfirm: () async {
+        Get.back(); //  سكر الديالوج
+        isPageLoading = true;
         update();
-
-        Get.back(); // بس سكري الديالوج
-
-        Get.snackbar("تم", "تم حذف العمل");
+        //delete
+        final response = await _workSampleService.deleteWorkSample(
+            uId: UserSession.uid!, wsId: work.id!);
+        if (response != StatusClasses.success) {
+          customSnackbar(
+              message: "خطأ : ${response.message ?? "فشل حذف العمل"}");
+          isPageLoading = false;
+          update();
+          return;
+        } else {
+          Get.find<ProfileController>()
+              .works
+              .removeWhere((w) => w.id == work.id);
+          Get.find<ProfileController>().works.refresh();
+          // await Get.find<ProfileController>().loadWorks(UserSession.uid!);
+          Get.back(); // ارجع لصفحة البروفايل بعد الحذف
+          customSnackbar(message: "تم حذف العمل بنجاح");
+          // isPageLoading = false;
+          // update();
+        }
       },
     );
   }

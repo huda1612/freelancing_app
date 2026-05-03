@@ -380,7 +380,7 @@ class FreelancerRequestController extends GetxController {
     filteredSubSkills.assignAll(matches);
   }
 
-  void toggleSelectSubSkill(String sub) {
+  void toggleSelectSkill(String sub) {
     if (selectedSkills.contains(sub)) {
       selectedSkills.remove(sub);
     } else {
@@ -405,13 +405,13 @@ class FreelancerRequestController extends GetxController {
     }
   }
 
-  void toggleSkill(int index) {
+  void toggleSubspecial(int index) {
     sugustSubSpecials[index].expanded.value =
         !sugustSubSpecials[index].expanded.value;
     sugustSubSpecials.refresh();
   }
 
-  void toggleSubSkill(int index, String subSkill) {
+  void toggleSkill(int index, String subSkill) {
     final skill = sugustSubSpecials[index];
 
     if (skill.selectedSubSkills.contains(subSkill)) {

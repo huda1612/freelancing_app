@@ -9,7 +9,6 @@ import 'package:freelancing_platform/core/general_controllers.dart/image_upload_
 import 'package:freelancing_platform/core/widgets/CustomEmptyDataText.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
-import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/card_container.dart';
@@ -18,12 +17,11 @@ import 'package:freelancing_platform/views/profile_section/profile_widgets/profi
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_skill_chip.dart';
 import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
 
-  final ProfileController controller = Get.put(ProfileController());
+  final ProfileController controller = Get.find<ProfileController>();
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +121,6 @@ class ProfileView extends StatelessWidget {
                           ClipOval(
                             child: Obx(() => CachedNetworkImage(
                                   imageUrl: controller.profileImage.value,
-                                  // key: ValueKey(controller.profileImage.value),
-                                  // cacheKey: controller.profileImage.value,
                                   placeholder: (context, url) =>
                                       const CustomLoading(),
                                   errorWidget: (context, url, error) =>
@@ -285,20 +281,53 @@ class ProfileView extends StatelessWidget {
           ),
           controller.isFreelancer
               ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 14),
-                    _titleText('المهارات'),
-                    SizedBox(
-                      height: 50.h,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.skills.length,
-                        separatorBuilder: (_, __) => SizedBox(width: 8.h),
-                        itemBuilder: (context, index) => ProfileSkillChip(
-                          skill: controller.skills[index],
-                        ),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _titleText('المهارات'),
+                        controller.isOwnProfile
+                            ? TextButton(
+                                onPressed: controller.editSkills,
+                                child: Text(
+                                  "تعديل المهارات",
+                                  style: AppTextStyles.link,
+                                ))
+                            : SizedBox.shrink()
+                      ],
                     ),
+                    Obx(() {
+                      if (controller.isLoadingSkills.value) {
+                        return CustomLoading();
+                      }
+                      return
+                          //  SizedBox(
+                          //   height: 100.h, // تقريباً سطرين
+                          //   child: SingleChildScrollView(
+                          //     child: Wrap(
+                          //       spacing: 8.w,
+                          //       runSpacing: 8.h,
+                          //       children: controller.skills
+                          //           .map((skill) => ProfileSkillChip(skill: skill))
+                          //           .toList(),
+                          //     ),
+                          //   ),
+                          // );
+
+                          SizedBox(
+                        height: 50.h,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller.skills.length,
+                          separatorBuilder: (_, __) => SizedBox(width: 8.h),
+                          itemBuilder: (context, index) => ProfileSkillChip(
+                            skill: controller.skills[index],
+                          ),
+                        ),
+                      );
+                    }),
                     SizedBox(height: 14.h),
                     _titleText('الشهادات'),
                     Column(
@@ -326,71 +355,113 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildWorksTab() {
-    return
-        // Obx(
-        // () =>
-        SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
-      child: Column(
-        children: [
-          // ListView.builder(
-          //   physics: NeverScrollableScrollPhysics(),
-          //   itemCount: controller.works.length,
-          //   itemBuilder: (context, index) {
-          //     final work = controller.works[index];
-
-          //     return GestureDetector(
-          //       onTap: () async {
-          //         final result = await Get.toNamed(
-          //           AppRoutes.workDetails,
-          //           arguments: {
-          //             "work": work,
-          //             "isOwnProfile": controller.isOwnProfile,
-          //           },
-          //         );
-
-          //         if (result != null) {
-          //           controller.works[index] = result;
-          //         }
-          //       },
-          //       child: ProfileWorkCard(work: work),
-          //     );
-          //   },
-          // ),
-          ...controller.works.map((work) => GestureDetector(
-              onTap: () async {
-                final result = await Get.toNamed(AppRoutes.workDetails,
+    return Obx(() => SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
+          child: Column(children: [
+            ...List.generate(controller.works.length, (index) {
+              final work = controller.works[index];
+              print(work.imageUrl);
+              return GestureDetector(
+                onTap: () async {
+                  Get.toNamed(
+                    AppRoutes.workDetails,
                     arguments: {
                       "work": work,
-                      "isOwnProfile": controller.isOwnProfile
-                    });
+                      "isOwnProfile": controller.isOwnProfile,
+                    },
+                  );
+                },
+                child: ProfileWorkCard(work: work),
+              );
+            }),
+            // ...List.generate(controller.newWorks.length, (index) {
+            //   // return
+            // }),
+            controller.isOwnProfile
+                ? SizedBox(
+                    width: double.infinity,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.gradientColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: TextButton.icon(
+                        onPressed: controller.addWork,
+                        icon: const Icon(Icons.add, color: AppColors.white),
+                        label: Text('إضافة عمل', style: AppTextStyles.button),
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ]),
+        ));
+    //  Obx(() => SingleChildScrollView(
+    //       padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
+    //       child: Column(
+    //         children: [
+    //           // ListView.builder(
+    //           //   physics: NeverScrollableScrollPhysics(),
+    //           //   itemCount: controller.works.length,
+    //           //   itemBuilder: (context, index) {
+    //           //     final work = controller.works[index];
 
-                if (result != null) {
-                  work = result;
-                }
-              },
-              child: ProfileWorkCard(work: work))),
-          SizedBox(height: 16.h),
-          controller.isOwnProfile
-              ? SizedBox(
-                  width: double.infinity,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: AppColors.gradientColor,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.add, color: AppColors.white),
-                      label: Text('إضافة عمل', style: AppTextStyles.button),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ],
-      ),
-    );
-    // );
+    //           //     return GestureDetector(
+    //           //       onTap: () async {
+    //           //         final result = await Get.toNamed(
+    //           //           AppRoutes.workDetails,
+    //           //           arguments: {
+    //           //             "work": work,
+    //           //             "isOwnProfile": controller.isOwnProfile,
+    //           //           },
+    //           //         );
+    //           //         if (result != null) {
+    //           //           controller.works[index] = result;
+    //           //         }
+    //           //       },
+    //           //       child: ProfileWorkCard(work: work),
+    //           //     );
+    //           //   },
+    //           // ),
+    //           ...controller.works.map((work) => GestureDetector(
+    //               onTap: () async {
+    //                 final result = await Get.toNamed(AppRoutes.workDetails,
+    //                     arguments: {
+    //                       "work": work,
+    //                       "isOwnProfile": controller.isOwnProfile
+    //                     });
+
+    //                 if (result != null) {
+    //                   // controller.loadWorks(controller.userId);
+    //                   print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$result");
+    //                   final index =
+    //                       controller.works.indexWhere((w) => w.id == result.id);
+    //                   if (index != -1) {
+    //                     controller.works[index] = result;
+    //                     controller.works.refresh();
+    //                   }
+    //                 }
+    //               },
+    //               child: ProfileWorkCard(work: work))),
+    //           SizedBox(height: 16.h),
+    //           controller.isOwnProfile
+    //               ? SizedBox(
+    //                   width: double.infinity,
+    //                   child: DecoratedBox(
+    //                     decoration: BoxDecoration(
+    //                       gradient: AppColors.gradientColor,
+    //                       borderRadius: BorderRadius.circular(16),
+    //                     ),
+    //                     child: TextButton.icon(
+    //                       onPressed: () {},
+    //                       icon: const Icon(Icons.add, color: AppColors.white),
+    //                       label: Text('إضافة عمل', style: AppTextStyles.button),
+    //                     ),
+    //                   ),
+    //                 )
+    //               : const SizedBox.shrink(),
+    //         ],
+    //       ),
+    //     ));
   }
 
   Widget _tabsBar() {

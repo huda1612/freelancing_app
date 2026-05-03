@@ -157,16 +157,8 @@ class AuthController extends GetxController {
       Get.snackbar("نجاح", "تم تسجيل الدخول");
       var nextRoute = await RouteHandler.firstRoutHandler();
       Get.offAllNamed(nextRoute);
-      // if (!_authService.currentUser!.emailVerified) {
-      //   //مؤقته للتجربه
-      //   // Get.toNamed(AppRoutes.personalInfo);
-      //   // Get.offAllNamed(AppRoutes.verifyEmail);
-      // } else {
-      //   Get.offAllNamed(AppRoutes.personalInfo);
-      //   //هون لازم اعمل التوجيه حسب حالة الطلب عنده!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // }
     } on FirebaseAuthException catch (e) {
-      // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + e.toString());
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + e.toString());
       String message;
       switch (e.code) {
         case 'user-not-found':
@@ -181,8 +173,15 @@ class AuthController extends GetxController {
         case 'user-disabled':
           message = "تم تعطيل هذا الحساب";
           break;
+        case 'network-request-failed':
+          message = "تحقق من اتصال الإنترنت";
+          break;
         default:
-          message = "فشل تسجيل الدخول، تأكد من البيانات";
+          if (e.message!.contains("Connection reset by peer")) {
+            message = "فشل تسجيل الدخول ، تحقق من اتصالك بالانترنت";
+            break;
+          }
+          message = "فشل تسجيل الدخول، تأكد من البيانات ";
       }
       Get.snackbar("خطأ", message);
     } catch (e) {
