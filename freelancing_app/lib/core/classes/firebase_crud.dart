@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 
@@ -92,10 +91,10 @@ class FirebaseCrud {
       // print("4444444444444444444444${doc.id}");
       return Right(fromMap(doc.data()!, doc.id));
     } on FirebaseException catch (e) {
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
+      // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
       return Left(mapFirestoreError(e));
     } catch (e) {
-      print("!!!!!!!!!!!!7687687!!!!!!!!!!!!!!!!!!!$e");
+      // print("!!!!!!!!!!!!7687687!!!!!!!!!!!!!!!!!!!$e");
 
       return Left(StatusClasses.customError(e.toString()));
     }
@@ -160,6 +159,7 @@ class FirebaseCrud {
     } on FirebaseException catch (e) {
       return mapFirestoreError(e);
     } catch (e) {
+      print(e);
       return StatusClasses.customError(e.toString());
     }
   }

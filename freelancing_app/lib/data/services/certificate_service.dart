@@ -44,14 +44,32 @@ class CertificateService {
     return response;
   }
 
-  //حذف شهادة
-  // Future<StatusClasses> deleteWorkSample({required String uId , required String wsId }) async {
-  //   var collection =
-  //       _firebaseFirestore.collection(CollectionsNames.users).doc(uId).collection(CollectionsNames.workSamples);
+  Future<StatusClasses> updateCertificate(
+      {required Map<String, dynamic> newData,
+      required String uid,
+      required String cID}) async {
+    final collection = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uid)
+        .collection(CollectionsNames.certificate);
+    final StatusClasses response = await FirebaseCrud.updateDocument(
+        collectionRef: collection, docId: cID, body: newData);
+    return response;
+  }
 
-  //   var response =
-  //       await FirebaseCrud.deleteDocument(collectionRef: collection, docId: wsId);
+  //حذف 
+  Future<StatusClasses> deleteCertificate(
+      {required String uId, required String cId}) async {
+    var collection = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uId)
+        .collection(CollectionsNames.certificate);
 
-  //   return response;
-  // }
+    var response = await FirebaseCrud.deleteDocument(
+        collectionRef: collection, docId: cId);
+
+    return response;
+  }
+
+  
 }

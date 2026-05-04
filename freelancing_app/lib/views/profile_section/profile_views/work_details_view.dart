@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
-import 'package:freelancing_platform/core/widgets/CustomEmptyDataText.dart';
+import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class WorkDetailsView extends StatelessWidget {
+  const WorkDetailsView({super.key});
+
   @override
   Widget build(BuildContext context) {
+    
     return GetBuilder<WorkDetailsController>(
         init: Get.find<WorkDetailsController>(),
         builder: (controller) {
@@ -52,7 +55,7 @@ class WorkDetailsView extends StatelessWidget {
                         const Spacer(),
 
                         // الثلاث نقاط
-                        controller.isOwnProfile
+                        controller.isOwnProfile && !controller.isNewWork
                             ? PopupMenuButton(
                                 icon: const Icon(Icons.more_vert,
                                     color: AppColors.white),
@@ -100,7 +103,17 @@ class WorkDetailsView extends StatelessWidget {
 
                           box(
                             child: controller.isEditing
-                                ? TextField(controller: controller.titleC)
+                                ? TextField(
+                                    controller: controller.titleC,
+                                    decoration: InputDecoration(
+                                      hintText: "ادخل عنوان العمل",
+                                      hintStyle: TextStyle(
+                                        color: AppColors.grey,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
                                 : Text(
                                     controller.work.title,
                                     style: const TextStyle(
@@ -113,22 +126,6 @@ class WorkDetailsView extends StatelessWidget {
 
                           const SizedBox(height: 18),
 
-                          // box(
-                          //     child: CachedNetworkImage(
-                          //   imageUrl: controller.work.imageUrl ?? '',
-                          //   placeholder: (context, url) =>
-                          //       const CustomLoading(),
-                          //   errorWidget: (context, url, error) =>
-                          //       const Icon(Icons.error),
-                          //   fit: BoxFit.cover,
-                          // )),
-
-                          // Image
-                          // GetBuilder<ImageUploadController>(
-                          // init: Get.find<ImageUploadController>(),
-                          // builder: (imageController) {
-                          // return
-
                           GestureDetector(
                             onTap: controller.isEditing
                                 ? controller.selectNewImage
@@ -136,10 +133,14 @@ class WorkDetailsView extends StatelessWidget {
                             child: SizedBox(
                                 width: double.infinity,
                                 child: controller.newImageFile != null
-                                    ? Image.file(controller.newImageFile!,
+                                    ? Image.file(
+                                        controller
+                                            .newImageFile!, //غير مدعومه بالويب هي الويدجيت
                                         fit: BoxFit.cover)
                                     : controller.work.imageUrl != null &&
-                                            controller.work.imageUrl!.isNotEmpty
+                                            controller.work.imageUrl!
+                                                .trim()
+                                                .isNotEmpty
                                         ? CachedNetworkImage(
                                             imageUrl:
                                                 controller.work.imageUrl ?? '',
@@ -154,17 +155,28 @@ class WorkDetailsView extends StatelessWidget {
                                             ),
                                             fit: BoxFit.cover,
                                           )
-                                        : Column(
-                                            children: [
-                                              const Icon(
-                                                Icons.no_photography_rounded,
-                                                color: AppColors.darkPurple,
-                                                size: 100,
-                                              ),
-                                              customEmptyMessage(
-                                                  message:
-                                                      "لا يوجد صورة للعمل"),
-                                            ],
+                                        : GestureDetector(
+                                            onTap: controller.isEditing
+                                                ? controller.selectNewImage
+                                                : null,
+                                            child: Column(
+                                              children: [
+                                                Icon(
+                                                  controller.isEditing
+                                                      ? Icons
+                                                          .add_a_photo_rounded
+                                                      : Icons
+                                                          .no_photography_rounded,
+                                                  color: AppColors.darkPurple,
+                                                  size: 100,
+                                                ),
+                                                customEmptyMessage(
+                                                    message: controller
+                                                            .isEditing
+                                                        ? "اضف صورة للعمل"
+                                                        : "لا يوجد صورة للعمل"),
+                                              ],
+                                            ),
                                           )),
                           ),
                           // }),
@@ -194,8 +206,12 @@ class WorkDetailsView extends StatelessWidget {
                           if (controller.isEditing)
                             Center(
                               child: ElevatedButton(
-                                onPressed: controller.saveChange,
-                                child: const Text("حفظ التعديلات"),
+                                onPressed: controller.isNewWork
+                                    ? controller.saveNewWork
+                                    : controller.saveChange,
+                                child: Text(controller.isNewWork
+                                    ? "إضافة العمل"
+                                    : "حفظ التعديلات"),
                               ),
                             ),
                         ],
