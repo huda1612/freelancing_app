@@ -34,8 +34,11 @@ class AppRoutes {
 
   //profile routes
   static const profile = '/profile';
+  static const personalInfo = '/personal_info';
   static const workDetails = '/work_details';
 
+  //skills routes
+  static const skillsSelection = '/skills_selection';
+
   //settings routes
-  static const personalInfo = '/personal_info';
 }

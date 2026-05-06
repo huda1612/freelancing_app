@@ -5,9 +5,6 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class WorkItemWidget extends StatelessWidget {
-  // final int index;
-  // WorkItemWidget({super.key, required this.index});
-  // final controller = Get.find<WorkCertController>();
 
   final int index;
 

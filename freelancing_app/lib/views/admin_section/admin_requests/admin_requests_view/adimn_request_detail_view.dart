@@ -180,8 +180,10 @@ class AdimnRequestDetailView extends StatelessWidget {
                                   controller.request.snapshot.certificates
                                       .length, (i) {
                               return ProfileCertificateTile(
-                                  certificate: controller
-                                      .request.snapshot.certificates[i]);
+                                certificate:
+                                    controller.request.snapshot.certificates[i],
+                                isOwnProfile: false,
+                              );
                             }))
                           : SizedBox.shrink(),
                     ],

@@ -2,21 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freelancing_platform/core/constants/user_status.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
 
-// enum UserStatus { incomplete, pending, approved, rejected }
-
-// String statusToString(UserStatus status) {
-//   switch (status) {
-//     case UserStatus.incomplete:
-//       return 'incomplete';
-//     case UserStatus.pending:
-//       return 'pending';
-//     case UserStatus.approved:
-//       return 'approved';
-//     case UserStatus.rejected:
-//       return 'rejected';
-//   }
-// }
-
 class UserModel {
   final String uid;
   final String fname;
@@ -128,6 +113,51 @@ class UserModel {
 
       //بحال كان عميل بس
       clientType: map['clientType'],
+    );
+  }
+  UserModel copyWith({
+    String? uid,
+    String? fname,
+    String? lname,
+    String? username,
+    String? status,
+    String? gender,
+    String? countryCode,
+    DateTime? birthDate,
+    String? email,
+    String? role,
+    String? photoUrl,
+    SpecializationSnapshot? specialization,
+    String? bio,
+    String? jobTitle,
+    List<String>? skills,
+    double? rating,
+    int? completedProjects,
+    int? points,
+    Timestamp? createdAt,
+    String? clientType,
+  }) {
+    return UserModel(
+      uid: uid ?? this.uid,
+      fname: fname ?? this.fname,
+      lname: lname ?? this.lname,
+      username: username ?? this.username,
+      status: status ?? this.status,
+      gender: gender ?? this.gender,
+      countryCode: countryCode ?? this.countryCode,
+      birthDate: birthDate ?? this.birthDate,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      photoUrl: photoUrl ?? this.photoUrl,
+      specialization: specialization ?? this.specialization,
+      bio: bio ?? this.bio,
+      jobTitle: jobTitle ?? this.jobTitle,
+      skills: skills ?? this.skills,
+      rating: rating ?? this.rating,
+      completedProjects: completedProjects ?? this.completedProjects,
+      points: points ?? this.points,
+      createdAt: createdAt ?? this.createdAt,
+      clientType: clientType ?? this.clientType,
     );
   }
 }
