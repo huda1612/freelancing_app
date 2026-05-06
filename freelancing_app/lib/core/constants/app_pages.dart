@@ -3,6 +3,7 @@ import 'package:freelancing_platform/core/bindings/client_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
+import 'package:freelancing_platform/core/bindings/project_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
@@ -27,6 +28,7 @@ import 'package:freelancing_platform/views/auth_section/auth_views/verification_
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
+import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
 import 'package:freelancing_platform/views/skills_section/skills_view/skills_selection_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
@@ -212,6 +214,15 @@ class AppPages {
       }),
       // middlewares: [AuthMiddleware()])
     ),
+
+
+     GetPage(
+      name: AppRoutes.createProject,
+      page: () => CreateProjectView(),
+      binding: ProjectBinding(),
+     // middlewares: [AuthMiddleware()],
+    ),
+    
     
     //********************************************************************************************************
   ];

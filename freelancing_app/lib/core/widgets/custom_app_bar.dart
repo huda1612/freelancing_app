@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? trailingIcon;
   final VoidCallback? onTrailingPressed;
   final Color? backgroundColor;
+  final Gradient? backgroundGradient;
   final PreferredSizeWidget? bottom;
 
   const CustomAppBar({
@@ -20,6 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.trailingIcon,
     this.onTrailingPressed,
     this.backgroundColor,
+     this.backgroundGradient,
     this.bottom,
   });
 
@@ -29,6 +31,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: 0,
+       flexibleSpace: backgroundGradient != null
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: backgroundGradient,
+              ),
+            )
+          : null,
       centerTitle: true,
       title: title != null
           ? Text(
