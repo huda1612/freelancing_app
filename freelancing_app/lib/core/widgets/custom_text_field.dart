@@ -13,7 +13,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final double? width;
-  final double? height;
+  // final double? height;
   final Function(String)? onChanged;
   final Color? fillColor;
   final BorderRadius? borderRadius;
@@ -29,7 +29,7 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType,
     this.validator,
     this.width = 380,
-    this.height = 48,
+    // this.height = 48,
     this.onChanged,
     this.fillColor,
     this.borderRadius,
@@ -72,7 +72,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       width: widget.width!.w,
       // height: widget.height!.h,
       child: TextFormField(
-        initialValue:widget.initialValue ,
+        initialValue: widget.initialValue,
         controller: widget.controller,
         obscureText: _obscure,
         keyboardType: widget.keyboardType,

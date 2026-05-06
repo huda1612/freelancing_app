@@ -51,10 +51,10 @@ class UserService {
   }
 
   Future<StatusClasses> updateUserData2(
-      Map<String, dynamic> newUser, String uid) async {
+      Map<String, dynamic> newData, String uid) async {
     final collection = _firebaseFirestore.collection(CollectionsNames.users);
     final StatusClasses response = await FirebaseCrud.updateDocument(
-        collectionRef: collection, docId: uid, body: newUser);
+        collectionRef: collection, docId: uid, body: newData);
     return response;
   }
 
