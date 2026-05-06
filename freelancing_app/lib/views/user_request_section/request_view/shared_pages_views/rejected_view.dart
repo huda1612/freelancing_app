@@ -14,8 +14,7 @@ import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/rejected_controller.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/get_core.dart';
-import 'package:get/get_instance/get_instance.dart';
+
 
 class RejectedView extends StatelessWidget {
   const RejectedView({super.key});

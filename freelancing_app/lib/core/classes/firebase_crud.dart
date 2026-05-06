@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 // import 'package:freelancing_platform/core/utils/helper_function/check_internet.dart';
 

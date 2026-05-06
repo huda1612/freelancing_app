@@ -20,8 +20,9 @@ class AppRoutes {
 
   //request route
   static const freelancerAccountInfo = '/freelancer_account_info';
-  static const freelancerWorkAndCertificates = '/freelancer_work_and_certificates';
-  
+  static const freelancerWorkAndCertificates =
+      '/freelancer_work_and_certificates';
+
   static const clinetWork = '/clinet_work';
 
   static const clientAccountInfo = '/client_account_info';
@@ -31,7 +32,10 @@ class AppRoutes {
   static const approved = '/approved';
   static const rejected = '/rejected';
 
+  //profile routes
+  static const profile = '/profile';
+  static const workDetails = '/work_details';
+
   //settings routes
   static const personalInfo = '/personal_info';
-
 }

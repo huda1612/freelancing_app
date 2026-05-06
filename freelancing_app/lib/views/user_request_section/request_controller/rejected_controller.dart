@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 
@@ -15,6 +14,7 @@ class RejectedController extends GetxController {
   String _rId = '';
 
   @override
+
   void onInit() {
     super.onInit();
     //احضار البيانات من السيرفر وتجهيزها بالمتغيرات

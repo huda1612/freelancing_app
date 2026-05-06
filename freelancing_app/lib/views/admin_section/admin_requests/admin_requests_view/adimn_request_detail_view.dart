@@ -9,10 +9,11 @@ import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_bottom_sheet_container.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
-// import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
+import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/request_type.dart';
-import 'package:freelancing_platform/views/admin_section/admin_requests/widgets/temp_folder.dart';
+import 'package:freelancing_platform/core/widgets/profile_certificate_tile.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/certificate_skill_card.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -94,12 +95,13 @@ class AdimnRequestDetailView extends StatelessWidget {
                       controller.request.snapshot.specialization != null
                           ? _infoRow("الاختصاص",
                               controller.request.snapshot.specialization!.name)
-                          : SizedBox.shrink(),
-                      controller.request.userType == UserRole.freelancer
-                          ? _infoRow("المسمى الوظيفي",
-                              controller.request.snapshot.jobTitle)
-                          : _infoRow("مجال العمل",
-                              controller.request.snapshot.jobTitle),
+                          : _infoRow("نوع العميل",
+                              controller.request.snapshot.clientType!),
+                      _infoRow(
+                          controller.request.userType == UserRole.freelancer
+                              ? "المسمى الوظيفي"
+                              : "مجال العمل",
+                          controller.request.snapshot.jobTitle),
 
                       const SizedBox(height: 10),
 
