@@ -36,15 +36,16 @@ class ProfileWorkCard extends StatelessWidget {
                     ? CachedNetworkImage(
                         imageUrl: work.imageUrl!,
                         placeholder: (context, url) => const CustomLoading(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.image_not_supported_rounded,
+                          color: AppColors.white,
+                        ),
                         fit: BoxFit.cover,
                       )
                     : Icon(
                         Icons.no_photography_rounded,
                         color: AppColors.white,
-                      )
-                ),
+                      )),
           ),
           SizedBox(width: 10.w),
           Expanded(

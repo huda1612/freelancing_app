@@ -84,10 +84,8 @@ class ImageService {
   static Future<Either<StatusClasses, String>> uploadImage(
     String presetName,
     File imageFile, {
-    // String? groupName,
     String? publicId,
-    // String? folder,
-    // bool overwrite = false
+  
   }) async {
     try {
       if (await checkInternet()) {

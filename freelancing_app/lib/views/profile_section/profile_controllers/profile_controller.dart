@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_image_preset.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
+import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
+import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/certificate_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/data/services/work_sample_service.dart';
@@ -19,24 +23,34 @@ import 'package:get/get.dart';
 class ProfileController extends GetxController {
   final UserService _userService;
   final WorkSampleService _workSampleService;
+  final CertificateService _certificateService;
 
   ProfileController({
     UserService? userService,
     WorkSampleService? workSampleService,
+    CertificateService? certificateService,
   })  : _userService = userService ?? UserService(),
-        _workSampleService = workSampleService ?? WorkSampleService();
+        _workSampleService = workSampleService ?? WorkSampleService(),
+        _certificateService = certificateService ?? CertificateService();
 
+  //loading states
   final pageState = StatusClasses.isloading.obs;
-  // final isProfileImageUploading = false.obs;
+  final isLoadingSkills = false.obs;
+  final loadCertificates = false.obs;
+  RxSet<String> loadingCertIds = <String>{}.obs;
+  final addingCerLoading = false.obs;
   final activeTabIndex = 0.obs;
-  String userId = '';
 
+  //UI variables
   final user = Rxn<UserModel>();
+  String userId = '';
   final profileImage = ''.obs;
   final reviews = <ReviewModel>[].obs;
   final certificates = <CertificateModel>[].obs;
   final works = <WorksampleModel>[].obs;
   final TextEditingController bioController = TextEditingController();
+
+  var newCertificate = Rxn<CertificateModel>();
 
   List<String> get skills => user.value?.skills ?? const <String>[];
 
@@ -53,7 +67,16 @@ class ProfileController extends GetxController {
     }
 
     loadProfile();
-    // if (role == null) {}
+  }
+
+  void addWork() {
+    Get.toNamed(
+      AppRoutes.workDetails,
+      arguments: {
+        "work": null,
+        "isOwnProfile": isOwnProfile,
+      },
+    );
   }
 
   //لو مررت وسيط رقم المستخدم للصفحه وانا عم انتقلها معناها هي ما صفحتي صفحة مستخدم ما
@@ -121,32 +144,26 @@ class ProfileController extends GetxController {
 
   Future<void> loadProfile() async {
     pageState.value = StatusClasses.isloading;
-    // update();
-    // isLoading.value = true;
+
     try {
       final getUserResponse = await _userService.fetchUserData2(userId);
       getUserResponse.fold((error) {
         pageState.value = error;
-        // update();
         return;
       }, (fetchedUser) {
         user.value = fetchedUser;
         profileImage.value = fetchedUser.photoUrl;
         bioController.text = fetchedUser.bio;
         pageState.value = StatusClasses.success;
-        // update();
       });
       if (pageState.value != StatusClasses.success) return;
 
-      // final resultList =
       await Future.wait([
         // _loadReviews(uid),
         _loadCertificates(userId),
-        _loadWorks(userId),
+        loadWorks(userId),
       ]);
-      // if (resultList[0] != StatusClasses.success) {
-      //   pageState =
-      // }
+
       if (user.value == null) {
         _setFallbackData();
       }
@@ -180,17 +197,21 @@ class ProfileController extends GetxController {
   // }
 
   Future<StatusClasses> _loadCertificates(String uid) async {
+    loadCertificates.value = true;
     CertificateService certificateService = CertificateService();
     final response = await certificateService.getAllUserCertificate(uid: uid);
     return response.fold((error) {
+      loadCertificates.value = false;
       return error;
     }, (cerList) {
       certificates.assignAll(cerList);
+      print(certificates[1].imageURL);
+      loadCertificates.value = false;
       return StatusClasses.success;
     });
   }
 
-  Future<StatusClasses> _loadWorks(String uid) async {
+  Future<StatusClasses> loadWorks(String uid) async {
     final response = await _workSampleService.getAllUserWorkSample(uid: uid);
     return response.fold(
       (error) {
@@ -210,11 +231,7 @@ class ProfileController extends GetxController {
     final result = await imageUploadController.pickAndUpload(
         AppImagePreset.profileImagePreset,
         publicId:
-            "users/$userId/profile_${DateTime.now().millisecondsSinceEpoch}"
-        // groupName: "users",
-        // id: userId,
-        // folder: "profile",
-        );
+            "users/$userId/profile_${DateTime.now().millisecondsSinceEpoch}");
 
     result.fold(
       (err) {
@@ -229,17 +246,186 @@ class ProfileController extends GetxController {
               updateResult.message ?? "حدث خطأ ما في السيرفر");
           return;
         } else {
-          print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$url");
 
-          profileImage.value = url;
+        profileImage.value = url;
         }
-        //  تحديث UI مباشرة بدون fetch
-        // user.value = user.value!.copyWith(photoUrl: url);
-        // profileImage.value = url;
-        // update();
       },
     );
   }
+  //--------------------------------------skills manage-----------------------------------------------
+
+  Future<void> editSkills() async {
+    //بنقله على صفحة المهارات
+    final selectedSkills =
+        await Get.toNamed(AppRoutes.skillsSelection, arguments: {
+      'oldSkills': user.value!.skills,
+      'specailization': user.value!.specialization!.slug
+    });
+
+    //لو رجع بلا ما يضغط على حفظ
+    if (selectedSkills == null) {
+      customSnackbar(message: "لم يتم حفظ التعديلات");
+      return;
+    }
+    if (selectedSkills is! List<String>) {
+      customSnackbar(message: "خطأ بنوع البيانات الراجعه");
+      return;
+    }
+
+    bool isSame = Set.from(selectedSkills).containsAll(user.value!.skills) &&
+        Set.from(user.value!.skills).containsAll(selectedSkills);
+    if (isSame) {
+      customSnackbar(message: "لم يتم تغيير المهارات");
+      return;
+    }
+    isLoadingSkills.value = true;
+
+    final response = await _userService
+        .updateUserData2({"skills": selectedSkills}, user.value!.uid);
+    if (response != StatusClasses.success) {
+      customSnackbar(
+          message:
+              "خطأ في تحديث المهارات : ${response.type}/${response.message}");
+      isLoadingSkills.value = false;
+      return;
+    }
+    user.value = user.value!.copyWith(skills: selectedSkills);
+    isLoadingSkills.value = false;
+    customSnackbar(message: "تم تحديث المهارات بنجاح");
+  }
+
+  //----------------------------------certificates manage--------------------------------------------
+
+  void addCertificate() {
+    newCertificate.value = CertificateModel(title: "", skills: []);
+  }
+
+  void cencelAddCertificate() {
+    newCertificate.value = null;
+  }
+
+  Future<void> saveCertificate(
+      String? certId, Map<String, dynamic> map, String operationType) async {
+    void setLoadind(bool l) {
+      if (certId != null) {
+        l ? loadingCertIds.add(certId) : loadingCertIds.remove(certId);
+      } else if (operationType == 'add') {
+        addingCerLoading.value = l;
+      }
+    }
+
+    //رفع الصوره
+    String? imageUrl;
+    setLoadind(true);
+
+    if (map["newImageFlie"] != null) {
+      final failedIsvalid = map["title"].toString().trim().isNotEmpty &&
+          map["title"] != null &&
+          map["description"].toString().trim().isNotEmpty &&
+          map["description"] != null;
+      if (!failedIsvalid) {
+        customSnackbar(message: " يجب ادخال صورة وعنوان ووصف");
+        setLoadind(false);
+
+        return;
+      }
+      bool uploadFailed = false;
+      //upload image
+      // ضغط الصورة
+      final compressedFile =
+          await ImageService.compressImage(map["newImageFlie"]);
+      // إذا فشل الضغط، استخدم الأصل
+      final fileToUpload = compressedFile ?? map["newImageFlie"];
+      final upRes = await ImageService.uploadImage(
+          AppImagePreset.certificatePreset, fileToUpload);
+      upRes.fold((err) {
+        customSnackbar(message: "لم يتم رفع الصوره ، ${err.message}");
+        uploadFailed = true;
+      }, (url) {
+        imageUrl = url;
+      });
+      if (uploadFailed) {
+        setLoadind(false);
+
+        return;
+      }
+    }
+    Map<String, dynamic> newData = {
+      "title": map['title'],
+      "source": map['source'],
+      "description": map['description'],
+      "credentialID": map['credentialID'],
+      "credentialURL": map['credentialURL'],
+      "date": map['date'],
+      "skills": map['skills'],
+      "imageURL": imageUrl ?? map["imageURL"]
+    };
+    final isvalid = Validators.validateCertificate(newData);
+    if (!isvalid) {
+      customSnackbar(message: " يجب ادخال صورة وعنوان ووصف");
+      // loadCertificates.value = false;
+      setLoadind(false);
+
+      return;
+    }
+
+    StatusClasses response;
+    if (operationType == 'update') {
+      response = await _certificateService.updateCertificate(
+          newData: newData, uid: userId, cID: certId!);
+    } else {
+      final c = CertificateModel(
+          title: map['title'],
+          source: map['source'],
+          description: map['description'],
+          credentialID: map['credentialID'],
+          credentialURL: map['credentialURL'],
+          date: map['date'],
+          skills: List<String>.from(map['skills']),
+          imageURL: imageUrl);
+      response =
+          await _certificateService.addCertificate(uid: userId, certificate: c);
+    }
+    if (response != StatusClasses.success) {
+      customSnackbar(message: "error : ${response.type} / ${response.message}");
+      setLoadind(false);
+
+      return;
+    }
+
+    //لتحديث البيانات بالواجهة
+    if (operationType == "update") {
+      final index = certificates.indexWhere((c) => c.id == certId);
+
+      if (index != -1) {
+        certificates[index] =
+            CertificateModel.fromMap(newData, certificates[index].id!);
+        certificates.refresh();
+      }
+    } else {
+      newCertificate.value = null;
+      await _loadCertificates(userId);
+    }
+
+    setLoadind(false);
+    customSnackbar(message: "تمت العملية بنجاح");
+  }
+
+  Future<void> deleteCertificate(String certId) async {
+    loadingCertIds.add(certId);
+    final response =
+        await _certificateService.deleteCertificate(uId: userId, cId: certId);
+    if (response != StatusClasses.success) {
+      customSnackbar(
+          message: "حدث خطأ : ${response.type} / ${response.message}");
+      return;
+    }
+    certificates.removeWhere((c) => c.id == certId);
+    loadingCertIds.remove(certId);
+    customSnackbar(message: "تم حذف الشهادة بنجاح");
+  }
+
+  //--------------------------------------------- UI functions--------------------------------------------
 
   void setTabIndex(int index) {
     activeTabIndex.value = index;

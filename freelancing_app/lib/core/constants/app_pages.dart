@@ -7,6 +7,7 @@ import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/personal_info_view.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
@@ -26,6 +27,8 @@ import 'package:freelancing_platform/views/auth_section/auth_views/verification_
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
+import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
+import 'package:freelancing_platform/views/skills_section/skills_view/skills_selection_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/rejected_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
@@ -81,34 +84,9 @@ class AppPages {
       binding: AuthBinding(),
     ),
 
-    // GetPage(
-    //     name: AppRoutes.verification,
-    //     page: () => VerificationView(),
-    //     middlewares: [AuthMiddleware()]),
-
     GetPage(name: AppRoutes.privacy, page: () => const PrivacyView()),
     GetPage(name: AppRoutes.terms, page: () => const TermsView()),
 
-    //**********************************************after login page****************************************
-    //  GetPage(
-    //     name: AppRoutes.home,
-    //     page: () => const HomeView(),
-    //     middlewares: [HomeMiddleware()]
-    //     // binding: SplashBinding(),
-    //   ),
-
-    GetPage(
-      name: AppRoutes.error,
-      binding: BindingsBuilder(() {
-        Get.lazyPut(() => SignOutController());
-      }),
-      page: () => ErrorView(),
-    ),
-
-    GetPage(
-      name: AppRoutes.noInternet,
-      page: () => NoInternetView(),
-    ),
     //**********************************************request pages****************************************
     //صفحات المستقل
     GetPage(
@@ -194,6 +172,7 @@ class AppPages {
       name: AppRoutes.profile,
       page: () => ProfileView(),
       binding: BindingsBuilder(() {
+        Get.lazyPut(() => ProfileController());
         Get.lazyPut(() => ImageUploadController());
       }),
       middlewares: [AuthMiddleware()],
@@ -208,6 +187,32 @@ class AppPages {
         binding: BindingsBuilder(() {
           Get.lazyPut(() => WorkDetailsController());
         }),
-        middlewares: [AuthMiddleware()])
+        middlewares: [AuthMiddleware()]),
+
+    //**********************************************helpful pages****************************************
+
+    GetPage(
+      name: AppRoutes.error,
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SignOutController());
+      }),
+      page: () => ErrorView(),
+    ),
+
+    GetPage(
+      name: AppRoutes.noInternet,
+      page: () => NoInternetView(),
+    ),
+
+    GetPage(
+      name: AppRoutes.skillsSelection,
+      page: () => SkillsSelectionView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SkillsSelectionController());
+      }),
+      // middlewares: [AuthMiddleware()])
+    ),
+    
+    //********************************************************************************************************
   ];
 }
