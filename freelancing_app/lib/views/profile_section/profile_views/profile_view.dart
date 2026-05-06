@@ -10,6 +10,7 @@ import 'package:freelancing_platform/core/general_controllers.dart/image_upload_
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
+
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';

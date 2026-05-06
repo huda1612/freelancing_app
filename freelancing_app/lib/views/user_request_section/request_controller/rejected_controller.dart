@@ -14,6 +14,7 @@ class RejectedController extends GetxController {
   String _rId = '';
 
   @override
+
   void onInit() {
     super.onInit();
     //احضار البيانات من السيرفر وتجهيزها بالمتغيرات

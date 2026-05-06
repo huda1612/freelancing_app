@@ -251,8 +251,8 @@ class ProfileController extends GetxController {
               updateResult.message ?? "حدث خطأ ما في السيرفر");
           return;
         } else {
-          // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + url);
-          profileImage.value = url;
+
+        profileImage.value = url;
         }
       },
     );
