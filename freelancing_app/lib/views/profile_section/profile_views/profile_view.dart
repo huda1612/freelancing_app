@@ -12,6 +12,7 @@ import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
+import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/card_container.dart';
@@ -282,6 +283,7 @@ class ProfileView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          //specailization
           controller.role == UserRole.freelancer
               ? _titleText('الاختصاص')
               : SizedBox.shrink(),
@@ -293,16 +295,56 @@ class ProfileView extends StatelessWidget {
                 ))
               : SizedBox.shrink(),
           SizedBox(height: 14.h),
-          _titleText('النبذة'),
-          cardContainer(
-            child: Text(
-              controller.user.value?.bio.isNotEmpty == true
-                  ? controller.user.value!.bio
-                  : 'لا يوجد نبذة حالياً.',
-              style: AppTextStyles.body.copyWith(color: AppColors.black),
-            ),
+
+          //Bio
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _titleText('النبذة'),
+              controller.isOwnProfile
+                  ? Row(
+                      children: [
+                        TextButton(
+                            onPressed: controller.editBio.value
+                                ? controller.saveNewBio
+                                : controller.toggleEditBio,
+                            child: Text(
+                              controller.editBio.value
+                                  ? "حفظ التعديل"
+                                  : "تعديل",
+                              style: AppTextStyles.link,
+                            )),
+                        controller.editBio.value
+                            ? TextButton(
+                                onPressed: controller.toggleEditBio,
+                                child: Text(
+                                  "إلغاء",
+                                  style: AppTextStyles.link,
+                                ))
+                            : SizedBox.shrink(),
+                      ],
+                    )
+                  : SizedBox.shrink(),
+            ],
           ),
+          controller.updatingBioLoading.value
+              ? CustomLoading()
+              : cardContainer(
+                  child: controller.editBio.value
+                      ? CustomTextField(
+                          controller: controller.bioController,
+                        )
+                      : Text(
+                          controller.user.value?.bio.isNotEmpty == true
+                              ? controller.user.value!.bio
+                              : 'لا يوجد نبذة حالياً.',
+                          style: AppTextStyles.body
+                              .copyWith(color: AppColors.black),
+                        ),
+                ),
           SizedBox(height: 14.h),
+
+          //reviews
           _titleText('التقييمات'),
           SizedBox(
             height: 116.h,
@@ -321,11 +363,14 @@ class ProfileView extends StatelessWidget {
                   )
                 : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
           ),
+
           controller.isFreelancer
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 14),
+
+                    //skills
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -371,6 +416,8 @@ class ProfileView extends StatelessWidget {
                       );
                     }),
                     SizedBox(height: 14.h),
+
+                    //certificates
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

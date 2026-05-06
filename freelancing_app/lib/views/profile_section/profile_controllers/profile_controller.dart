@@ -39,7 +39,12 @@ class ProfileController extends GetxController {
   final loadCertificates = false.obs;
   RxSet<String> loadingCertIds = <String>{}.obs;
   final addingCerLoading = false.obs;
+  final updatingBioLoading = false.obs;
+
   final activeTabIndex = 0.obs;
+
+  final editBio = false.obs;
+  // String newBio = '';
 
   //UI variables
   final user = Rxn<UserModel>();
@@ -205,7 +210,7 @@ class ProfileController extends GetxController {
       return error;
     }, (cerList) {
       certificates.assignAll(cerList);
-      print(certificates[1].imageURL);
+      // print(certificates[1].imageURL);
       loadCertificates.value = false;
       return StatusClasses.success;
     });
@@ -292,6 +297,38 @@ class ProfileController extends GetxController {
     user.value = user.value!.copyWith(skills: selectedSkills);
     isLoadingSkills.value = false;
     customSnackbar(message: "تم تحديث المهارات بنجاح");
+  }
+
+  //--------------------------------------Bio manage-----------------------------------------------
+
+  void toggleEditBio() {
+    editBio.value = !editBio.value;
+  }
+
+  Future<void> saveNewBio() async {
+    final newBio = bioController.text.trim();
+    if (newBio == '' || newBio == user.value?.bio.trim()) {
+      customSnackbar(message: "لم تقم بتعديل الوصف");
+      return;
+    }
+    final isValid = Validators.validateBio(newBio);
+    if (isValid != null) {
+      customSnackbar(message: isValid);
+      return;
+    }
+    updatingBioLoading.value = true;
+    editBio.value = false;
+
+    final response =
+        await _userService.updateUserData2({'bio': newBio}, userId);
+    if (response != StatusClasses.success) {
+      updatingBioLoading.value = false;
+      customSnackbar(message: "error : ${response.type} / ${response.message}");
+      return;
+    }
+    user.value = user.value!.copyWith(bio: newBio);
+    updatingBioLoading.value = false;
+    customSnackbar(message: "تم تعديل الوصف بنجاح");
   }
 
   //----------------------------------certificates manage--------------------------------------------
