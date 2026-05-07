@@ -14,8 +14,8 @@ import 'package:get/get.dart';
 class CreateProjectView extends StatelessWidget {
   CreateProjectView({super.key});
 
-  final CreateProjectController controller = Get.find<CreateProjectController>();
-
+  final CreateProjectController controller =
+      Get.find<CreateProjectController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,15 +30,13 @@ class CreateProjectView extends StatelessWidget {
           fetchDataFun: controller.fetchSpecializations,
           child: SafeArea(
             top: false,
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(AppSpaces.paddingMedium),
-                child: Form(
-                  key: controller.formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(AppSpaces.paddingMedium),
+              child: Form(
+                key: controller.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     _SectionTitle(text: 'عنوان المشروع'),
                     CustomTextField(
                       controller: controller.titleController,
@@ -73,12 +71,12 @@ class CreateProjectView extends StatelessWidget {
                       validator: controller.validateDuration,
                     ),
                     SizedBox(height: AppSpaces.heightMedium2),
-                    _SectionTitle(text: 'التخصص'),
+                    _SectionTitle(text: 'تصنيف المشروع'),
                     Obx(() {
                       return DropdownButtonFormField<String>(
-                        initialValue: controller.selectedSpecialization.value,
+                        value: controller.selectedSpecialization.value,
                         isExpanded: true,
-                        decoration: unifiedDecoration('اختر التخصص'),
+                        decoration: unifiedDecoration('اختر التصنيف'),
                         items: controller.allSpecializations
                             .map(
                               (o) => DropdownMenuItem<String>(
@@ -93,14 +91,16 @@ class CreateProjectView extends StatelessWidget {
                             .toList(),
                         onChanged: (value) =>
                             controller.selectedSpecialization.value = value,
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'التخصص مطلوب' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'التصنيف مطلوب'
+                            : null,
                       );
                     }),
                     SizedBox(height: AppSpaces.heightLarge),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        _SectionTitle(text: 'المهارات المطلوبة'),
                         Container(
                           decoration: BoxDecoration(
                             gradient: AppColors.gradientColor,
@@ -112,8 +112,11 @@ class CreateProjectView extends StatelessWidget {
                             icon: const Icon(Icons.add, color: AppColors.white),
                           ),
                         ),
-                        _SectionTitle(text: 'المهارات المطلوبة'),
                       ],
+                    ),
+                    Text(
+                      '${controller.selectedSkills.length}/${CreateProjectController.maxProjectSkills} مهارة',
+                      style: AppTextStyles.link,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -171,8 +174,7 @@ class CreateProjectView extends StatelessWidget {
                         gradient: AppColors.gradientColor,
                       );
                     }),
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -194,9 +196,8 @@ class _SectionTitle extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8.h),
       child: Text(
         text,
-        textDirection: TextDirection.rtl,
-             style: AppTextStyles.subheading.copyWith(color: AppColors.darkPurple),
-
+        // textDirection: TextDirection.rtl,
+        style: AppTextStyles.subheading.copyWith(color: AppColors.darkPurple),
       ),
     );
   }

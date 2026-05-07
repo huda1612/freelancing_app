@@ -4,7 +4,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_image_preset.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';

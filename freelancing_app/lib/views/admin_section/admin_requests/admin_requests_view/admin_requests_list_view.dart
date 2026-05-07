@@ -5,7 +5,7 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
-import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';

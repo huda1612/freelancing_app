@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
-import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
