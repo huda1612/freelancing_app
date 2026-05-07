@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
@@ -194,11 +195,8 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         text,
         textDirection: TextDirection.rtl,
-        style: TextStyle(
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w700,
-          color: AppColors.darkPurple,
-        ),
+             style: AppTextStyles.subheading.copyWith(color: AppColors.darkPurple),
+
       ),
     );
   }
