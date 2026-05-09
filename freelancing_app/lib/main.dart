@@ -40,9 +40,9 @@ class MyApp extends StatelessWidget {
           fallbackLocale: Locale('ar'),
           debugShowCheckedModeBanner: false,
 
-          initialRoute: AppRoutes.splash,
+          // initialRoute: AppRoutes.splash,
 
-          // initialRoute: AppRoutes.profile,
+          initialRoute: AppRoutes.createProject,
           // initialRoute: AppRoutes.personalInfo,
           // initialRoute: AppRoutes.pending,
           // initialRoute: AppRoutes.rejected,

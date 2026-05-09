@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:freelancing_platform/core/constants/reuest_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/reuest_status.dart';
 import 'user_request_snapshot_model.dart';
 
 // enum RequestStatus { pending, approved, rejected }

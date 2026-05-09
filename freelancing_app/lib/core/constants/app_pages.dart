@@ -3,7 +3,6 @@ import 'package:freelancing_platform/core/bindings/client_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
-import 'package:freelancing_platform/core/bindings/project_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
@@ -42,6 +41,7 @@ import 'package:freelancing_platform/views/user_request_section/request_view/sha
 import 'package:freelancing_platform/views/user_request_section/request_view/shared_pages_views/rejected_view.dart';
 import 'package:get/get.dart';
 
+import '../../views/project_section/project_controller/create_project_controller.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -219,7 +219,10 @@ class AppPages {
      GetPage(
       name: AppRoutes.createProject,
       page: () => CreateProjectView(),
-      binding: ProjectBinding(),
+       binding: BindingsBuilder(() {
+        Get.lazyPut(() => CreateProjectController());
+      }),
+      // binding: ProjectBinding(),
      // middlewares: [AuthMiddleware()],
     ),
     
