@@ -1,6 +1,6 @@
 import 'package:freelancing_platform/core/classes/status_classes.dart';
-import 'package:freelancing_platform/core/constants/reuest_status.dart';
-import 'package:freelancing_platform/core/constants/user_roles.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/reuest_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/data/services/request_service.dart';
 import 'package:freelancing_platform/models/user_collections/users_requests_model.dart';
 import 'package:get/get.dart';

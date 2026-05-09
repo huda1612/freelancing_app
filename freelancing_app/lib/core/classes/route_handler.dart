@@ -5,9 +5,9 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/constants/collections_names.dart';
-import 'package:freelancing_platform/core/constants/user_roles.dart';
-import 'package:freelancing_platform/core/constants/user_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_status.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 

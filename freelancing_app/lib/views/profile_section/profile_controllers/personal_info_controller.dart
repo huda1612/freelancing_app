@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/constants/collections_names.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';

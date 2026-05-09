@@ -46,7 +46,9 @@ class AppRoutes {
 
   //skills routes
   static const skillsSelection = '/skills_selection';
-   static const createProject = '/create_project';
+
+  //project routes
+  static const createProject = '/create_project';
 
   //settings routes
 }

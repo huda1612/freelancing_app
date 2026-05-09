@@ -6,7 +6,7 @@ import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/constants/collections_names.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
