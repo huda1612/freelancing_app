@@ -29,6 +29,7 @@ import 'package:freelancing_platform/views/onboarding_section/onboarding_view/on
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
+import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
 import 'package:freelancing_platform/views/skills_section/skills_view/skills_selection_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
@@ -220,6 +221,13 @@ class AppPages {
       name: AppRoutes.createProject,
       page: () => CreateProjectView(),
       binding: ProjectBinding(),
+     // middlewares: [AuthMiddleware()],
+    ),
+
+     GetPage(
+      name: AppRoutes.searchPage,
+      page: () => SearchView(),
+     
      // middlewares: [AuthMiddleware()],
     ),
     
