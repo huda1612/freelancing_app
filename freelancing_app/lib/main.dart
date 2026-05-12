@@ -43,9 +43,9 @@ class MyApp extends StatelessWidget {
 
           // initialRoute: AppRoutes.splash,
 
-          initialRoute: AppRoutes.projectDetails,
+          // initialRoute: AppRoutes.projectDetails,
           // initialRoute: AppRoutes.createProject,
-          // initialRoute: AppRoutes.pending,
+          initialRoute: AppRoutes.submitOffer,
           // initialRoute: AppRoutes.rejected,
           // initialRoute: AppRoutes.approved
           // initialRoute: AppRoutes.freelancerWorkAndCertificates,

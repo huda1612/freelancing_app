@@ -3,18 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
-import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 
 class ProjectCard extends StatelessWidget {
   const ProjectCard({
     super.key,
     required this.project,
-    this.onApply,
+    // this.onApply,
   });
 
   final ProjectModel project;
-  final VoidCallback? onApply;
+  // final VoidCallback? onApply;
 
   @override
   Widget build(BuildContext context) {
@@ -59,31 +58,31 @@ class ProjectCard extends StatelessWidget {
           SizedBox(height: 8.h),
           _InfoRow(
             icon: Icons.schedule_outlined,
-            label: 'المدة المتبقية',
+            label: 'المدة المطلوبة',
             value: '${project.durationDays} يوم',
           ),
           SizedBox(height: 8.h),
-          _InfoRow(
-            icon: Icons.people_alt_outlined,
-            label: 'عدد المتقدمين',
-            value: '${project.applicantsCount}',
-          ),
-          if (onApply != null) ...[
-            SizedBox(height: AppSpaces.heightMedium),
-            CustomButton(
-              text: 'قدّم على المشروع',
-              onTap: onApply!,
-              gradient: AppColors.gradientColor,
-            ),
-          ],
+          // _InfoRow(
+          //   icon: Icons.people_alt_outlined,
+          //   label: 'عدد المتقدمين',
+          //   value: '0',
+          // ),
+          // if (onApply != null) ...[
+          //   SizedBox(height: AppSpaces.heightMedium),
+          //   CustomButton(
+          //     text: 'قدّم على المشروع',
+          //     onTap: onApply!,
+          //     gradient: AppColors.gradientColor,
+          //   ),
+          // ],
         ],
       ),
     );
   }
 
   String get _specializationText {
-    if (project.specialization.trim().isNotEmpty) {
-      return project.specialization;
+    if (project.category.name.trim().isNotEmpty) {
+      return project.category.name;
     }
     if (project.skillsRequired.isNotEmpty) {
       return project.skillsRequired.first;
@@ -110,8 +109,8 @@ class _InfoRow extends StatelessWidget {
         Icon(icon, size: 18.sp, color: AppColors.vividPurple),
         SizedBox(width: 8.w),
         Text(
-          '$label: ',
-          style: AppTextStyles.link.copyWith(fontSize: 13.sp),
+          '$label : ',
+          style: AppTextStyles.link.copyWith(fontSize: 14.sp),
         ),
         Expanded(
           child: Text(

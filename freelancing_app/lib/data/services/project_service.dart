@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 
 class ProjectService {
@@ -41,5 +43,16 @@ class ProjectService {
 
         });
     return transactionRes;
+  }
+  
+  Future<Either<StatusClasses, List<ProjectModel>>> getOpenProjects() async {
+    final query = _firebaseFirestore
+        .collection(CollectionsNames.projects)
+        .where('status', isEqualTo: ProjectStatus.newProject);
+
+    return FirebaseCrud.runGetQuery<ProjectModel>(
+      query: query,
+      fromMap: (data, id) => ProjectModel.fromMap(data, id),
+    );
   }
 }

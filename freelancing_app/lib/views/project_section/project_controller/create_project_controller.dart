@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/utils/helper_function/normalize_numbers.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -99,7 +100,7 @@ class CreateProjectController extends GetxController {
     final emptyError = validateRequired(value, 'الميزانية');
     if (emptyError != null) return emptyError;
     // final parsed = double.tryParse(value!.trim());
-    final parsed = double.tryParse(_normalizeNumbers(value!.trim()));
+    final parsed = double.tryParse(normalizeNumbers(value!.trim()));
     if (parsed == null || parsed <= 0) {
       return 'الميزانية يجب أن تكون رقمًا أكبر من 0';
     }
@@ -110,7 +111,7 @@ class CreateProjectController extends GetxController {
     final emptyError = validateRequired(value, 'مدة التنفيذ');
     if (emptyError != null) return emptyError;
     // final parsed = int.tryParse(value!.trim());
-    final parsed = double.tryParse(_normalizeNumbers(value!.trim()));
+    final parsed = double.tryParse(normalizeNumbers(value!.trim()));
     if (parsed == null || parsed <= 0) {
       return 'مدة التنفيذ يجب أن تكون رقمًا صحيحًا أكبر من 0';
     }
@@ -162,9 +163,9 @@ class CreateProjectController extends GetxController {
         slug: selected.slug,
       ),
       skillsRequired: selectedSkills.toList(),
-      budget: double.parse(_normalizeNumbers(budgetController.text.trim())),
+      budget: double.parse(normalizeNumbers(budgetController.text.trim())),
       durationDays:
-          int.parse(_normalizeNumbers(durationController.text.trim())),
+          int.parse(normalizeNumbers(durationController.text.trim())),
       createdAt: null,
     );
 
@@ -180,16 +181,16 @@ class CreateProjectController extends GetxController {
     Get.snackbar('خطأ', response.message ?? 'فشل إنشاء المشروع');
   }
 
-  String _normalizeNumbers(String input) {
-    const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  // String normalizeNumbers(String input) {
+  //   const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  //   const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 
-    for (int i = 0; i < arabic.length; i++) {
-      input = input.replaceAll(arabic[i], english[i]);
-    }
+  //   for (int i = 0; i < arabic.length; i++) {
+  //     input = input.replaceAll(arabic[i], english[i]);
+  //   }
 
-    return input;
-  }
+  //   return input;
+  // }
 
   void _clearForm() {
     titleController.clear();
