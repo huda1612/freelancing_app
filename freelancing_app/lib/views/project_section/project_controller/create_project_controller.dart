@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/data/project_service.dart';
+import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
@@ -145,11 +145,22 @@ class CreateProjectController extends GetxController {
     }
 
     submitLoading.value = true;
+    final selected = allSpecializations.firstWhereOrNull(
+      (s) => s.slug == selectedSpecialization.value,
+    );
+    if (selected == null) {
+      Get.snackbar("خطأ", "التخصص غير موجود");
+      return;
+    }
     final project = ProjectModel(
       id: '',
       clientId: UserSession.uid!,
       title: titleController.text.trim(),
       description: descriptionController.text.trim(),
+      category: SpecializationSnapshot(
+        name: selected.name,
+        slug: selected.slug,
+      ),
       skillsRequired: selectedSkills.toList(),
       budget: double.parse(_normalizeNumbers(budgetController.text.trim())),
       durationDays:

@@ -18,4 +18,28 @@ class ProjectService {
       body: project.toMap(),
     );
   }
+
+  Future<StatusClasses> deleteProject(ProjectModel project) async {
+    final transactionRes =
+        await FirebaseCrud.runTransaction(action: (transaction)async{
+          var doc = _firebaseFirestore.collection(CollectionsNames.projects).doc(project.id);
+          transaction.delete(doc);
+
+          /// جلب العروض الخاصة بالمشروع
+    final offersQuery = await _firebaseFirestore
+        .collection(CollectionsNames.offers)
+        .where("projectId", isEqualTo: project.id)
+        .get();
+
+    // حذف جميع العروض
+    for (final doc in offersQuery.docs) {
+      _firebaseFirestore.batch().delete(doc.reference);
+    }
+
+    // تنفيذ كل العمليات دفعة واحدة
+    await _firebaseFirestore.batch().commit();
+
+        });
+    return transactionRes;
+  }
 }

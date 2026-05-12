@@ -28,9 +28,12 @@ import 'package:freelancing_platform/views/onboarding_section/onboarding_view/on
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_views/bowse_projects_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
+import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
+
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
 import 'package:freelancing_platform/views/skills_section/skills_view/skills_selection_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
@@ -218,15 +221,14 @@ class AppPages {
       // middlewares: [AuthMiddleware()])
     ),
 
-
-     GetPage(
+    GetPage(
       name: AppRoutes.createProject,
       page: () => CreateProjectView(),
-       binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.lazyPut(() => CreateProjectController());
       }),
       // binding: ProjectBinding(),
-     // middlewares: [AuthMiddleware()],
+      // middlewares: [AuthMiddleware()],
     ),
 
      GetPage(
@@ -243,6 +245,16 @@ class AppPages {
   }),
 ),
     
+    GetPage(
+      name: AppRoutes.projectDetails,
+      page: () => ProjectDetailsView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => ProjectDetailsController());
+      }),
+      // binding: ProjectBinding(),
+      // middlewares: [AuthMiddleware()],
+    ),
+
     //********************************************************************************************************
   ];
 }

@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/classes/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+// import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
 
 // import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
 // import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
@@ -42,13 +43,13 @@ class MyApp extends StatelessWidget {
 
           // initialRoute: AppRoutes.splash,
 
-          initialRoute: AppRoutes.createProject,
-          // initialRoute: AppRoutes.personalInfo,
+          initialRoute: AppRoutes.projectDetails,
+          // initialRoute: AppRoutes.createProject,
           // initialRoute: AppRoutes.pending,
           // initialRoute: AppRoutes.rejected,
           // initialRoute: AppRoutes.approved
           // initialRoute: AppRoutes.freelancerWorkAndCertificates,
-          //  initialRoute: AppRoutes.splash,
+          // initialRoute: AppRoutes.login,
 
           getPages: AppPages.pages,
         );
