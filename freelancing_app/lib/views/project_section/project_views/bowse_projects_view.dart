@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
@@ -31,17 +32,18 @@ class BrowseProjectsView extends StatelessWidget {
       body: Obx(() {
         return UiStateHandler(
           status: controller.pageState.value,
-          fetchDataFun: controller.fetchOpenProjects,
+          fetchDataFun: controller.fetchOpenProjectAndSpec,
           child: SafeArea(
             top: false,
             child: Obx(() {
               if (controller.projects.isEmpty) {
-                return customEmptyMessage(message: 'لا توجد مشاريع مفتوحة حالياً');
+                return customEmptyMessage(
+                    message: 'لا توجد مشاريع مفتوحة حالياً');
               }
               final filteredProjects = controller.filteredProjects;
 
               return RefreshIndicator(
-                onRefresh: controller.fetchOpenProjects,
+                onRefresh: controller.fetchOpenProjectAndSpec,
                 color: AppColors.vividPurple,
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -58,7 +60,12 @@ class BrowseProjectsView extends StatelessWidget {
                       )
                     else
                       ...filteredProjects.map(
-                        (project) => ProjectCard(project: project),
+                        (project) => GestureDetector(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.projectDetails,
+                                  arguments: {"project": project});
+                            },
+                            child: ProjectCard(project: project)),
                       ),
                   ],
                 ),
@@ -70,6 +77,7 @@ class BrowseProjectsView extends StatelessWidget {
     );
   }
 
+  //هالتابع لاظهار خيارات الفلتره حسب الاختصاص
   void _showSpecializationFilter(BuildContext context) {
     final options = controller.allSpecializations;
 
@@ -84,7 +92,8 @@ class BrowseProjectsView extends StatelessWidget {
           return SizedBox(
             height: 140,
             child: Center(
-              child: customEmptyMessage(message: 'لا توجد اختصاصات متاحة حالياً'),
+              child:
+                  customEmptyMessage(message: 'لا توجد اختصاصات متاحة حالياً'),
             ),
           );
         }
@@ -116,8 +125,7 @@ class BrowseProjectsView extends StatelessWidget {
                     groupValue: controller.selectedSpecialization.value,
                     onChanged: controller.selectSpecializationFilter,
                   ),
-                  onTap: () =>
-                      controller.selectSpecializationFilter(spec.slug),
+                  onTap: () => controller.selectSpecializationFilter(spec.slug),
                 ),
               ),
             ],

@@ -17,7 +17,6 @@ class SearchOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -27,7 +26,7 @@ class SearchOptionCard extends StatelessWidget {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(AppSpaces.radiusMedium),
           boxShadow: const [
-            BoxShadow(color: AppColors.black, blurRadius: 6),
+            BoxShadow(color: AppColors.darkPurple, blurRadius: 6),
           ],
         ),
         child: Row(
@@ -42,10 +41,9 @@ class SearchOptionCard extends StatelessWidget {
             ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(
-                title,
-                style: AppTextStyles.body
-              ),
+              child: Text(title,
+                  style: AppTextStyles.meduimstyle
+                      .copyWith(fontSize: 18, color: AppColors.darkPurple)),
             ),
             const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
           ],

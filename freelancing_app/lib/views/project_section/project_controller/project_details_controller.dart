@@ -52,9 +52,7 @@ class ProjectDetailsController extends GetxController {
         //هي لازم تكون صفحه ثانيه
         Get.offNamed(AppRoutes.profile);
         // Get.offNamed(AppRoutes.home); هيك لازم
-
         // await Future.delayed(const Duration(milliseconds: 1000));
-
         // Get.back();
       });
 
@@ -66,8 +64,12 @@ class ProjectDetailsController extends GetxController {
     // Get.toNamed(AppRoutes.offersList , arguments: {"projectId" : });
   }
   Future<void> onOfferSubmit() async {
-    // Get.toNamed(AppRoutes.createOffer , arguments: {"project" : });
+    Get.toNamed(AppRoutes.submitOffer, arguments: {
+      "projectBudget": project!.budget,
+      "projectDurationDays": project!.durationDays
+    });
   }
+
   void onDeleteProject() {
     Get.defaultDialog(
       title: "تأكيد الحذف",
@@ -115,21 +117,6 @@ class ProjectDetailsController extends GetxController {
   //   specialization.value = newSpecialization;
 
   //   skills.value = newSkills;
-  // }
-
-  // /// حذف المشروع
-  // void deleteProject() {
-  //   title.value = "";
-
-  //   description.value = "";
-
-  //   budget.value = "";
-
-  //   duration.value = "";
-
-  //   specialization.value = "";
-
-  //   skills.clear();
   // }
 
   // /// إضافة مهارة
