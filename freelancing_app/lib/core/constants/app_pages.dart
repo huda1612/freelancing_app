@@ -7,6 +7,8 @@ import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
+import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
+import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/personal_info_view.dart';
@@ -222,29 +224,29 @@ class AppPages {
     ),
 
     GetPage(
+      name: AppRoutes.searchPage,
+      page: () => SearchView(),
+    ),
+
+    //**********************************************project pages****************************************
+
+    GetPage(
       name: AppRoutes.createProject,
       page: () => CreateProjectView(),
       binding: BindingsBuilder(() {
         Get.lazyPut(() => CreateProjectController());
       }),
-      // binding: ProjectBinding(),
-      // middlewares: [AuthMiddleware()],
+      middlewares: [AuthMiddleware()],
     ),
 
-     GetPage(
-      name: AppRoutes.searchPage,
-      page: () => SearchView(),
-     
-     // middlewares: [AuthMiddleware()],
-    ),
     GetPage(
-  name: AppRoutes.browseProjects,
-  page: () => BrowseProjectsView(),
-  binding: BindingsBuilder(() {
-    Get.lazyPut(() => BrowseProjectsController());
-  }),
-),
-    
+        name: AppRoutes.browseProjects,
+        page: () => BrowseProjectsView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => BrowseProjectsController());
+        }),
+        middlewares: [AuthMiddleware()]),
+
     GetPage(
       name: AppRoutes.projectDetails,
       page: () => ProjectDetailsView(),
@@ -252,7 +254,17 @@ class AppPages {
         Get.lazyPut(() => ProjectDetailsController());
       }),
       // binding: ProjectBinding(),
-      // middlewares: [AuthMiddleware()],
+      middlewares: [AuthMiddleware()],
+    ),
+
+    //**********************************************offer pages****************************************
+    GetPage(
+      name: AppRoutes.submitOffer,
+      page: () => SubmitOfferView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SubmitOfferController());
+      }),
+      middlewares: [AuthMiddleware()],
     ),
 
     //********************************************************************************************************

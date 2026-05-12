@@ -6,26 +6,20 @@ import 'package:freelancing_platform/views/search_section/search_controllers/sea
 import 'package:freelancing_platform/views/search_section/search_widgets/search_option_card.dart';
 import 'package:get/get.dart';
 
-
 class SearchView extends StatelessWidget {
   final controller = Get.put(SearchPageController());
 
-   SearchView({super.key});
+  SearchView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: CustomAppBar(
-        title:  "البحث",
+        title: "البحث",
         backgroundGradient: AppColors.gradientColor,
-        
-      
-        
       ),
       backgroundColor: AppColors.white,
       body: SingleChildScrollView(
-        
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -49,7 +43,7 @@ class SearchView extends StatelessWidget {
             //   ),
             // ),
 
-             SizedBox(height:AppSpaces.heightMedium),
+            SizedBox(height: AppSpaces.heightMedium),
 
             // Options
             Obx(() => Column(
@@ -57,7 +51,7 @@ class SearchView extends StatelessWidget {
                       .map(
                         (opt) => SearchOptionCard(
                           title: opt.title,
-                          icon: opt.icon, 
+                          icon: opt.icon,
                           onTap: () => controller.navigateTo(opt.route),
                         ),
                       )
