@@ -49,6 +49,7 @@ class AppRoutes {
 
   //project routes
   static const createProject = '/create_project';
+  static const browseProjects = '/browse_projects';
 
   //settings routes
 }

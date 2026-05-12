@@ -27,6 +27,8 @@ import 'package:freelancing_platform/views/auth_section/auth_views/verification_
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_views/bowse_projects_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
@@ -233,7 +235,13 @@ class AppPages {
      
      // middlewares: [AuthMiddleware()],
     ),
-    
+    GetPage(
+  name: AppRoutes.browseProjects,
+  page: () => BrowseProjectsView(),
+  binding: BindingsBuilder(() {
+    Get.lazyPut(() => BrowseProjectsController());
+  }),
+),
     
     //********************************************************************************************************
   ];
