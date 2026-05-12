@@ -37,11 +37,19 @@ class AppRoutes {
   static const personalInfo = '/personal_info';
   static const workDetails = '/work_details';
 
+
+
+  static const searchPage  = '/search_page';
+
+
+
+
   //skills routes
   static const skillsSelection = '/skills_selection';
 
   //project routes
   static const createProject = '/create_project';
+  static const browseProjects = '/browse_projects';
   static const projectDetails = '/project_details';
 
   //settings routes
