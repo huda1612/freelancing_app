@@ -26,50 +26,61 @@ class SubmitOfferView extends StatelessWidget {
         top: false,
         child: SingleChildScrollView(
           padding: EdgeInsets.all(AppSpaces.paddingMedium),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _SectionTitle(text: 'قيمة العرض'),
-              CustomTextField(
-                controller: controller.priceController,
-                hintText: 'المبلغ',
-                validator: (val) => controller.priceValidation(val),
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionTitle(text: 'قيمة العرض'),
+                CustomTextField(
+                  controller: controller.priceController,
+                  hintText: 'المبلغ',
+                  validator: (val) => controller.priceValidation(val),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.attach_money,
+                    color: AppColors.vividPurple,
+                    size: 22.w,
+                  ),
+                  // prefixText: '\$ ',
                 ),
-                // prefixText: r'$ ',
-              ),
-              SizedBox(height: AppSpaces.heightMedium2),
-              _SectionTitle(text: 'مدة التسليم'),
-              CustomTextField(
-                controller: controller.durationController,
-                hintText: 'عدد الأيام',
-                validator: (val) => controller.durationValidation(val),
-                keyboardType: TextInputType.number,
-                prefixIcon: Icon(
-                  Icons.timer_outlined,
-                  color: AppColors.vividPurple,
-                  size: 22.w,
+                SizedBox(height: AppSpaces.heightMedium2),
+                _SectionTitle(text: 'مدة التسليم'),
+                CustomTextField(
+                  controller: controller.durationController,
+                  hintText: 'عدد الأيام',
+                  validator: (val) => controller.durationValidation(val),
+                  keyboardType: TextInputType.number,
+                  prefixIcon: Icon(
+                    Icons.timer_outlined,
+                    color: AppColors.vividPurple,
+                    size: 22.w,
+                  ),
+                  textInputAction: TextInputAction.next,
                 ),
-              ),
-              SizedBox(height: AppSpaces.heightMedium2),
-              _SectionTitle(text: 'تفاصيل العرض'),
-              CustomTextField(
-                controller: controller.detailsController,
-                hintText: 'اكتب تفاصيل عرضك هنا...',
-                validator: (val) => controller.descriptionValidation(val),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: AppSpaces.heightLarge1),
-              GetBuilder<SubmitOfferController>(
-                builder: (_) => CustomButton(
-                  text: 'إرسال العرض ',
-                  onTap: controller.submitOffer,
-                  isLoading: controller.submitLoading,
-                  gradient: AppColors.gradientColor,
+                SizedBox(height: AppSpaces.heightMedium2),
+                _SectionTitle(text: 'تفاصيل العرض'),
+                CustomTextField(
+                  controller: controller.detailsController,
+                  hintText: 'اكتب تفاصيل عرضك هنا...',
+                  validator: (val) => controller.descriptionValidation(val),
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.done,
                 ),
-              ),
-            ],
+                SizedBox(height: AppSpaces.heightLarge1),
+                GetBuilder<SubmitOfferController>(
+                  builder: (controller) => CustomButton(
+                    text: 'إرسال العرض ',
+                    onTap: controller.submitOffer,
+                    isLoading: controller.submitLoading,
+                    gradient: AppColors.gradientColor,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

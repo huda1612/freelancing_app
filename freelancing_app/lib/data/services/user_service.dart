@@ -43,6 +43,7 @@ class UserService {
     return response;
   }
 
+
   Future<void> updateUserData(Map<String, dynamic> newUser, String uid) async {
     await _firebaseFirestore
         .collection(CollectionsNames.users)

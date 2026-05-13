@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
+import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ class ProjectDetailsController extends GetxController {
     if (project!.clientId == UserSession.uid) return true;
     return false;
   }
+
+  bool hasOffer = false;
 
   bool get isFreelancer => UserSession.role == UserRole.freelancer;
 
@@ -39,15 +42,38 @@ class ProjectDetailsController extends GetxController {
 
       return;
     }
+    if (UserSession.role == UserRole.freelancer) {
+      hasOldOffer();
+    }
+  }
+
+  Future<void> hasOldOffer() async {
+    final hasOfferRes = await OfferService().freelancerOfferOnProject(
+      projectId: project!.id,
+      freelancerId: UserSession.uid!,
+    );
+    return hasOfferRes.fold((err) {
+      customSnackbar(message: "${err.type} / ${err.message}");
+      hasOffer = true;
+    }, (offer) {
+      if (offer.isNotEmpty) {
+        customSnackbar(message: "لديك عرض مسبق على هذا المشروع");
+        hasOffer = true;
+        update();
+      }
+    });
   }
 
   void onOfferView() {
     // Get.toNamed(AppRoutes.offersList , arguments: {"projectId" : });
   }
+
   Future<void> onOfferSubmit() async {
     Get.toNamed(AppRoutes.submitOffer, arguments: {
       "projectBudget": project!.budget,
-      "projectDurationDays": project!.durationDays
+      "projectDurationDays": project!.durationDays,
+      "projectId": project!.id,
+      "clientId": project!.clientId
     });
   }
 
