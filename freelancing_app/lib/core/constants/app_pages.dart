@@ -1,12 +1,14 @@
 import 'package:freelancing_platform/core/bindings/auth_binding.dart';
 import 'package:freelancing_platform/core/bindings/client_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
+import 'package:freelancing_platform/core/bindings/main_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
+import 'package:freelancing_platform/views/main_section/main_views/main_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
@@ -55,7 +57,11 @@ import 'app_routes.dart';
 class AppPages {
   static final pages = [
     //**********************************************auth pages****************************************
-
+GetPage(
+  name: "/main",
+  page: () => MainView(),
+  binding: MainBinding(),
+),
     GetPage(
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
