@@ -11,25 +11,6 @@ import 'package:get/get.dart';
 class ProjectDetailsController extends GetxController {
   //  ProjectModel? project =ProjectModel(id: "", clientId:"", title: "", description: "", category: SpecializationSnapshot(slug: "", name: ""), budget: 0, durationDays: 0) ;
   ProjectModel? project;
-  // final String title = "تطوير تطبيق متجر إلكتروني";
-  // final String status = ProjectStatus.newProject;
-
-  // final String description =
-  //     "أحتاج إلى تطوير تطبيق متجر إلكتروني احترافي باستخدام Flutter مع لوحة تحكم وإمكانية الدفع الإلكتروني وإدارة المنتجات.";
-
-  // final String budget = "500\$ - 700\$";
-
-  // final String duration = "14 يوم";
-
-  // final String specialization = "تطوير تطبيقات Flutter";
-
-  // final List<String> skills = [
-  //   "Flutter",
-  //   "Firebase",
-  //   "API",
-  //   "UI UX",
-  //   "Dart",
-  // ];
 
   // var clientId = "G63CQ2p5DheAmfph21A9tCAJyWJ3";
   bool get isOwnProject {

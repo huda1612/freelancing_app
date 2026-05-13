@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:get/get.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -16,7 +18,6 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -38,23 +39,19 @@ class CustomBottomNavBar extends StatelessWidget {
               _buildNavItem(
                 icon: Icons.home_outlined,
                 index: 0,
-              
               ),
               _buildNavItem(
                 icon: Icons.search,
                 index: 1,
-               
               ),
               if (isClient) _buildFabButton(),
               _buildNavItem(
                 icon: Icons.chat_bubble_outline,
                 index: 2,
-               
               ),
               _buildNavItem(
                 icon: Icons.person_outline,
                 index: 3,
-              
               ),
             ],
           ),
@@ -66,7 +63,6 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget _buildNavItem({
     required IconData icon,
     required int index,
- 
   }) {
     final isSelected = currentIndex == index;
 
@@ -97,7 +93,8 @@ class CustomBottomNavBar extends StatelessWidget {
               height: 3,
               width: 18,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: AppColors.gradientColor.colors),
+                gradient:
+                    LinearGradient(colors: AppColors.gradientColor.colors),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -107,25 +104,28 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 
   Widget _buildFabButton() {
-    return Container(
-      height: 60,
-      width: 60,
-      margin: const EdgeInsets.only(top: 2,bottom: 5),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(colors: AppColors.gradientColor.colors),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 8,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: const Icon(
-        Icons.add,
-        color: Colors.white,
-        size: 30,
+    return GestureDetector(
+      onTap: () => Get.toNamed(AppRoutes.createProject),
+      child: Container(
+        height: 60,
+        width: 60,
+        margin: const EdgeInsets.only(top: 2, bottom: 5),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(colors: AppColors.gradientColor.colors),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 30,
+        ),
       ),
     );
   }

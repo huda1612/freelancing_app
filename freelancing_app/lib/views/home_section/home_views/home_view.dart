@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
+import 'package:get/get.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -10,8 +11,13 @@ class HomeView extends StatelessWidget {
       appBar: AppBar(
         title: const Text("الرئيسية"),
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () =>
+                  Get.put<SignOutController>(SignOutController()).signOut(),
+              icon: Icon(Icons.output_rounded))
+        ],
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -21,16 +27,12 @@ class HomeView extends StatelessWidget {
               "مرحباً بك 👋",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
-
             const Text(
               "إليك بعض الاقتراحات والمشاريع المناسبة لك",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-
             const SizedBox(height: 20),
-
             Expanded(
               child: ListView(
                 children: const [

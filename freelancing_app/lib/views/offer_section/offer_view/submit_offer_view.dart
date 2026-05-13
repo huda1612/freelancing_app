@@ -61,8 +61,8 @@ class SubmitOfferView extends StatelessWidget {
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: AppSpaces.heightLarge1),
-              Obx(
-                () => CustomButton(
+              GetBuilder<SubmitOfferController>(
+                builder: (_) => CustomButton(
                   text: 'إرسال العرض ',
                   onTap: controller.submitOffer,
                   isLoading: controller.submitLoading,

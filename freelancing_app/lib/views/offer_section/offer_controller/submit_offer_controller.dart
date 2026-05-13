@@ -35,6 +35,7 @@ class SubmitOfferController extends GetxController {
     }
 
     submitLoading = true;
+    update();
 
     customSnackbar(
       message: "تم تقديم العرض بنجاح",
@@ -46,13 +47,21 @@ class SubmitOfferController extends GetxController {
     detailsController.clear();
 
     submitLoading = false;
+    update();
+  }
+
+  bool _validateRequired(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return true;
+    }
+    return false;
   }
 
   String? priceValidation(String? val) {
-    if (val == null || val.trim().isEmpty) {
+    if (_validateRequired(val)) {
       return "يجب ادخال قيمة مبلغ العرض";
     }
-    final parsed = double.tryParse(normalizeNumbers(val.trim()));
+    final parsed = double.tryParse(normalizeNumbers(val!.trim()));
     if (parsed == null || parsed <= 0) {
       return 'العرض يجب أن يكون رقمًا أكبر من 0';
     }
@@ -72,7 +81,20 @@ class SubmitOfferController extends GetxController {
   //   return null;
   // }
 
-  String? durationValidation(String? val) {}
+  String? durationValidation(String? val) {
+    if (_validateRequired(val)) {
+      return "يجب ادخال قيمة مدة التسليم";
+    }
+    final parsed = double.tryParse(normalizeNumbers(val!.trim()));
+    if (parsed == null || parsed <= 0) {
+      return 'المدة يجب أن تكون رقمًا أكبر من 0';
+    }
+    if (parsed > projectDurationDays) {
+      return 'يجب ان لا تتجاوز المدة قيمة مدة المشروع وهي $projectDurationDays';
+    }
+    return null;
+  }
+
   String? descriptionValidation(String? val) {}
 
   @override

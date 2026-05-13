@@ -8,6 +8,7 @@ import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
+import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
 import 'package:freelancing_platform/views/main_section/main_views/main_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
@@ -57,11 +58,11 @@ import 'app_routes.dart';
 class AppPages {
   static final pages = [
     //**********************************************auth pages****************************************
-GetPage(
-  name: "/main",
-  page: () => MainView(),
-  binding: MainBinding(),
-),
+    GetPage(name: "/main", page: () => MainView(), binding: MainBinding()
+        // binding: BindingsBuilder(() {
+        //   Get.lazyPut(() => MainController());
+        // }),
+        ),
     GetPage(
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
