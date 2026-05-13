@@ -16,7 +16,6 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradientColors = [const Color(0xFF6A00FF), const Color(0xFF00C2FF)];
 
     return Container(
       decoration: const BoxDecoration(
@@ -39,23 +38,23 @@ class CustomBottomNavBar extends StatelessWidget {
               _buildNavItem(
                 icon: Icons.home_outlined,
                 index: 0,
-                gradientColors: gradientColors,
+              
               ),
               _buildNavItem(
                 icon: Icons.search,
                 index: 1,
-                gradientColors: gradientColors,
+               
               ),
-              if (isClient) _buildFabButton(gradientColors),
+              if (isClient) _buildFabButton(),
               _buildNavItem(
                 icon: Icons.chat_bubble_outline,
                 index: 2,
-                gradientColors: gradientColors,
+               
               ),
               _buildNavItem(
                 icon: Icons.person_outline,
                 index: 3,
-                gradientColors: gradientColors,
+              
               ),
             ],
           ),
@@ -67,7 +66,7 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget _buildNavItem({
     required IconData icon,
     required int index,
-    required List<Color> gradientColors,
+ 
   }) {
     final isSelected = currentIndex == index;
 
@@ -82,14 +81,14 @@ class CustomBottomNavBar extends StatelessWidget {
             shaderCallback: (bounds) {
               return LinearGradient(
                 colors: isSelected
-                    ? gradientColors
-                    : [Colors.grey.shade500, Colors.grey.shade500],
+                    ? AppColors.gradientColor.colors
+                    : [AppColors.grey, AppColors.grey],
               ).createShader(bounds);
             },
             child: Icon(
               icon,
               size: 26,
-              color: Colors.white, // اللون يتحدد من ShaderMask
+              color: AppColors.white, // اللون يتحدد من ShaderMask
             ),
           ),
           if (isSelected)
@@ -98,7 +97,7 @@ class CustomBottomNavBar extends StatelessWidget {
               height: 3,
               width: 18,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: gradientColors),
+                gradient: LinearGradient(colors: AppColors.gradientColor.colors),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -107,14 +106,14 @@ class CustomBottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildFabButton(List<Color> gradientColors) {
+  Widget _buildFabButton() {
     return Container(
       height: 60,
       width: 60,
-      margin: const EdgeInsets.only(top: 4),
+      margin: const EdgeInsets.only(top: 2,bottom: 5),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(colors: gradientColors),
+        gradient: LinearGradient(colors: AppColors.gradientColor.colors),
         boxShadow: const [
           BoxShadow(
             color: Colors.black26,

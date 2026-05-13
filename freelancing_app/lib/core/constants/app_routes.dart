@@ -1,4 +1,6 @@
 class AppRoutes {
+  static const main = '/main';
+
   //auth routes
   static const splash = '/splash';
   static const onboarding = '/onboarding';
