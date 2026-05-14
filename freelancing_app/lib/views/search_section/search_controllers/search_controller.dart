@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/models/search/search_option_model.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +24,6 @@ class SearchPageController extends GetxController {
   ].obs;
 
   void navigateTo(String route) {
-    Get.toNamed(route);
+    NavigationService.toNamed(route);
   }
 }

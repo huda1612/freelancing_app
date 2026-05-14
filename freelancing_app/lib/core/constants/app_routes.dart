@@ -24,9 +24,7 @@ class AppRoutes {
   static const freelancerAccountInfo = '/freelancer_account_info';
   static const freelancerWorkAndCertificates =
       '/freelancer_work_and_certificates';
-
   static const clinetWork = '/clinet_work';
-
   static const clientAccountInfo = '/client_account_info';
   static const entryTest = '/entryTest';
 
@@ -34,13 +32,19 @@ class AppRoutes {
   static const approved = '/approved';
   static const rejected = '/rejected';
 
+  //home routes
+  static const home = '/home';
+
   //profile routes
   static const profile = '/profile';
   static const personalInfo = '/personal_info';
   static const workDetails = '/work_details';
 
-  static const searchPage = '/search_page';
+  //search route
+  static const search = '/search';
 
+  //chat routes
+  static const chat = '/chat';
   //skills routes
   static const skillsSelection = '/skills_selection';
 
