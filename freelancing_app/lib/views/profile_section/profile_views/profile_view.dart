@@ -83,7 +83,7 @@ class ProfileView extends StatelessWidget {
           CountryCode.fromCountryCode(controller.user.value?.countryCode ?? "");
       cName = country.name;
     }
-    final String? gender =
+    final String gender =
         controller.user.value?.gender == 'female' ? "انثى" : "ذكر";
 
     return Wrap(

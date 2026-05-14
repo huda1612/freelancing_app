@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/widgets/base_screen.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
@@ -187,20 +189,62 @@ class ProjectDetailsView extends StatelessWidget {
 
             SizedBox(height: AppSpaces.heightMedium),
 
-            // زر تقديم عرض او عرض العروض
+            // زر تقديم عرض + زر العروض المقدّمة (للفريلانسر) أو عرض العروض للعميل
             if (controller.project!.status == ProjectStatus.newProject)
-              GetBuilder<ProjectDetailsController>(builder: (controller) {
+              GetBuilder<ProjectDetailsController>(builder: (c) {
+                if (c.isFreelancer) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          text: c.hasOffer
+                              ? 'لديك عرض معلّق'
+                              : 'تقديم عرض',
+                          height: 44,
+                          width: null,
+                          onTap: c.onOfferSubmit,
+                          isDisable: c.hasOffer,
+                          prefix: Icon(
+                            Icons.send_rounded,
+                            color: AppColors.white,
+                            size: 18.sp,
+                          ),
+                          gradient: AppColors.gradientColor,
+                          textStyle: AppTextStyles.button.copyWith(
+                            color: AppColors.white,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: CustomButton(
+                          text: 'العروض المقدَّمة',
+                          height: 44,
+                          width: null,
+                          onTap: c.onOfferView,
+                          buttonType: ButtonType.outlined,
+                          color: AppColors.vividPurple,
+                          textStyle: AppTextStyles.link.copyWith(
+                            color: AppColors.vividPurple,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          prefix: Icon(
+                            Icons.visibility_outlined,
+                            color: AppColors.vividPurple,
+                            size: 18.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
                 return CustomButton(
-                  text: controller.isFreelancer
-                      ? controller.hasOffer
-                          ? 'لديك عرض سابق على هذا المشروع'
-                          : 'إرسال العرض '
-                      : "عرض العروض المستلمة",
-                  onTap: controller.isFreelancer
-                      ? controller.onOfferSubmit
-                      : controller.onOfferView,
-                  isDisable: controller.hasOffer,
-                  prefix: Icon(
+                  text: "عرض العروض المستلمة",
+                  onTap: c.onOfferView,
+                  prefix: const Icon(
                     Icons.content_paste,
                     color: AppColors.white,
                   ),
