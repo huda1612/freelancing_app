@@ -158,7 +158,7 @@ class AuthController extends GetxController {
       var nextRoute = await RouteHandler.firstRoutHandler();
       Get.offAllNamed(nextRoute);
     } on FirebaseAuthException catch (e) {
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + e.toString());
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$e");
       String message;
       switch (e.code) {
         case 'user-not-found':

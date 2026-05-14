@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
@@ -54,9 +55,9 @@ class ProjectDetailsController extends GetxController {
     );
     return hasOfferRes.fold((err) {
       customSnackbar(message: "${err.type} / ${err.message}");
-      hasOffer = true;
+      hasOffer = false;
     }, (offer) {
-      if (offer.isNotEmpty) {
+      if (offer.isNotEmpty && offer.first.status == OfferStatus.pending) {
         customSnackbar(message: "لديك عرض مسبق على هذا المشروع");
         hasOffer = true;
         update();
@@ -65,7 +66,10 @@ class ProjectDetailsController extends GetxController {
   }
 
   void onOfferView() {
-    // Get.toNamed(AppRoutes.offersList , arguments: {"projectId" : });
+    Get.toNamed(AppRoutes.projectOffers, arguments: {
+      'project': project,
+      'projectId': project!.id,
+    });
   }
 
   Future<void> onOfferSubmit() async {
