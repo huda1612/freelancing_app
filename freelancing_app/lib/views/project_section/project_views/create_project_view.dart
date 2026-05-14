@@ -74,7 +74,7 @@ class CreateProjectView extends StatelessWidget {
                     _SectionTitle(text: 'تصنيف المشروع'),
                     Obx(() {
                       return DropdownButtonFormField<String>(
-                        value: controller.selectedSpecialization.value,
+                        initialValue: controller.selectedSpecialization.value,
                         isExpanded: true,
                         decoration: unifiedDecoration('اختر التصنيف'),
                         items: controller.allSpecializations

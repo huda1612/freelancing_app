@@ -72,8 +72,12 @@ class SubmitOfferController extends GetxController {
   //   return null;
   // }
 
-  String? durationValidation(String? val) {}
-  String? descriptionValidation(String? val) {}
+  String? durationValidation(String? val) {
+    return null;
+  }
+  String? descriptionValidation(String? val) {
+    return null;
+  }
 
   @override
   void onClose() {
