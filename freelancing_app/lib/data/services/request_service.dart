@@ -87,7 +87,6 @@ class RequestService {
     return response;
   }
 
-  //بدي اعمل الزر بصفحة التفاصيل يحذف المستخدم والطلب بدل بس حذف الظلب!!!!!!!!
   Future<StatusClasses> cleanOldRejectedRequestesAndUsers() async {
     //استعلام بجيب اللي تاريخهم اكثر من 15
     final query = _firebaseFirestore

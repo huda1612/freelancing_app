@@ -71,7 +71,7 @@ class RouteHandler {
           {
             //هي بدها تعديل للهوم !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // return AppRoutes.approved;
-            return AppRoutes.profile;
+            return AppRoutes.main;
           }
         case UserStatus.pending:
           {

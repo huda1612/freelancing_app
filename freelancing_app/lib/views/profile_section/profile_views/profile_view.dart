@@ -143,51 +143,53 @@ class ProfileView extends StatelessWidget {
                 gradient: AppColors.gradientColor,
               ),
               padding: const EdgeInsets.all(3),
-              child: GetBuilder<ImageUploadController>(builder: (c) {
-                return GestureDetector(
-                  onLongPress: controller.isOwnProfile
-                      ? controller.changeProfileImage
-                      : null,
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.owhite,
-                    // child: ClipOval(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        if (c.localImage != null)
-                          ClipOval(
-                              child:
-                                  Image.file(c.localImage!, fit: BoxFit.cover))
-                        else if (controller.profileImage.value.isNotEmpty)
-                          ClipOval(
-                            child: Obx(() => CachedNetworkImage(
-                                  imageUrl: controller.profileImage.value,
-                                  placeholder: (context, url) =>
-                                      const CustomLoading(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                  fit: BoxFit.cover,
-                                )),
-                          )
-                        else
-                          Icon(Icons.person,
-                              size: 54, color: AppColors.lightPurple),
-                        if (c.isUploading)
-                          const Center(child: CircularProgressIndicator()),
-                        controller.isOwnProfile
-                            ? Align(
-                                alignment: Alignment.bottomRight,
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  color: AppColors.lightPurple,
-                                ),
+              child: GetBuilder<ImageUploadController>(
+                  init: Get.find<ImageUploadController>(),
+                  builder: (c) {
+                    return GestureDetector(
+                      onLongPress: controller.isOwnProfile
+                          ? controller.changeProfileImage
+                          : null,
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.owhite,
+                        // child: ClipOval(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            if (c.localImage != null)
+                              ClipOval(
+                                  child: Image.file(c.localImage!,
+                                      fit: BoxFit.cover))
+                            else if (controller.profileImage.value.isNotEmpty)
+                              ClipOval(
+                                child: Obx(() => CachedNetworkImage(
+                                      imageUrl: controller.profileImage.value,
+                                      placeholder: (context, url) =>
+                                          const CustomLoading(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                      fit: BoxFit.cover,
+                                    )),
                               )
-                            : SizedBox.shrink()
-                      ],
-                    ),
-                  ),
-                );
-              }),
+                            else
+                              Icon(Icons.person,
+                                  size: 54, color: AppColors.lightPurple),
+                            if (c.isUploading)
+                              const Center(child: CircularProgressIndicator()),
+                            controller.isOwnProfile
+                                ? Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      color: AppColors.lightPurple,
+                                    ),
+                                  )
+                                : SizedBox.shrink()
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ),
           Transform.translate(

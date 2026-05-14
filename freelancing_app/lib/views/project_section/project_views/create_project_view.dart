@@ -40,6 +40,7 @@ class CreateProjectView extends StatelessWidget {
                     _SectionTitle(text: 'عنوان المشروع'),
                     CustomTextField(
                       controller: controller.titleController,
+                      textInputAction: TextInputAction.next,
                       hintText: 'اكتب عنوان المشروع',
                       keyboardType: TextInputType.name,
                       validator: (value) =>
@@ -49,6 +50,7 @@ class CreateProjectView extends StatelessWidget {
                     _SectionTitle(text: 'وصف المشروع'),
                     CustomTextField(
                       controller: controller.descriptionController,
+                      textInputAction: TextInputAction.next,
                       hintText: 'اكتب وصف المشروع',
                       keyboardType: TextInputType.multiline,
                       validator: (value) =>
@@ -59,6 +61,7 @@ class CreateProjectView extends StatelessWidget {
                     CustomTextField(
                       controller: controller.budgetController,
                       hintText: 'المبلغ',
+                      textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       validator: controller.validateBudget,
                     ),
@@ -67,6 +70,7 @@ class CreateProjectView extends StatelessWidget {
                     CustomTextField(
                       controller: controller.durationController,
                       hintText: 'عدد الأيام',
+                      textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       validator: controller.validateDuration,
                     ),
