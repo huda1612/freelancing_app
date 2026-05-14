@@ -7,10 +7,13 @@ class NavigationService {
       Get.find<NavigationController>();
 
   static int get currentTab => _controller.currentIndex.value;
-  static T? arguments<T>(
-    BuildContext context,
-  ) {
-    return ModalRoute.of(context)!.settings.arguments as T?;
+  // static T? arguments<T>(
+  //   BuildContext context,
+  // ) {
+  //   return ModalRoute.of(context)!.settings.arguments as T?;
+  // }
+  static T? currentArguments<T>() {
+    return ModalRoute.of(Get.context!)?.settings.arguments as T?;
   }
 
   /// Nested Navigation

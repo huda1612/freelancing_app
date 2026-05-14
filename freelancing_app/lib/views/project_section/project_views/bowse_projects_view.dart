@@ -66,7 +66,8 @@ class BrowseProjectsView extends StatelessWidget {
                               print(
                                   "currentTab = ${NavigationService.currentTab}");
                               print("args = ${{"project": project}}");
-                              Get.toNamed(AppRoutes.projectDetails,
+                              NavigationService.toNamed(
+                                  AppRoutes.projectDetails,
                                   arguments: {"project": project});
                             },
                             child: ProjectCard(project: project)),
