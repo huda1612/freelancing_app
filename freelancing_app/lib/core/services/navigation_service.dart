@@ -1,0 +1,93 @@
+import 'package:flutter/material.dart';
+import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
+import 'package:get/get.dart';
+
+class NavigationService {
+  static NavigationController get _controller =>
+      Get.find<NavigationController>();
+
+  static int get currentTab => _controller.currentIndex.value;
+  static T? arguments<T>(
+    BuildContext context,
+  ) {
+    return ModalRoute.of(context)!.settings.arguments as T?;
+  }
+
+  /// Nested Navigation
+  static Future<dynamic>? toNamed(
+    String route, {
+    dynamic arguments,
+    int? id,
+  }) {
+    return Get.toNamed(
+      route,
+      id: id ?? currentTab,
+      arguments: arguments,
+    );
+  }
+
+  static Future<dynamic>? offNamed(
+    String route, {
+    dynamic arguments,
+    int? id,
+  }) {
+    return Get.offNamed(
+      route,
+      id: id ?? currentTab,
+      arguments: arguments,
+    );
+  }
+
+  static Future<dynamic>? offAllNamed(
+    String route, {
+    dynamic arguments,
+    int? id,
+  }) {
+    return Get.offAllNamed(
+      route,
+      id: id ?? currentTab,
+      arguments: arguments,
+    );
+  }
+
+  static void back({int? id}) {
+    Get.back(
+      id: id ?? currentTab,
+    );
+  }
+
+  /// Root Navigation
+  static Future<dynamic>? rootToNamed(
+    String route, {
+    dynamic arguments,
+  }) {
+    return Get.toNamed(
+      route,
+      arguments: arguments,
+    );
+  }
+
+  static Future<dynamic>? rootOffNamed(
+    String route, {
+    dynamic arguments,
+  }) {
+    return Get.offNamed(
+      route,
+      arguments: arguments,
+    );
+  }
+
+  static Future<dynamic>? rootOffAllNamed(
+    String route, {
+    dynamic arguments,
+  }) {
+    return Get.offAllNamed(
+      route,
+      arguments: arguments,
+    );
+  }
+
+  static void changeTab(int index) {
+    _controller.changePage(index);
+  }
+}
