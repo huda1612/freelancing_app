@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/bindings/initial_binding.dart';
 import 'package:freelancing_platform/core/classes/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 // import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
-
 // import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
 // import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
 // import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
@@ -40,6 +40,9 @@ class MyApp extends StatelessWidget {
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),
           debugShowCheckedModeBanner: false,
+
+          initialBinding: InitialBinding(),
+
           initialRoute: AppRoutes.splash,
 
           // initialRoute: AppRoutes.projectDetails,

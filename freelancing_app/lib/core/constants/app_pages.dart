@@ -187,6 +187,17 @@ class AppPages {
 
     //**********************************************profile pages****************************************
     GetPage(
+      name: AppRoutes.home,
+      page: () => HomeView(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.chat,
+      page: () => ChatView(),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    GetPage(
       name: AppRoutes.profile,
       page: () => ProfileView(),
       binding: BindingsBuilder(() {
@@ -232,7 +243,7 @@ class AppPages {
     ),
 
     GetPage(
-      name: AppRoutes.searchPage,
+      name: AppRoutes.search,
       page: () => SearchView(),
     ),
 
