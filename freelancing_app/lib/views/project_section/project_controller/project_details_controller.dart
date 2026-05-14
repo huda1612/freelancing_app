@@ -28,10 +28,14 @@ class ProjectDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     //Load project details
-    project = Get.arguments?["project"];
+    // project = Get.arguments?["project"];
     // final project = NavigationService.arguments<ProjectModel>(
-    //   context,
+    //  Get.context!,
     // );
+    // final args = NavigationService.currentArguments<Map>();
+    final args = Get.routing.args;
+    project = args?["project"];
+
     print("!!!!!!!!!!!!!!!!!!!!!!!!!$project");
     if (project == null || project is! ProjectModel) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
