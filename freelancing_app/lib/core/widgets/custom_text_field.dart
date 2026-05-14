@@ -17,23 +17,27 @@ class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final Color? fillColor;
   final BorderRadius? borderRadius;
-
-  const CustomTextField({
-    super.key,
-    this.initialValue,
-    this.hintText,
-    this.controller,
-    this.obscureText = false,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.keyboardType,
-    this.validator,
-    this.width = 380,
-    // this.height = 48,
-    this.onChanged,
-    this.fillColor,
-    this.borderRadius,
-  });
+  final TextInputAction? textInputAction;
+  final String? prefixText;
+  final TextStyle? prefixStyle;
+  const CustomTextField(
+      {super.key,
+      this.initialValue,
+      this.hintText,
+      this.controller,
+      this.obscureText = false,
+      this.prefixIcon,
+      this.prefixText,
+      this.prefixStyle,
+      this.suffixIcon,
+      this.keyboardType,
+      this.validator,
+      this.width = 380,
+      // this.height = 48,
+      this.onChanged,
+      this.fillColor,
+      this.borderRadius,
+      this.textInputAction});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -87,8 +91,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         textDirection: TextDirection.rtl,
         decoration: unifiedDecoration(widget.hintText ?? "").copyWith(
-          suffixIcon: suffixIcon,
-        ),
+            suffixIcon: suffixIcon,
+            prefixIcon: widget.prefixIcon,
+            prefixText: widget.prefixText,
+            prefixStyle: widget.prefixStyle ??
+                TextStyle(
+                    fontSize: 15.sp,
+                    color: AppColors.vividPurple,
+                    fontWeight: FontWeight.w700)),
+        textInputAction: widget.textInputAction,
       ),
     );
   }

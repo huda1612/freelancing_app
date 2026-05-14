@@ -189,19 +189,24 @@ class ProjectDetailsView extends StatelessWidget {
 
             // زر تقديم عرض او عرض العروض
             if (controller.project!.status == ProjectStatus.newProject)
-              CustomButton(
-                text: controller.isFreelancer
-                    ? "تقديم عرض"
-                    : "عرض العروض المستلمة",
-                onTap: controller.isFreelancer
-                    ? controller.onOfferSubmit
-                    : controller.onOfferView,
-                prefix: Icon(
-                  Icons.content_paste,
-                  color: AppColors.white,
-                ),
-                gradient: AppColors.gradientColor,
-              ),
+              GetBuilder<ProjectDetailsController>(builder: (controller) {
+                return CustomButton(
+                  text: controller.isFreelancer
+                      ? controller.hasOffer
+                          ? 'لديك عرض سابق على هذا المشروع'
+                          : 'إرسال العرض '
+                      : "عرض العروض المستلمة",
+                  onTap: controller.isFreelancer
+                      ? controller.onOfferSubmit
+                      : controller.onOfferView,
+                  isDisable: controller.hasOffer,
+                  prefix: Icon(
+                    Icons.content_paste,
+                    color: AppColors.white,
+                  ),
+                  gradient: AppColors.gradientColor,
+                );
+              }),
             SizedBox(height: AppSpaces.heightMedium),
           ],
         ),
