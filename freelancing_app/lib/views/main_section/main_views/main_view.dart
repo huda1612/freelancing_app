@@ -136,17 +136,17 @@ class MainView extends StatelessWidget {
         );
 
         return GetPageRoute(
-            routeName: settings.name,
-            page: page.page,
-            binding: page.binding,
-            middlewares: page.middlewares,
-            transition: page.transition,
-            settings: settings
-            // settings: RouteSettings(
-            //   name: settings.name,
-            //   arguments: settings.arguments, // 👈 مهم جدًا
-            // ),
-            );
+          routeName: settings.name,
+          page: page.page,
+          binding: page.binding,
+          middlewares: page.middlewares,
+          transition: page.transition,
+          // settings: settings
+          settings: RouteSettings(
+            name: settings.name,
+            arguments: settings.arguments, // 👈 مهم جدًا
+          ),
+        );
       },
     );
   }
