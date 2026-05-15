@@ -68,8 +68,7 @@ class ProfileController extends GetxController {
     if (isOwnProfile) {
       userId = UserSession.uid!;
     } else {
-      // userId = Get.parameters['id']!;
-      userId = Get.arguments['id']!;
+      userId = Get.arguments['id'] ?? Get.arguments['userId'] ?? '';
     }
 
     loadProfile();
@@ -87,8 +86,8 @@ class ProfileController extends GetxController {
 
   //لو مررت وسيط رقم المستخدم للصفحه وانا عم انتقلها معناها هي ما صفحتي صفحة مستخدم ما
   bool get isOwnProfile {
-    // final String? argUserId = Get.parameters['id'];
-    final String? argUserId = Get.arguments['id'];
+    final String? argUserId =
+        Get.arguments?['id'] ?? Get.arguments?['userId'];
 
     if (argUserId == null || argUserId == UserSession.uid) return true;
     return false;
@@ -101,6 +100,28 @@ class ProfileController extends GetxController {
 
   bool get isFreelancer {
     return role == UserRole.freelancer;
+  }
+
+  bool get isClient => role == UserRole.client;
+
+  int get pointsCount => user.value?.points ?? 0;
+
+  int get completedProjectsCount => user.value?.completedProjects ?? 0;
+
+  String get accountTypeLabel {
+    if (isClient) {
+      switch (user.value?.clientType) {
+        case 'company':
+          return 'شركة';
+        case 'individual':
+          return 'فرد';
+        default:
+          return 'غير محدد';
+      }
+    }
+    if (role == UserRole.freelancer) return 'مستقل';
+    if (role == UserRole.admin) return 'مدير';
+    return roleLabel;
   }
 
   String get username {

@@ -4,7 +4,6 @@ import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
-import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
@@ -31,7 +30,16 @@ class ProjectDetailsController extends GetxController {
     super.onInit();
     //Load project details
     // project = Get.arguments?["project"];
-    project = Get.find<BrowseProjectsController>().selectedProject;
+
+    //جديدة 
+   // project = Get.find<BrowseProjectsController>().selectedProject;
+final argProject = Get.arguments?['project'];
+    if (argProject is ProjectModel) {
+      project = argProject;
+    } else if (Get.isRegistered<BrowseProjectsController>()) {
+      project = Get.find<BrowseProjectsController>().selectedProject;
+    }
+   //لهون
     if (project == null || project is! ProjectModel) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         customSnackbar(

@@ -32,11 +32,7 @@ import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_bottom_nav_bar.dart';
-import 'package:freelancing_platform/views/chat_section/chat_views/chat_view.dart';
-import 'package:freelancing_platform/views/home_section/home_views/home_view.dart';
 import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
-import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
-import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
 import 'package:get/get.dart';
 
 class MainView extends StatelessWidget {
