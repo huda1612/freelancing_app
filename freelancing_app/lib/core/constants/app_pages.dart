@@ -35,9 +35,13 @@ import 'package:freelancing_platform/views/auth_section/auth_views/verification_
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_views/active_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/bowse_projects_view.dart';
+import 'package:freelancing_platform/views/project_section/project_views/client_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
@@ -277,6 +281,26 @@ class AppPages {
       // binding: ProjectBinding(),
       middlewares: [AuthMiddleware()],
     ),
+    //جديدة
+    GetPage(
+      name: AppRoutes.myProjects,
+      page: () => ClientProjectView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => ClientProjectController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    GetPage(
+      name: AppRoutes.activeProject,
+      page: () => ActiveProjectView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => ActiveProjectController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    //جديدة
 
     //**********************************************offer pages****************************************
     GetPage(

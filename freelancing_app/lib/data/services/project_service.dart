@@ -55,4 +55,50 @@ class ProjectService {
       fromMap: (data, id) => ProjectModel.fromMap(data, id),
     );
   }
+  //*************************************************** */
+  //اضافات جديدية 
+  
+  /// كل مشاريع العميل (تُصفّى حسب الحالة في الواجهة).
+  Future<Either<StatusClasses, List<ProjectModel>>> getClientProjects({
+    required String clientId,
+  }) async {
+    final query = _firebaseFirestore
+        .collection(CollectionsNames.projects)
+        .where('clientId', isEqualTo: clientId);
+
+    return FirebaseCrud.runGetQuery<ProjectModel>(
+      query: query,
+      fromMap: (data, id) => ProjectModel.fromMap(data, id),
+    );
+  }
+
+  Future<StatusClasses> updateProjectStatus({
+    required String projectId,
+    required String status,
+    String? acceptedOfferId,
+  }) async {
+    final body = <String, dynamic>{
+      'status': status,
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+    if (acceptedOfferId != null) {
+      body['acceptedOfferId'] = acceptedOfferId;
+    }
+
+    return FirebaseCrud.updateDocument(
+      collectionRef:
+          _firebaseFirestore.collection(CollectionsNames.projects),
+      docId: projectId,
+      body: body,
+    );
+  }
+
+  Future<StatusClasses> republishProject(String projectId) {
+    return updateProjectStatus(
+      projectId: projectId,
+      status: ProjectStatus.newProject,
+    );
+  }
 }
+
+
