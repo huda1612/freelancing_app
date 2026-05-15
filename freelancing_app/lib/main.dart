@@ -5,6 +5,8 @@ import 'package:freelancing_platform/core/classes/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/services/notification_services.dart';
+import 'package:freelancing_platform/core/utils/helper_function/check_fcm_token.dart';
 // import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
 // import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
 // import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
@@ -22,8 +24,14 @@ void main() async {
   );
 
   // استدعاء تهيئة البيانات قبل تشغيل التطبيق
-  await AppInitializer.init();
+  await AppInitializer.init();  
+
   runApp(const MyApp());
+  final notificationServices = Get.put(NotificationServices());
+
+  await notificationServices.initialize(
+    onToken: checkFcmToken,
+  );
 }
 
 class MyApp extends StatelessWidget {

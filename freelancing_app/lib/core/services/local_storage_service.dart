@@ -18,19 +18,23 @@ class LocalStorageService {
     await sh.remove(key); // هذا يحذف القيمة اللي تحت المفتاح
   }
 
+  static setConstantFirstOpen() async {
+    AppConstantData.firstOpen = await getStringValue(AppKeys.firstOpen);
+  }
+
+  // static setConstantFcm() async {
+  //   AppConstantData.fcm = await getStringValue(AppKeys.fcm);
+  // }
+
+  // static setConstantLang() async {
+  //   AppConstantData.lang = await getStringValue(AppKeys.lang);
+  // }
+
   // static setConstantUid() async {
   //   AppConstantData.uid = await getStringValue(AppKeys.uid);
   // }
 
   // static setConstantRole() async {
   //   AppConstantData.role = await getStringValue(AppKeys.role);
-  // }
-
-  static setConstantFirstOpen() async {
-    AppConstantData.firstOpen = await getStringValue(AppKeys.firstOpen);
-  }
-
-  // static setConstantLang() async {
-  //   AppConstantData.lang = await getStringValue(AppKeys.lang);
   // }
 }

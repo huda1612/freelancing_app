@@ -71,6 +71,7 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildBasicInfo() {
+    
     String? cName;
     if (controller.user.value?.countryCode != null) {
       final country =

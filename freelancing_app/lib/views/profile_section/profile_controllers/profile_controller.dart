@@ -86,8 +86,8 @@ class ProfileController extends GetxController {
 
   //لو مررت وسيط رقم المستخدم للصفحه وانا عم انتقلها معناها هي ما صفحتي صفحة مستخدم ما
   bool get isOwnProfile {
-    final String? argUserId =
-        Get.arguments?['id'] ?? Get.arguments?['userId'];
+    // final String? argUserId = Get.parameters['id'];
+    final String? argUserId = Get.arguments?['id'];
 
     if (argUserId == null || argUserId == UserSession.uid) return true;
     return false;

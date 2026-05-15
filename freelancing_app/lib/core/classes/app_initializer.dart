@@ -5,7 +5,9 @@ class AppInitializer {
   static Future<void> init() async {
     // LocalStorageService.setConstantUid();
     // LocalStorageService.setConstantRole();
-   await UserSession.load();
-   await LocalStorageService.setConstantFirstOpen();
+    await UserSession.load();
+    await LocalStorageService.setConstantFirstOpen();
+    //مافي داعي اله لان مارح احتاجه جوا التطبيق ليش لاعمل مصدرين للتوكن زضل حدثهم مع بعض
+    // await LocalStorageService.setConstantFcm();
   }
 }
