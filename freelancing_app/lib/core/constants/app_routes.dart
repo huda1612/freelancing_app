@@ -52,6 +52,8 @@ class AppRoutes {
   static const createProject = '/create_project';
   static const browseProjects = '/browse_projects';
   static const projectDetails = '/project_details';
+   static const myProjects = '/my_projects';
+  static const activeProject = '/active_project';
 
   //offers routes
   static const submitOffer = '/submit_offer';

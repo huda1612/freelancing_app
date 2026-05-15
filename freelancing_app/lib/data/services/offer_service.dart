@@ -100,7 +100,7 @@ class OfferService {
   // جلب عروض مشروع معيّن
   Future<Either<StatusClasses, List<OfferModel>>> getProjectOffers(
       {required String projectId, bool? justPendingOffers}) async {
-    var query;
+    Query<Map<String, dynamic>> query;
     if (justPendingOffers != null && justPendingOffers == true) {
       query = _firebaseFirestore
           .collection(CollectionsNames.offers)

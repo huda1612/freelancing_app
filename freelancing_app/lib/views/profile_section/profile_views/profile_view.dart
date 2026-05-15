@@ -17,6 +17,7 @@ import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/card_container.dart';
 import 'package:freelancing_platform/core/widgets/profile_certificate_tile.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_drawer.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_review_card.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_skill_chip.dart';
 import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
@@ -33,16 +34,9 @@ class ProfileView extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: Scaffold(
             backgroundColor: AppColors.white,
-            // appBar: CustomAppBar(
-            //   title: 'الملف الشخصي',
-            //   leadingIcon: Builder(
-            //     builder: (context) => IconButton(
-            //       icon: const Icon(Icons.menu_rounded, color: AppColors.black),
-            //       onPressed: () => Scaffold.of(context).openDrawer(),
-            //     ),
-            //   ),
-            // ),
-            // drawer: _buildSideDrawer(),
+            drawer: controller.isOwnProfile
+                ? ProfileDrawer(controller: controller)
+                : null,
             body: Obx(() =>
                 // GetBuilder<ProfileController>(builder: (_) {
                 UiStateHandler(
@@ -102,6 +96,52 @@ class ProfileView extends StatelessWidget {
     );
   }
 
+  TextStyle get _headerMetaStyle =>
+      AppTextStyles.link.copyWith(color: AppColors.black);
+
+  Widget _buildAccountStats() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _statRow(
+          icon: Icons.stars_rounded,
+          label: 'النقاط',
+          value: '${controller.pointsCount}',
+        ),
+        SizedBox(width: 20.w),
+        _statRow(
+          icon: Icons.assignment_turned_in_outlined,
+          label: 'المشاريع المكتملة',
+          value: '${controller.completedProjectsCount}',
+        ),
+      ],
+    );
+  }
+
+  Widget _statRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 18, color: AppColors.vividPurple),
+        SizedBox(width: 6.w),
+        Text(label, style: _headerMetaStyle),
+        SizedBox(width: 6.w),
+        Text(
+          value,
+          style: _headerMetaStyle.copyWith(
+            fontWeight: FontWeight.w700,
+            color: AppColors.darkPurple,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _infoItem(IconData icon, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -123,14 +163,30 @@ class ProfileView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Container(
-            height: 140.h,
-            decoration: BoxDecoration(
-              gradient: AppColors.gradientColor,
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(24),
+          Stack(
+            children: [
+              Container(
+                height: 140.h,
+                decoration: BoxDecoration(
+                  gradient: AppColors.gradientColor,
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(24),
+                  ),
+                ),
               ),
-            ),
+              if (controller.isOwnProfile)
+                Positioned(
+                  top: MediaQuery.of(Get.context!).padding.top + 8,
+                  right: 12,
+                  child: Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu_rounded,
+                          color: AppColors.white, size: 28),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                    ),
+                  ),
+                ),
+            ],
           ),
           //للصورة
           Transform.translate(
@@ -219,9 +275,11 @@ class ProfileView extends StatelessWidget {
                     color: AppColors.black,
                   ),
                 ),
+                SizedBox(height: 8.h),
+                _buildAccountStats(),
                 SizedBox(height: 6.h),
                 _buildBasicInfo(),
-                SizedBox(height: 12.h),
+                SizedBox(height: 8.h),
                 _buildActionButtons(),
               ],
             ),
