@@ -8,6 +8,8 @@ import 'package:freelancing_platform/core/bindings/splash_binding.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
+import 'package:freelancing_platform/views/chat_section/chat_views/chat_view.dart';
+import 'package:freelancing_platform/views/home_section/home_views/home_view.dart';
 import 'package:freelancing_platform/views/main_section/main_views/main_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
