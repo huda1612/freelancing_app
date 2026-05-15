@@ -4,10 +4,12 @@ import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
 import 'package:get/get.dart';
 
 class ProjectDetailsController extends GetxController {
@@ -28,17 +30,13 @@ class ProjectDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     //Load project details
-    project = Get.arguments?["project"];
+    // project = Get.arguments?["project"];
+    project = Get.find<BrowseProjectsController>().selectedProject;
     if (project == null || project is! ProjectModel) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         customSnackbar(
           message: "تعذر تحميل بيانات المشروع",
         );
-        //هي لازم تكون صفحه ثانيه
-        // Get.offNamed(AppRoutes.profile);
-        // Get.offNamed(AppRoutes.home); هيك لازم
-        // await Future.delayed(const Duration(milliseconds: 1000));
-        // Get.back();
       });
 
       return;

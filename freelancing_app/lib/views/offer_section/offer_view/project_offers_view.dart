@@ -18,26 +18,23 @@ class ProjectOffersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        appBar: CustomAppBar(
-          title: 'عروض المشروع',
-          backgroundGradient: AppColors.gradientColor,
-        ),
-        body: SafeArea(
-          top: false,
-          child: Obx(
-            () => UiStateHandler(
-              status: controller.pageState.value,
-              fetchDataFun: controller.loadOffers,
-              child: Column(
-                children: [
-                  if (controller.showTabs) _tabsBar(),
-                  Expanded(child: _buildOffersList(context)),
-                ],
-              ),
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: CustomAppBar(
+        title: 'عروض المشروع',
+        backgroundGradient: AppColors.gradientColor,
+      ),
+      body: SafeArea(
+        top: false,
+        child: Obx(
+          () => UiStateHandler(
+            status: controller.pageState.value,
+            fetchDataFun: controller.loadOffers,
+            child: Column(
+              children: [
+                if (controller.showTabs) _tabsBar(),
+                Expanded(child: _buildOffersList(context)),
+              ],
             ),
           ),
         ),
@@ -58,7 +55,7 @@ class ProjectOffersView extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+        padding: const EdgeInsets.fromLTRB(12, 3, 12, 0),
         child: Row(
           children: [
             Expanded(
@@ -96,10 +93,10 @@ class ProjectOffersView extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
+      // borderRadius: BorderRadius.circular(8),
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
+      child: Container(
+        // duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: const BoxDecoration(color: Colors.transparent),
         child: Column(

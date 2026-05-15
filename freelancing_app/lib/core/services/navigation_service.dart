@@ -12,8 +12,19 @@ class NavigationService {
   // ) {
   //   return ModalRoute.of(context)!.settings.arguments as T?;
   // }
-  static T? currentArguments<T>() {
-    return ModalRoute.of(Get.context!)?.settings.arguments as T?;
+  // static T? currentArguments<T>() {
+  //   return ModalRoute.of(Get.context!)?.settings.arguments as T?;
+  // }
+  static T? arguments<T>() {
+    final context = Get.context;
+    print("context : $context");
+    if (context == null) return null;
+
+    final route = ModalRoute.of(context);
+    print("route : $route");
+    if (route == null) return null;
+
+    return route.settings.arguments as T?;
   }
 
   /// Nested Navigation
