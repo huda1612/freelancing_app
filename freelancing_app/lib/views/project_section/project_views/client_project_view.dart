@@ -7,6 +7,7 @@ import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_widgets/client_project_tile.dart';
 import 'package:get/get.dart';
 
 class ClientProjectView extends StatelessWidget {
@@ -134,21 +135,21 @@ class ClientProjectView extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final ProjectModel project = items[index];
-          final mode = MyProjectTile.modeFromStatus(project.status);
+          final mode = ClientProjectTile.modeFromStatus(project.status);
 
-          return GetBuilder<MyProjectsController>(
-            builder: (c) => MyProjectTile(
+          return GetBuilder<ClientProjectController>(
+            builder: (c) => ClientProjectTile(
               project: project,
               mode: mode,
               isBusy: c.isBusy(project.id),
               onTap: () => _onProjectTap(c, project, mode),
-              onApproveCompletion: mode == MyProjectTileMode.delivered
+              onApproveCompletion: mode == ClientProjectTileMode.delivered
                   ? () => c.approveProjectCompletion(project)
                   : null,
-              onRepublish: mode == MyProjectTileMode.withdrawn
+              onRepublish: mode == ClientProjectTileMode.withdrawn
                   ? () => c.republishProject(project)
                   : null,
-              onDelete: mode == MyProjectTileMode.withdrawn
+              onDelete: mode == ClientProjectTileMode.withdrawn
                   ? () => c.confirmDeleteProject(project)
                   : null,
             ),
@@ -159,20 +160,20 @@ class ClientProjectView extends StatelessWidget {
   }
 
   void _onProjectTap(
-    MyProjectsController c,
+    ClientProjectController c,
     ProjectModel project,
-    MyProjectTileMode mode,
+    ClientProjectTileMode mode,
   ) {
     switch (mode) {
-      case MyProjectTileMode.newProject:
-      case MyProjectTileMode.completed:
+      case ClientProjectTileMode.newProject:
+      case ClientProjectTileMode.completed:
         c.openProjectDetails(project);
         break;
-      case MyProjectTileMode.inProgress:
+      case ClientProjectTileMode.inProgress:
         c.openActiveProject(project);
         break;
-      case MyProjectTileMode.delivered:
-      case MyProjectTileMode.withdrawn:
+      case ClientProjectTileMode.delivered:
+      case ClientProjectTileMode.withdrawn:
         break;
     }
   }
