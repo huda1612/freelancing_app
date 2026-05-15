@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
@@ -22,6 +23,11 @@ class SubmitOfferController extends GetxController {
   String? clientId;
   // Loading state
   bool submitLoading = false;
+
+  /// تعديل عرض موجود (يُمرَّر من صفحة العروض)
+  OfferModel? offerToEdit;
+  bool get isEditMode => offerToEdit != null;
+
   @override
   void onInit() {
     super.onInit();
@@ -29,8 +35,14 @@ class SubmitOfferController extends GetxController {
     projectDurationDays = Get.arguments?["projectDurationDays"];
     projectId = Get.arguments?['projectId'];
     clientId = Get.arguments?['clientId'];
-  }
 
+    offerToEdit = Get.arguments?["offer"] as OfferModel?;
+    if (offerToEdit != null) {
+      priceController.text = offerToEdit!.price.toString();
+      durationController.text = offerToEdit!.durationDays.toString();
+      detailsController.text = offerToEdit!.proposalText;
+    }
+  }
 
   bool get argsExist {
     if (projectId == null || clientId == null) {
@@ -85,29 +97,53 @@ class SubmitOfferController extends GetxController {
               : user.specialization!.name,
           rating: user.rating,
           completedProjects: user.completedProjects);
-      final offer = OfferModel(
-        id: '',
-        projectId: projectId!,
-        freelancerId: UserSession.uid!,
-        clientId: clientId!,
-        freelancerSnapshot: freelancerSnapshot,
-        price: double.tryParse(normalizeNumbers(priceController.text.trim()))!,
-        proposalText: detailsController.text.trim(),
-        durationDays:
-            int.parse(normalizeNumbers(durationController.text.trim())),
-        createdAt: null,
-      );
-      final res2 = await OfferService().addOffer(offer: offer);
-      if (res2 != StatusClasses.success) {
-        customSnackbar(message: "خطأ : ${res2.type} / ${res2.message}");
-        submitLoading = false;
-        update();
-        return;
+      if (isEditMode) {
+        final res2 = await OfferService().updateOffer(
+          offerId: offerToEdit!.id,
+          newData: {
+            'price':
+                double.tryParse(normalizeNumbers(priceController.text.trim()))!,
+            'duration_days':
+                int.parse(normalizeNumbers(durationController.text.trim())),
+            'proposal_text': detailsController.text.trim(),
+            'freelancerSnapshot': freelancerSnapshot.toMap(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+        );
+        if (res2 != StatusClasses.success) {
+          customSnackbar(message: "خطأ : ${res2.type} / ${res2.message}");
+          submitLoading = false;
+          update();
+          return;
+        }
+        Get.back(result: true);
+        customSnackbar(message: "تم تحديث العرض بنجاح");
+      } else {
+        final offer = OfferModel(
+          id: '',
+          projectId: projectId!,
+          freelancerId: UserSession.uid!,
+          clientId: clientId!,
+          freelancerSnapshot: freelancerSnapshot,
+          price:
+              double.tryParse(normalizeNumbers(priceController.text.trim()))!,
+          proposalText: detailsController.text.trim(),
+          durationDays:
+              int.parse(normalizeNumbers(durationController.text.trim())),
+          createdAt: null,
+        );
+        final res2 = await OfferService().addOffer(offer: offer);
+        if (res2 != StatusClasses.success) {
+          customSnackbar(message: "خطأ : ${res2.type} / ${res2.message}");
+          submitLoading = false;
+          update();
+          return;
+        }
+        Get.back();
+        customSnackbar(
+          message: "تم تقديم العرض بنجاح",
+        );
       }
-      Get.back();
-      customSnackbar(
-        message: "تم تقديم العرض بنجاح",
-      );
       // Clear fields after success
       priceController.clear();
       durationController.clear();

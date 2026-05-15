@@ -43,14 +43,14 @@ class ProjectOfferTile extends StatelessWidget {
 
   bool get _showClientDecision =>
       isProjectOwner &&
-          offer.status == OfferStatus.pending &&
-          onAccept != null &&
-          onReject != null;
+      offer.status == OfferStatus.pending &&
+      onAccept != null &&
+      onReject != null;
 
   bool get _showFreelancerActions =>
       _isOfferOwner &&
-          offer.status == OfferStatus.pending &&
-          (onWithdraw != null || onEdit != null);
+      offer.status == OfferStatus.pending &&
+      (onWithdraw != null || onEdit != null);
 
   String _preview(String text) {
     final t = text.trim();
@@ -96,9 +96,9 @@ class ProjectOfferTile extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      snap.specialization.isNotEmpty
-                          ? snap.specialization
-                          : snap.jobTitle,
+                      snap.jobTitle.isNotEmpty
+                          ? snap.jobTitle
+                          : snap.specialization,
                       style: AppTextStyles.link,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -134,7 +134,8 @@ class ProjectOfferTile extends StatelessWidget {
                     SizedBox(width: 6.w),
                     Text(
                       '${offer.durationDays} يوم',
-                      style: AppTextStyles.body.copyWith(color: AppColors.black),
+                      style:
+                          AppTextStyles.body.copyWith(color: AppColors.black),
                     ),
                     SizedBox(width: 16.w),
                     Icon(Icons.attach_money,
@@ -183,7 +184,7 @@ class ProjectOfferTile extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             if (isBusy)
-              const Center(child: CustomLoading())
+              CustomLoading()
             else if (_showClientDecision) ...[
               Row(
                 children: [
@@ -193,8 +194,8 @@ class ProjectOfferTile extends StatelessWidget {
                       width: null,
                       onTap: onAccept!,
                       gradient: AppColors.gradientColor,
-                      textStyle: AppTextStyles.button
-                          .copyWith(color: AppColors.white),
+                      textStyle:
+                          AppTextStyles.button.copyWith(color: AppColors.white),
                     ),
                   ),
                   SizedBox(width: 10.w),
@@ -218,8 +219,7 @@ class ProjectOfferTile extends StatelessWidget {
                     IconButton(
                       tooltip: 'سحب العرض',
                       onPressed: onWithdraw,
-                      icon:
-                          Icon(Icons.undo_rounded, color: AppColors.darkPurple),
+                      icon: Icon(Icons.delete, color: AppColors.darkPurple),
                     ),
                   if (onEdit != null)
                     IconButton(
