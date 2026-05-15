@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
+import 'package:get/get.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
@@ -75,8 +75,15 @@ class NotificationServices {
 
   Future<void> _showForegroundNotification(RemoteMessage message) async {
     final notification = message.notification;
-    if (notification == null) return;
+    if (notification == null) {
+      // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! nullll");
+      return;
+    }
+    // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! notttt nullll");
+
     final payload = jsonEncode(message.data);
+    // Get.snackbar(
+    //     notification.title ?? 'no title', notification.body ?? 'no body');
     await _localNotificationsPlugin.show(
       message.hashCode,
       notification.title ?? '',
@@ -108,16 +115,17 @@ class NotificationServices {
   }
 
   void _navigateFromData(Map<String, dynamic> data) {
+    Get.toNamed(AppRoutes.search);
     //هون انا لازم زبطه للانتقال للصفحات عكيفي حسب شو البيانات المرسله بالاشعار
-    final type = data['type'];
-    String? id = data['id'];
-    if (type == null) return;
-    switch (type) {
-      case '':
-        NavigationService.toNamed(AppRoutes.home);
-        break;
-      default:
-    }
+    // final type = data['type'];
+    // String? id = data['id'];
+    // if (type == null) return;
+    // switch (type) {
+    //   case '':
+    //     NavigationService.toNamed(AppRoutes.home);
+    //     break;
+    //   default:
+    // }
   }
 
   void _handLocalNotificationClick(String? payload) {

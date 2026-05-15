@@ -5,11 +5,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
+import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
+import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
@@ -154,7 +159,8 @@ class AuthController extends GetxController {
       isLoginLoading.value = true;
 
       await _authService.login(email: email.value, password: password.value);
-      Get.snackbar("نجاح", "تم تسجيل الدخول");
+      customSnackbar(message: "تم تسجيل الدخول بنجاح");
+      updateUserFcmToken();
       var nextRoute = await RouteHandler.firstRoutHandler();
       Get.offAllNamed(nextRoute);
     } on FirebaseAuthException catch (e) {
@@ -189,6 +195,15 @@ class AuthController extends GetxController {
     } finally {
       isLoginLoading.value = false;
     }
+  }
+
+  Future<void> updateUserFcmToken() async {
+    final fcmToken = await LocalStorageService.getStringValue(AppKeys.fcmToken);
+
+    if (fcmToken == null || fcmToken.isEmpty) return;
+
+    await UserService()
+        .updateUserData2({"fcmToken": fcmToken}, UserSession.uid!);
   }
 
 //------------------------------------------------------------------------تابع انشاء الحساب---------------------------------------------
@@ -272,6 +287,7 @@ class AuthController extends GetxController {
 
       //بحال كل شي مر بدون اخطاء
       Get.snackbar("نجاح", "تم إنشاء الحساب");
+      updateUserFcmToken();
       //نوجهه لصفحة التحقق من الايميل ليتحقق منه
       Get.offAllNamed(AppRoutes.verifyEmail);
     } on FirebaseAuthException catch (e) {

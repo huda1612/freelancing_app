@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
+import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -27,6 +29,9 @@ class SignOutController extends GetxController {
     // await LocalStorageService.removeValue(AppKeys.role);
     // await LocalStorageService.setConstantUid();
     // await LocalStorageService.setConstantRole();
+
+    final uId = UserSession.uid;
+    print("!!!!!!!!!!$uId");
     UserSession.clear();
 
     //تسجيل خروج اذا مسجل بالايميل
@@ -34,7 +39,10 @@ class SignOutController extends GetxController {
     signOutIsLoading = false;
     update();
     //توجيه لصفحة البداية
-    Get.snackbar("success", "تم تسجيل الخروج بنجاح");
+    customSnackbar(message: "تم تسجيل الخروج بنجاح");
     Get.offAllNamed(AppRoutes.welcome);
+    if (uId != null) {
+      UserService().updateUserData2({"fcmToken": null}, uId);
+    }
   }
 }
