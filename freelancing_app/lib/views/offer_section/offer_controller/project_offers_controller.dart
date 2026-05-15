@@ -3,6 +3,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
@@ -43,18 +44,19 @@ class ProjectOffersController extends GetxController {
       });
       return;
     }
-
-    loadOffers().catchError((err, stack) {
-      debugPrint('loadOffers error: $err');
-      debugPrint('$stack');
-    });
+    loadOffers();
+    // .catchError((err, stack) {
+    //   debugPrint('loadOffers error: $err');
+    //   debugPrint('$stack');
+    // });
   }
 
   Future<void> loadOffers() async {
     pageState.value = StatusClasses.isloading;
 
-    final res =
-        await _offerService.getProjectOffers(projectId: projectId!);
+    //لو دخل عالصفحه وهو ما صاحبها بكفي حمل العروض المعلقه بس ليش لحملهم كلهم
+    final res = await _offerService.getProjectOffers(
+        projectId: projectId!, justPendingOffers: !isProjectOwner);
 
     res.fold(
       (err) {
@@ -99,9 +101,10 @@ class ProjectOffersController extends GetxController {
     activeTabIndex.value = index;
   }
 
-  Future<void> openFreelancerProfile(String freelancerId) async {
-    await Get.toNamed(
+  void openFreelancerProfile(String freelancerId) {
+    Get.toNamed(
       AppRoutes.profile,
+      // "${AppRoutes.profile}?id=$freelancerId",
       arguments: {'userId': freelancerId},
     );
   }

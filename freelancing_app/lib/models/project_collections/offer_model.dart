@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 
 class OfferModel {
   final String id;
@@ -21,7 +21,7 @@ class OfferModel {
     required this.clientId,
     required this.price,
     required this.durationDays,
-    this.status = ProjectStatus.newProject,
+    this.status =OfferStatus.pending,
     required this.freelancerSnapshot,
     this.proposalText = '',
     this.createdAt,

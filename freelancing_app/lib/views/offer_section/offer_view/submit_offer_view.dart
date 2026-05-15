@@ -19,7 +19,7 @@ class SubmitOfferView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: CustomAppBar(
-        title: 'تقديم عرض',
+        title: controller.isEditMode ? 'تعديل العرض' : 'تقديم عرض',
         backgroundGradient: AppColors.gradientColor,
       ),
       body: SafeArea(
@@ -73,7 +73,9 @@ class SubmitOfferView extends StatelessWidget {
                 SizedBox(height: AppSpaces.heightLarge1),
                 GetBuilder<SubmitOfferController>(
                   builder: (controller) => CustomButton(
-                    text: 'إرسال العرض ',
+                    text: controller.isEditMode
+                        ? 'حفظ التعديلات'
+                        : 'إرسال العرض ',
                     onTap: controller.submitOffer,
                     isLoading: controller.submitLoading,
                     gradient: AppColors.gradientColor,

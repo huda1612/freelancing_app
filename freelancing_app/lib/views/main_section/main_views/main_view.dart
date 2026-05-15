@@ -150,40 +150,4 @@ class MainView extends StatelessWidget {
       },
     );
   }
-//   Widget _buildTabNavigator({
-//   required GlobalKey<NavigatorState> navigatorKey,
-//   required String initialRoute,
-// }) {
-//   return Navigator(
-//     key: navigatorKey,
-//     initialRoute: initialRoute,
-//     onGenerateRoute: (settings) {
-
-//       final page = AppPages.pages.firstWhere(
-//         (route) => route.name == settings.name,
-//         orElse: () => GetPage(
-//           name: initialRoute,
-//           page: () => const SizedBox(),
-//         ),
-//       );
-
-//       return GetPageRoute(
-//         routeName: settings.name,
-
-//         page: () {
-//           // inject current arguments manually
-//           Get.arguments = settings.arguments;
-
-//           return page.page();
-//         },
-
-//         binding: page.binding,
-//         middlewares: page.middlewares,
-//         transition: page.transition,
-
-//         settings: settings,
-//       );
-//     },
-//   );
-// }
 }
