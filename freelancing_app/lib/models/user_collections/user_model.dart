@@ -22,6 +22,7 @@ class UserModel {
   final int completedProjects;
   final int points;
   final Timestamp? createdAt;
+  final String? fcmToken;
 
   //بحال كان عميل بس
   final String? clientType;
@@ -46,7 +47,7 @@ class UserModel {
     this.completedProjects = 0,
     this.points = 0,
     this.createdAt,
-
+    this.fcmToken,
     //بحال كان عميل بس
     this.clientType,
   });
@@ -72,7 +73,8 @@ class UserModel {
       'completed_projects': completedProjects,
       'points': points,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
-      'clientType': clientType
+      'clientType': clientType,
+      'fcmToken': fcmToken,
     };
   }
 
@@ -113,6 +115,7 @@ class UserModel {
 
       //بحال كان عميل بس
       clientType: map['clientType'],
+      fcmToken: map['fcmToken'],
     );
   }
   UserModel copyWith({
@@ -136,6 +139,7 @@ class UserModel {
     int? points,
     Timestamp? createdAt,
     String? clientType,
+    String? fcmToken,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -158,6 +162,7 @@ class UserModel {
       points: points ?? this.points,
       createdAt: createdAt ?? this.createdAt,
       clientType: clientType ?? this.clientType,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 }

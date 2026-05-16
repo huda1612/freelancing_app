@@ -1,5 +1,5 @@
 import 'package:freelancing_platform/core/services/notification_services.dart';
-import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
+import 'package:freelancing_platform/views/main_section/main_controllers/navigation_controller.dart';
 import 'package:get/get.dart';
 
 class InitialBinding extends Bindings {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
+import 'package:freelancing_platform/views/main_section/main_controllers/navigation_controller.dart';
 import 'package:get/get.dart';
 
 class NavigationService {
@@ -15,16 +15,52 @@ class NavigationService {
   // static T? currentArguments<T>() {
   //   return ModalRoute.of(Get.context!)?.settings.arguments as T?;
   // }
-  static T? arguments<T>() {
-    final context = Get.context;
-    print("context : $context");
-    if (context == null) return null;
+  // static T? arguments<T>() {
+  //   final context = Get.context;
+  //   print("context : $context");
+  //   if (context == null) return null;
 
-    final route = ModalRoute.of(context);
-    print("route : $route");
-    if (route == null) return null;
+  //   final route = ModalRoute.of(context);
+  //   print("route : $route");
+  //   if (route == null) return null;
 
-    return route.settings.arguments as T?;
+  //   return route.settings.arguments as T?;
+  // }
+
+  static T? arguments<T>(BuildContext context) {
+    return ModalRoute.of(context)?.settings.arguments as T?;
+  }
+
+  // static Map<String, dynamic>? routeArguments(String route) {
+  //   if (!Get.isRegistered<Map<String, dynamic>>(tag: route)) {
+  //     return null;
+  //   }
+
+  //   return Get.find<Map<String, dynamic>>(tag: route);
+  // }
+  static String routeTag(
+    String route, {
+    int? tabIndex,
+  }) {
+    return "${route}_${tabIndex ?? currentTab}";
+  }
+
+  static Map<String, dynamic>? routeArguments(
+    String route, {
+    int? tabIndex,
+  }) {
+    final tag = routeTag(
+      route,
+      tabIndex: tabIndex,
+    );
+
+    if (!Get.isRegistered<Map<String, dynamic>>(tag: tag)) {
+      return null;
+    }
+
+    return Get.find<Map<String, dynamic>>(
+      tag: tag,
+    );
   }
 
   /// Nested Navigation

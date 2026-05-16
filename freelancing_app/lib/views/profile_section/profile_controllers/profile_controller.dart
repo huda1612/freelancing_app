@@ -108,21 +108,21 @@ class ProfileController extends GetxController {
 
   int get completedProjectsCount => user.value?.completedProjects ?? 0;
 
-  String get accountTypeLabel {
-    if (isClient) {
-      switch (user.value?.clientType) {
-        case 'company':
-          return 'شركة';
-        case 'individual':
-          return 'فرد';
-        default:
-          return 'غير محدد';
-      }
-    }
-    if (role == UserRole.freelancer) return 'مستقل';
-    if (role == UserRole.admin) return 'مدير';
-    return roleLabel;
-  }
+  // String get accountTypeLabel {
+  //   if (isClient) {
+  //     switch (user.value?.clientType) {
+  //       case 'company':
+  //         return 'شركة';
+  //       case 'individual':
+  //         return 'فرد';
+  //       default:
+  //         return 'غير محدد';
+  //     }
+  //   }
+  //   if (role == UserRole.freelancer) return 'مستقل';
+  //   // if (role == UserRole.admin) return 'مدير';
+  //   return roleLabel;
+  // }
 
   String get username {
     final raw = user.value?.username.trim() ?? '';
@@ -130,15 +130,15 @@ class ProfileController extends GetxController {
     return raw;
   }
 
-  String get roleLabel {
-    final raw = user.value?.role.trim() ?? '';
-    if (raw.isEmpty) return 'Freelancer';
-    return raw;
-  }
+  // String get roleLabel {
+  //   final raw = user.value?.role.trim() ?? '';
+  //   if (raw.isEmpty) return 'Freelancer';
+  //   return raw;
+  // }
 
   String get specializationLabel {
     final raw = user.value?.specialization?.name.trim() ?? '';
-    if (raw.isEmpty) return '';
+    if (raw.isEmpty) return 'لا يوجد اختصاص محدد';
     return raw;
   }
 
@@ -490,7 +490,7 @@ class ProfileController extends GetxController {
   void setTabIndex(int index) {
     activeTabIndex.value = index;
   }
-
+  //هاد بلاه احسن بس خليته احتياط
   void _setFallbackData() {
     user.value = UserModel(
       uid: 'local-user',
