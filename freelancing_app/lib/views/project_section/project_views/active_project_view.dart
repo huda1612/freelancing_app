@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
@@ -59,13 +61,16 @@ class ActiveProjectView extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: AppSpaces.heightMedium),
-              CustomButton(
-                text: 'عرض العروض والتفاصيل',
-                onTap: controller.openOffers,
-                prefix: const Icon(Icons.content_paste, color: AppColors.white),
-                gradient: AppColors.gradientColor,
-              ),
+              if (UserSession.role == UserRole.client) ...[
+                SizedBox(height: AppSpaces.heightMedium),
+                CustomButton(
+                  text: 'عرض العروض والتفاصيل',
+                  onTap: controller.openOffers,
+                  prefix:
+                      const Icon(Icons.content_paste, color: AppColors.white),
+                  gradient: AppColors.gradientColor,
+                ),
+              ],
             ],
           ),
         ),

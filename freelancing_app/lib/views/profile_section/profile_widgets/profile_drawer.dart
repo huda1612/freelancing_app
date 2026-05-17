@@ -5,7 +5,6 @@ import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
-import 'package:get/get.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({
@@ -114,15 +113,32 @@ class ProfileDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            // const Spacer(),
-            // ListTile(
-            //   leading: const Icon(Icons.close, color: AppColors.grey),
-            //   title: Text(
-            //     'إغلاق',
-            //     style: AppTextStyles.link.copyWith(color: AppColors.darkGrey),
-            //   ),
-            //   onTap: () => Navigator.of(context).pop(),
-            // ),
+
+ 
+            if ((controller.isClient || controller.isFreelancer) &&
+                controller.isOwnProfile)
+              ListTile(
+                leading: const Icon(Icons.folder_outlined,
+                    color: AppColors.vividPurple),
+                title: Text(
+                  'مشاريعي',
+                  style: AppTextStyles.body.copyWith(color: AppColors.black),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  NavigationService.toNamed(AppRoutes.myProjects);
+                },
+              ),
+            const Spacer(),
+            ListTile(
+              leading: const Icon(Icons.close, color: AppColors.grey),
+              title: Text(
+                'إغلاق',
+                style: AppTextStyles.link.copyWith(color: AppColors.darkGrey),
+              ),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+
           ],
         ),
       ),

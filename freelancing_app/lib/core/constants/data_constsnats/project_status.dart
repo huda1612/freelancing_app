@@ -24,4 +24,21 @@ class ProjectStatus {
     'مكتملة',
     'مسحوبة',
   ];
+
+
+  //اضافات جديدة 
+  /// تسميات التبويبات في صفحة مشاريعي (للمستقل).
+  static const List<String> freelancerTabStatuses = [
+    inProgress,
+    delivered,
+    completed,
+    cancelled,
+  ];
+
+  static const List<String> freelancerTabLabels = [
+    'قيد التقدم',
+    'تم التسليم',
+    'مكتملة',
+    'مسحوبة',
+  ];
 }

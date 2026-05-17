@@ -3,7 +3,10 @@ import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
+import 'package:freelancing_platform/data/services/offer_service.dart';
+import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 
 class ProjectService {
@@ -99,6 +102,57 @@ class ProjectService {
       status: ProjectStatus.newProject,
     );
   }
+
+
+
+  //جديدة
+  
+  /// مشاريع المستقل (حيث عُرضه مقبولاً على المشروع).
+  Future<Either<StatusClasses, List<ProjectModel>>> getFreelancerProjects({
+    required String freelancerId,
+  }) async {
+    final offersRes = await OfferService().getFreelancerOffers(
+      freelancerId: freelancerId,
+    );
+
+    if (offersRes.isLeft()) {
+      return Left(offersRes.fold((l) => l, (_) => StatusClasses.customError('')));
+    }
+
+    final offers = offersRes.getOrElse(() => <OfferModel>[]);
+    final accepted = offers
+        .where((o) => o.status == OfferStatus.accepted)
+        .toList();
+    if (accepted.isEmpty) {
+      return Right(<ProjectModel>[]);
+    }
+
+    final collection =
+        _firebaseFirestore.collection(CollectionsNames.projects);
+
+    final snapshots = await Future.wait(
+      accepted.map((offer) => collection.doc(offer.projectId).get()),
+    );
+
+    final projects = <ProjectModel>[];
+    for (var i = 0; i < accepted.length; i++) {
+      final doc = snapshots[i];
+      if (!doc.exists || doc.data() == null) continue;
+
+      final project = ProjectModel.fromMap(doc.data()!, doc.id);
+      final offer = accepted[i];
+      if (project.acceptedOfferId == null ||
+          project.acceptedOfferId == offer.id) {
+        projects.add(project);
+      }
+    }
+
+    return Right(List<ProjectModel>.from(projects));
+  }
 }
+
+
+
+
 
 
