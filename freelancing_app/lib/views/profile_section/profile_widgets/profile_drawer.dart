@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
-import 'package:get/get.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({
@@ -43,7 +43,8 @@ class ProfileDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            if (controller.isClient && controller.isOwnProfile)
+            if ((controller.isClient || controller.isFreelancer) &&
+                controller.isOwnProfile)
               ListTile(
                 leading: const Icon(Icons.folder_outlined,
                     color: AppColors.vividPurple),
@@ -53,7 +54,7 @@ class ProfileDrawer extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  Get.toNamed(AppRoutes.myProjects);
+                  NavigationService.toNamed(AppRoutes.myProjects);
                 },
               ),
             const Spacer(),

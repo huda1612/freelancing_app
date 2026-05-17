@@ -34,15 +34,20 @@ class OfferService {
   }) async {
     final query = _firebaseFirestore
         .collection(CollectionsNames.offers)
-        .where("freelancerId", isEqualTo: freelancerId)
-        .orderBy("createdAt", descending: true);
+        .where("freelancerId", isEqualTo: freelancerId);
+        //.orderBy("createdAt", descending: true);
 
     final response = await FirebaseCrud.runGetQuery<OfferModel>(
       query: query,
       fromMap: (data, id) => OfferModel.fromMap(data, id),
     );
 
-    return response;
+   // return response;
+//جديد
+ return response.map((list) {
+      _sortOffersByCreatedAtDesc(list);
+      return list;
+    });
   }
 
   // Future<Either<StatusClasses, List<OfferModel>>> freelancerOfferOnProject({
