@@ -15,7 +15,10 @@ class ReviweService {
   Future<Either<StatusClasses, List<ReviewModel>>> getAllUserReview({
     required String uId,
   }) async {
-    var query = _firebaseFirestore.collection(CollectionsNames.reviews);
+    var query = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uId)
+        .collection(CollectionsNames.reviews);
     var response = await FirebaseCrud.runGetQuery<ReviewModel>(
         query: query, fromMap: (data, id) => ReviewModel.fromMap(data, id));
     return response;
@@ -27,8 +30,8 @@ class ReviweService {
     var query = _firebaseFirestore
         .collection(CollectionsNames.users)
         .doc(uId)
-        .collection('reviews')
-        .orderBy('createdAt', descending: true)
+        .collection(CollectionsNames.reviews)
+        .orderBy('createdAt', descending: true) //هي يمكن رح تعطي خطأ
         .limit(10);
     var response = await FirebaseCrud.runGetQuery<ReviewModel>(
         query: query, fromMap: (data, id) => ReviewModel.fromMap(data, id));

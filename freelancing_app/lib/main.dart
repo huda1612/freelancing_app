@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/bindings/initial_binding.dart';
 import 'package:freelancing_platform/core/classes/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/services/notification_services.dart';
@@ -11,9 +12,7 @@ import 'package:freelancing_platform/core/utils/helper_function/check_fcm_token.
 // import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
 // import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
 // import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'firebase_options.dart'; // ← مهم جداً
 
 void main() async {
@@ -24,14 +23,16 @@ void main() async {
   );
 
   // استدعاء تهيئة البيانات قبل تشغيل التطبيق
-  await AppInitializer.init();  
+  await AppInitializer.init();
 
   runApp(const MyApp());
   final notificationServices = Get.put(NotificationServices());
-
-  await notificationServices.initialize(
-    onToken: checkFcmToken,
-  );
+  //لو الاشعارات مفعله بتكون null والا بتكون ما null لو ما مفعله
+  if (AppConstantData.isNotificationsDisable == null) {
+    await notificationServices.initialize(
+      onToken: checkFcmToken,
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

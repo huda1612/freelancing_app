@@ -21,6 +21,10 @@ class ProjectDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //هالطريقه بتمرير البيانات اشتغلت واجتت البيانات من الarguments بس المشكله كانت بان لازم اعملها بالbuild ما بتنعمل بالكنترولر قبل بناء الصفحه
+    // final project =
+    //     NavigationService.arguments<Map<String, ProjectModel>>(context);
+    // print("!!!!!!!!!!!!!! + $project");
     if (controller.project == null) {
       return BaseScreen(
         body: Center(
@@ -198,9 +202,7 @@ class ProjectDetailsView extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CustomButton(
-                          text: c.hasOffer
-                              ? 'لديك عرض معلّق'
-                              : 'تقديم عرض',
+                          text: c.hasOffer ? 'لديك عرض معلّق' : 'تقديم عرض',
                           height: 44,
                           width: null,
                           onTap: c.onOfferSubmit,

@@ -3,6 +3,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
@@ -33,14 +34,16 @@ class ProjectOffersController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    project = Get.arguments?['project'] as ProjectModel?;
-    projectId = Get.arguments?['projectId'] as String? ?? project?.id;
-
+    // project = Get.arguments?['project'] as ProjectModel?;
+    // projectId = Get.arguments?['projectId'] as String? ?? project?.id;
+    project =
+        NavigationService.routeArguments(AppRoutes.projectOffers)?["project"];
+    projectId = project?.id;
     if (projectId == null || projectId!.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         customSnackbar(message: "تعذر تحميل العروض، معلومات المشروع ناقصة");
-        Get.back();
       });
+
       return;
     }
     loadOffers();

@@ -22,6 +22,11 @@ class LocalStorageService {
     AppConstantData.firstOpen = await getStringValue(AppKeys.firstOpen);
   }
 
+  static setConstantisNotificationsDisable() async {
+    AppConstantData.isNotificationsDisable =
+        await getStringValue(AppKeys.isNotificationsDisable);
+  }
+
   // static setConstantFcm() async {
   //   AppConstantData.fcm = await getStringValue(AppKeys.fcm);
   // }

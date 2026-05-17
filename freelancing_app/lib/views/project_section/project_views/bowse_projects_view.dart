@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
@@ -60,13 +62,14 @@ class BrowseProjectsView extends StatelessWidget {
                     else
                       ...filteredProjects.map(
                         (project) => GestureDetector(
-                            onTap: () => controller.onProjectSelect(project),
-                            // {
+                            onTap: () 
+                            // => controller.onProjectSelect(project),
+                            {
                             
-                              // NavigationService.toNamed(
-                              //     AppRoutes.projectDetails,
-                              //     arguments: {"project": project});
-                            // },
+                              NavigationService.toNamed(
+                                 AppRoutes.projectDetails,
+                                  arguments: {"project": project});
+                             },
                             child: ProjectCard(project: project)),
                       ),
                   ],

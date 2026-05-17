@@ -4,11 +4,11 @@ import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
-import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
 import 'package:get/get.dart';
 
 class ProjectDetailsController extends GetxController {
@@ -31,16 +31,26 @@ class ProjectDetailsController extends GetxController {
     //Load project details
     // project = Get.arguments?["project"];
 
-    //جديدة 
-   // project = Get.find<BrowseProjectsController>().selectedProject;
-final argProject = Get.arguments?['project'];
-    if (argProject is ProjectModel) {
-      project = argProject;
-    } else if (Get.isRegistered<BrowseProjectsController>()) {
-      project = Get.find<BrowseProjectsController>().selectedProject;
-    }
-   //لهون
-    if (project == null || project is! ProjectModel) {
+    //جديدة
+    // project = Get.find<BrowseProjectsController>().selectedProject;
+    // final argProject = Get.arguments?['project'];
+    // if (argProject is ProjectModel) {
+    //   project = argProject;
+    // } else if (Get.isRegistered<BrowseProjectsController>()) {
+    //   project = Get.find<BrowseProjectsController>().selectedProject;
+    // }
+    //لهون
+    //طريقه اشتغلت بس اختصرتها بالخدمه
+    // final args = Get.find<Map<String, dynamic>>(
+    //   tag: AppRoutes.projectDetails,
+    // );
+    // project = args["project"]!;
+
+    final args = NavigationService.routeArguments(AppRoutes.projectDetails);
+
+    project = args?["project"];
+
+    if (project == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         customSnackbar(
           message: "تعذر تحميل بيانات المشروع",
@@ -72,7 +82,7 @@ final argProject = Get.arguments?['project'];
   }
 
   void onOfferView() {
-    Get.toNamed(AppRoutes.projectOffers, arguments: {
+    NavigationService.toNamed(AppRoutes.projectOffers, arguments: {
       'project': project,
       'projectId': project!.id,
     });
@@ -113,7 +123,6 @@ final argProject = Get.arguments?['project'];
     return;
   }
 
-  //
   //تحديث المشروع
   // void updateProject({
   //   required String newTitle,

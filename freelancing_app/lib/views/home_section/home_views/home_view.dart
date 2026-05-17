@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/services/notification_sender_services.dart';
+import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:get/get.dart';
 
@@ -35,10 +38,19 @@ class HomeView extends StatelessWidget {
             const SizedBox(height: 20),
             Expanded(
               child: ListView(
-                children: const [
+                children: [
                   _SuggestionCard(title: "مشاريع مقترحة لك"),
                   _SuggestionCard(title: "أفضل المستقلين"),
                   _SuggestionCard(title: "عملاء يبحثون عن خدماتك"),
+                  CustomButton(
+                      text: "ارسال اشعار",
+                      onTap: () {
+                        NotificationSenderServices.sendNotificationToUser(
+                            uId: UserSession.uid!,
+                            // "fsj9w7PuTcuXGzU_eao0lQ:APA91bHC0i7q8sioMsD_cGIqbxa5V2JuVGVi5V9fc3ZwC4RHbfRF9OVpVh1nwaU8ZKi_v5zadTPb2ktJ1qPe8yzyU0Mi2fcky-qnbm0djmFqDpRezWdv3Es",
+                            title: "test",
+                            body: "its just a test notification");
+                      })
                 ],
               ),
             ),
