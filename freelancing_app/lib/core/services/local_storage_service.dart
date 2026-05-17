@@ -3,7 +3,7 @@ import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
-  static setStringValue(String key, String value) async {
+  static Future<void> setStringValue(String key, String value) async {
     SharedPreferences sh = await SharedPreferences.getInstance();
     await sh.setString(key, value);
   }
@@ -13,18 +13,28 @@ class LocalStorageService {
     return sh.getString(key);
   }
 
-  static removeValue(String key) async {
+  static Future<void> removeValue(String key) async {
     final sh = await SharedPreferences.getInstance();
     await sh.remove(key); // هذا يحذف القيمة اللي تحت المفتاح
   }
 
-  static setConstantFirstOpen() async {
+  static Future<void> setBoolValue(String key, bool value) async {
+    SharedPreferences sh = await SharedPreferences.getInstance();
+    await sh.setBool(key, value);
+  }
+
+  static Future<bool?> getBoolValue(String key) async {
+    SharedPreferences sh = await SharedPreferences.getInstance();
+    return sh.getBool(key);
+  }
+
+  static Future<void> setConstantFirstOpen() async {
     AppConstantData.firstOpen = await getStringValue(AppKeys.firstOpen);
   }
 
-  static setConstantisNotificationsDisable() async {
-    AppConstantData.isNotificationsDisable =
-        await getStringValue(AppKeys.isNotificationsDisable);
+  static Future<void> setConstantisNotificationsEnable() async {
+    AppConstantData.notificationsEnable =
+        await getBoolValue(AppKeys.notificationsEnable) ?? true;
   }
 
   // static setConstantFcm() async {

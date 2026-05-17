@@ -177,13 +177,54 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                 ),
+              // Positioned(
+              //   top: MediaQuery.of(Get.context!).padding.top + 17,
+              //   left: MediaQuery.of(Get.context!).padding.top + 0,
+              //   child: _statRow(
+              //     // icon: Icons.stars_rounded,
+              //     label: 'النقاط',
+              //     value: '${controller.pointsCount}',
+              //   ),
+              // )
               Positioned(
-                top: MediaQuery.of(Get.context!).padding.top + 17,
-                left: MediaQuery.of(Get.context!).padding.top + 0,
-                child: _statRow(
-                  // icon: Icons.stars_rounded,
-                  label: 'النقاط',
-                  value: '${controller.pointsCount}',
+                top: MediaQuery.of(Get.context!).padding.top + 14,
+                left: 14.w,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withOpacity(0.92),
+                    borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // SizedBox(width: 4.w),
+
+                      Text(
+                        '${controller.pointsCount}',
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColors.darkPurple,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Icon(
+                        Icons.workspace_premium_rounded,
+                        // Icons.stars_rounded,
+                        color: AppColors.darkPurple,
+                        size: 20,
+                      ),
+                      // Text(
+                      //   'نقطة',
+                      //   style: AppTextStyles.link.copyWith(
+                      //     color: AppColors.darkGrey,
+                      //   ),
+                      // ),
+                    ],
+                  ),
                 ),
               )
             ],
@@ -338,227 +379,233 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildProfileTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //specailization
-          controller.role == UserRole.freelancer
-              ? _titleText('الاختصاص')
-              : SizedBox.shrink(),
-          controller.role == UserRole.freelancer
-              ? cardContainer(
-                  child: Text(
-                  controller.specializationLabel,
-                  style: AppTextStyles.body.copyWith(color: AppColors.black),
-                ))
-              : SizedBox.shrink(),
-          SizedBox(height: 14.h),
+    return RefreshIndicator(
+      onRefresh: controller.pageInit,
+      color: AppColors.vividPurple,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //specailization
+            controller.role == UserRole.freelancer
+                ? _titleText('الاختصاص')
+                : SizedBox.shrink(),
+            controller.role == UserRole.freelancer
+                ? cardContainer(
+                    child: Text(
+                    controller.specializationLabel,
+                    style: AppTextStyles.body.copyWith(color: AppColors.black),
+                  ))
+                : SizedBox.shrink(),
+            SizedBox(height: 14.h),
 
-          //Bio
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _titleText('النبذة'),
-              controller.isOwnProfile
-                  ? Row(
-                      children: [
-                        TextButton(
-                            onPressed: controller.editBio.value
-                                ? controller.saveNewBio
-                                : controller.toggleEditBio,
-                            child: Text(
-                              controller.editBio.value
-                                  ? "حفظ التعديل"
-                                  : "تعديل",
-                              style: AppTextStyles.link,
-                            )),
-                        controller.editBio.value
-                            ? TextButton(
-                                onPressed: controller.toggleEditBio,
-                                child: Text(
-                                  "إلغاء",
-                                  style: AppTextStyles.link,
-                                ))
-                            : SizedBox.shrink(),
-                      ],
-                    )
-                  : SizedBox.shrink(),
-            ],
-          ),
-          controller.updatingBioLoading.value
-              ? CustomLoading()
-              : cardContainer(
-                  child: controller.editBio.value
-                      ? CustomTextField(
-                          controller: controller.bioController,
-                        )
-                      : Text(
-                          controller.user.value?.bio.isNotEmpty == true
-                              ? controller.user.value!.bio
-                              : 'لا يوجد نبذة حالياً.',
-                          style: AppTextStyles.body
-                              .copyWith(color: AppColors.black),
-                        ),
-                ),
-          SizedBox(height: 14.h),
-
-          //reviews
-          _titleText('التقييمات'),
-          SizedBox(
-            height: 116.h,
-            child: controller.reviews.isNotEmpty
-                ? ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.reviews.take(5).length,
-                    separatorBuilder: (_, __) => SizedBox(width: 10.w),
-                    itemBuilder: (context, index) {
-                      final review = controller.reviews[index];
-                      return ProfileReviewCard(
-                        rating: review.rating,
-                        title: review.comment,
-                      );
-                    },
-                  )
-                : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
-          ),
-
-          controller.isFreelancer
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 14),
-
-                    //skills
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _titleText('المهارات'),
-                        controller.isOwnProfile
-                            ? TextButton(
-                                onPressed: controller.editSkills,
-                                child: Text(
-                                  "تعديل المهارات",
-                                  style: AppTextStyles.link,
-                                ))
-                            : SizedBox.shrink()
-                      ],
-                    ),
-                    Obx(() {
-                      if (controller.isLoadingSkills.value) {
-                        return CustomLoading();
-                      }
-                      return
-                          //  SizedBox(
-                          //   height: 100.h, // تقريباً سطرين
-                          //   child: SingleChildScrollView(
-                          //     child: Wrap(
-                          //       spacing: 8.w,
-                          //       runSpacing: 8.h,
-                          //       children: controller.skills
-                          //           .map((skill) => ProfileSkillChip(skill: skill))
-                          //           .toList(),
-                          //     ),
-                          //   ),
-                          // );
-
-                          SizedBox(
-                        height: 50.h,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: controller.skills.length,
-                          separatorBuilder: (_, __) => SizedBox(width: 8.h),
-                          itemBuilder: (context, index) => ProfileSkillChip(
-                            skill: controller.skills[index],
+            //Bio
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _titleText('النبذة'),
+                controller.isOwnProfile
+                    ? Row(
+                        children: [
+                          TextButton(
+                              onPressed: controller.editBio.value
+                                  ? controller.saveNewBio
+                                  : controller.toggleEditBio,
+                              child: Text(
+                                controller.editBio.value
+                                    ? "حفظ التعديل"
+                                    : "تعديل",
+                                style: AppTextStyles.link,
+                              )),
+                          controller.editBio.value
+                              ? TextButton(
+                                  onPressed: controller.toggleEditBio,
+                                  child: Text(
+                                    "إلغاء",
+                                    style: AppTextStyles.link,
+                                  ))
+                              : SizedBox.shrink(),
+                        ],
+                      )
+                    : SizedBox.shrink(),
+              ],
+            ),
+            controller.updatingBioLoading.value
+                ? CustomLoading()
+                : cardContainer(
+                    child: controller.editBio.value
+                        ? CustomTextField(
+                            controller: controller.bioController,
+                          )
+                        : Text(
+                            controller.user.value?.bio.isNotEmpty == true
+                                ? controller.user.value!.bio
+                                : 'لا يوجد نبذة حالياً.',
+                            style: AppTextStyles.body
+                                .copyWith(color: AppColors.black),
                           ),
-                        ),
-                      );
-                    }),
-                    SizedBox(height: 14.h),
+                  ),
+            SizedBox(height: 14.h),
 
-                    //certificates
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _titleText('الشهادات'),
-                        TextButton(
-                            onPressed: controller.newCertificate.value == null
-                                ? controller.addCertificate
-                                : controller.cencelAddCertificate,
-                            child: Text(
-                              controller.newCertificate.value == null
-                                  ? "اضافة شهادة"
-                                  : "إلغاء الاضافة",
-                              style: AppTextStyles.link,
-                            ))
-                      ],
-                    ),
-                    Obx(() {
-                      return controller.newCertificate.value != null
-                          ? ProfileCertificateTile(
-                              isLoading: controller.addingCerLoading.value,
-                              isNewCertificate: true,
-                              certificate: controller.newCertificate.value!,
-                              allSkills: controller.user.value != null
-                                  ? controller.user.value!.skills
-                                  : [],
-                              onPickImage: ImageService.pickImage,
-                              onSave: (map) =>
-                                  controller.saveCertificate(null, map, "add"),
-                              isOwnProfile: controller.isOwnProfile,
-                            )
-                          : SizedBox.shrink();
-                    }),
-                    Obx(() {
-                      return Column(
-                        children: controller.loadCertificates.value
-                            ? [const CustomLoading()]
-                            : controller.certificates
-                                .map(
-                                  (certificate) => ProfileCertificateTile(
-                                    isLoading: controller.loadingCertIds
-                                        .contains(certificate.id),
-                                    certificate: certificate,
-                                    allSkills: controller.user.value != null
-                                        ? controller.user.value!.skills
-                                        : [],
-                                    onPickImage: ImageService.pickImage,
-                                    onDelete: () => controller
-                                        .deleteCertificate(certificate.id!),
-                                    onSave: (map) => controller.saveCertificate(
-                                        certificate.id!, map, "update"),
-                                    isOwnProfile: controller.isOwnProfile,
-                                  ),
-                                )
-                                .toList(),
-                      );
-                    }),
+            //reviews
+            _titleText('التقييمات'),
+            SizedBox(
+              height: 116.h,
+              child: controller.reviews.isNotEmpty
+                  ? ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.reviews.take(5).length,
+                      separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                      itemBuilder: (context, index) {
+                        final review = controller.reviews[index];
+                        return ProfileReviewCard(
+                          rating: review.rating,
+                          title: review.comment,
+                        );
+                      },
+                    )
+                  : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
+            ),
 
-                    // controller.isOwnProfile
-                    //     ? Center(
-                    //         child: SizedBox(
-                    //           width: double.infinity,
-                    //           child: DecoratedBox(
-                    //             decoration: BoxDecoration(
-                    //               gradient: AppColors.gradientColor,
-                    //               borderRadius: BorderRadius.circular(16),
-                    //             ),
-                    //             child: TextButton.icon(
-                    //               onPressed: controller.addWork,
-                    //               icon: const Icon(Icons.add,
-                    //                   color: AppColors.white),
-                    //               label: Text('إضافة شهادة',
-                    //                   style: AppTextStyles.button),
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       )
-                    //     : const SizedBox.shrink(),
-                  ],
-                )
-              : const SizedBox.shrink(),
-        ],
+            controller.isFreelancer
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 14),
+
+                      //skills
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _titleText('المهارات'),
+                          controller.isOwnProfile
+                              ? TextButton(
+                                  onPressed: controller.editSkills,
+                                  child: Text(
+                                    "تعديل المهارات",
+                                    style: AppTextStyles.link,
+                                  ))
+                              : SizedBox.shrink()
+                        ],
+                      ),
+                      Obx(() {
+                        if (controller.isLoadingSkills.value) {
+                          return CustomLoading();
+                        }
+                        return
+                            //  SizedBox(
+                            //   height: 100.h, // تقريباً سطرين
+                            //   child: SingleChildScrollView(
+                            //     child: Wrap(
+                            //       spacing: 8.w,
+                            //       runSpacing: 8.h,
+                            //       children: controller.skills
+                            //           .map((skill) => ProfileSkillChip(skill: skill))
+                            //           .toList(),
+                            //     ),
+                            //   ),
+                            // );
+
+                            SizedBox(
+                          height: 50.h,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.skills.length,
+                            separatorBuilder: (_, __) => SizedBox(width: 8.h),
+                            itemBuilder: (context, index) => ProfileSkillChip(
+                              skill: controller.skills[index],
+                            ),
+                          ),
+                        );
+                      }),
+                      SizedBox(height: 14.h),
+
+                      //certificates
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _titleText('الشهادات'),
+                          TextButton(
+                              onPressed: controller.newCertificate.value == null
+                                  ? controller.addCertificate
+                                  : controller.cencelAddCertificate,
+                              child: Text(
+                                controller.newCertificate.value == null
+                                    ? "اضافة شهادة"
+                                    : "إلغاء الاضافة",
+                                style: AppTextStyles.link,
+                              ))
+                        ],
+                      ),
+                      Obx(() {
+                        return controller.newCertificate.value != null
+                            ? ProfileCertificateTile(
+                                isLoading: controller.addingCerLoading.value,
+                                isNewCertificate: true,
+                                certificate: controller.newCertificate.value!,
+                                allSkills: controller.user.value != null
+                                    ? controller.user.value!.skills
+                                    : [],
+                                onPickImage: ImageService.pickImage,
+                                onSave: (map) => controller.saveCertificate(
+                                    null, map, "add"),
+                                isOwnProfile: controller.isOwnProfile,
+                              )
+                            : SizedBox.shrink();
+                      }),
+                      Obx(() {
+                        return Column(
+                          children: controller.loadCertificates.value
+                              ? [const CustomLoading()]
+                              : controller.certificates
+                                  .map(
+                                    (certificate) => ProfileCertificateTile(
+                                      isLoading: controller.loadingCertIds
+                                          .contains(certificate.id),
+                                      certificate: certificate,
+                                      allSkills: controller.user.value != null
+                                          ? controller.user.value!.skills
+                                          : [],
+                                      onPickImage: ImageService.pickImage,
+                                      onDelete: () => controller
+                                          .deleteCertificate(certificate.id!),
+                                      onSave: (map) =>
+                                          controller.saveCertificate(
+                                              certificate.id!, map, "update"),
+                                      isOwnProfile: controller.isOwnProfile,
+                                    ),
+                                  )
+                                  .toList(),
+                        );
+                      }),
+
+                      // controller.isOwnProfile
+                      //     ? Center(
+                      //         child: SizedBox(
+                      //           width: double.infinity,
+                      //           child: DecoratedBox(
+                      //             decoration: BoxDecoration(
+                      //               gradient: AppColors.gradientColor,
+                      //               borderRadius: BorderRadius.circular(16),
+                      //             ),
+                      //             child: TextButton.icon(
+                      //               onPressed: controller.addWork,
+                      //               icon: const Icon(Icons.add,
+                      //                   color: AppColors.white),
+                      //               label: Text('إضافة شهادة',
+                      //                   style: AppTextStyles.button),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       )
+                      //     : const SizedBox.shrink(),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
       ),
     );
   }
@@ -571,55 +618,60 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildWorksTab() {
-    return Obx(() => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
-          child: Column(children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: _statRow(
-                label: "عدد المشاريع المكتملة",
-                value: '${controller.completedProjectsCount}',
+    return Obx(() => RefreshIndicator(
+          onRefresh: controller.pageInit,
+          color: AppColors.vividPurple,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
+            child: Column(children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: _statRow(
+                  label: "عدد المشاريع المكتملة",
+                  value: '${controller.completedProjectsCount}',
+                ),
               ),
-            ),
-            SizedBox(
-              height: AppSpaces.heightSmall,
-            ),
-            ...List.generate(controller.works.length, (index) {
-              final work = controller.works[index];
-              // print(work.imageUrl);
-              return GestureDetector(
-                onTap: () async {
-                  Get.toNamed(
-                    AppRoutes.workDetails,
-                    arguments: {
-                      "work": work,
-                      "isOwnProfile": controller.isOwnProfile,
-                    },
-                  );
-                },
-                child: ProfileWorkCard(work: work),
-              );
-            }),
-            // ...List.generate(controller.newWorks.length, (index) {
-            //   // return
-            // }),
-            controller.isOwnProfile
-                ? SizedBox(
-                    width: double.infinity,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: AppColors.gradientColor,
-                        borderRadius: BorderRadius.circular(16),
+              SizedBox(
+                height: AppSpaces.heightSmall,
+              ),
+              ...List.generate(controller.works.length, (index) {
+                final work = controller.works[index];
+                // print(work.imageUrl);
+                return GestureDetector(
+                  onTap: () async {
+                    Get.toNamed(
+                      AppRoutes.workDetails,
+                      arguments: {
+                        "work": work,
+                        "isOwnProfile": controller.isOwnProfile,
+                      },
+                    );
+                  },
+                  child: ProfileWorkCard(work: work),
+                );
+              }),
+              // ...List.generate(controller.newWorks.length, (index) {
+              //   // return
+              // }),
+              controller.isOwnProfile
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.gradientColor,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextButton.icon(
+                          onPressed: controller.addWork,
+                          icon: const Icon(Icons.add, color: AppColors.white),
+                          label: Text('إضافة عمل', style: AppTextStyles.button),
+                        ),
                       ),
-                      child: TextButton.icon(
-                        onPressed: controller.addWork,
-                        icon: const Icon(Icons.add, color: AppColors.white),
-                        label: Text('إضافة عمل', style: AppTextStyles.button),
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ]),
+                    )
+                  : const SizedBox.shrink(),
+            ]),
+          ),
         ));
     //  Obx(() => SingleChildScrollView(
     //       padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),

@@ -8,6 +8,7 @@ import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
 import 'package:get/get.dart';
 
 class ProjectOffersController extends GetxController {
@@ -152,8 +153,14 @@ class ProjectOffersController extends GetxController {
       customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
       return;
     }
-    customSnackbar(message: "تم سحب العرض");
+
     await loadOffers();
+    customSnackbar(message: "تم سحب العرض");
+
+    if (Get.isRegistered<ProjectDetailsController>()) {
+      Get.find<ProjectDetailsController>().hasOffer.value = false;
+      Get.find<ProjectDetailsController>().oldOffer = null;
+    }
   }
 
   Future<void> editOffer(OfferModel offer) async {
@@ -173,6 +180,9 @@ class ProjectOffersController extends GetxController {
     );
     if (result == true) {
       await loadOffers();
+      if (Get.isRegistered<ProjectDetailsController>()) {
+        await Get.find<ProjectDetailsController>().hasOldOffer();
+      }
     }
   }
 

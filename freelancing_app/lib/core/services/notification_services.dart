@@ -154,4 +154,11 @@ class NotificationServices {
       }
     }); //
   }
+
+  Future<bool> areNotificationsAllowed() async {
+    final settings = await _messaging.getNotificationSettings();
+    final status = settings.authorizationStatus;
+    return status == AuthorizationStatus.authorized ||
+        status == AuthorizationStatus.provisional;
+  }
 }

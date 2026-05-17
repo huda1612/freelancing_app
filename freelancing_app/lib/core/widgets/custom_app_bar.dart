@@ -21,17 +21,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.trailingIcon,
     this.onTrailingPressed,
     this.backgroundColor,
-     this.backgroundGradient,
+    this.backgroundGradient,
     this.bottom,
   });
 
   @override
-
   Widget build(BuildContext context) {
     return AppBar(
+      //هي ضفتها بس لغير لون السهم الخلف الافتراضي
+      iconTheme: IconThemeData(
+        color:
+            backgroundGradient != null ? AppColors.white : AppColors.darkPurple,
+      ),
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: 0,
-       flexibleSpace: backgroundGradient != null
+      flexibleSpace: backgroundGradient != null
           ? Container(
               decoration: BoxDecoration(
                 gradient: backgroundGradient,
@@ -40,10 +44,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       centerTitle: true,
       title: title != null
-          ? Text(
-              title!,
-              style: AppTextStyles.subheading.copyWith(color: AppColors.white,)
-            )
+          ? Text(title!,
+              style: AppTextStyles.subheading.copyWith(
+                color: AppColors.white,
+              ))
           : null,
       leading: leadingIcon != null
           ? IconButton(
