@@ -11,6 +11,7 @@ class CollectionsNames {
   static const String activities = "activities";
   static const String projects = "projects";
   static const String offers = "offers";
+  static const String notifications = "notifications";
 
   //********************************************************************* */
   static const String specializations = "specializations";

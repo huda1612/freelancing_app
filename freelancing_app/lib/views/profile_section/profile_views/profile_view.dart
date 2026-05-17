@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
-
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
@@ -30,56 +30,46 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-            backgroundColor: AppColors.white,
-            drawer: controller.isOwnProfile
-                ? ProfileDrawer(controller: controller)
-                : null,
-            body: Obx(() =>
-                // GetBuilder<ProfileController>(builder: (_) {
-                UiStateHandler(
-                  status: controller.pageState.value,
-                  fetchDataFun: controller.loadProfile,
-                  child: Column(
-                    children: [
-                      _buildHeader(),
-                      _tabsBar(),
-                      Expanded(
-                        child: IndexedStack(
-                          index: controller.activeTabIndex.value,
-                          children: [
-                            _buildProfileTab(),
-                            _buildWorksTab(),
-                          ],
-                        ),
-                      ),
-                    ],
+    return Scaffold(
+        backgroundColor: AppColors.white,
+        drawer: controller.isOwnProfile
+            ? ProfileDrawer(controller: controller)
+            : null,
+        body: Obx(() =>
+            // GetBuilder<ProfileController>(builder: (_) {
+            UiStateHandler(
+              status: controller.pageState.value,
+              fetchDataFun: controller.loadProfile,
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  _tabsBar(),
+                  Expanded(
+                    child: IndexedStack(
+                      index: controller.activeTabIndex.value,
+                      children: [
+                        _buildProfileTab(),
+                        _buildWorksTab(),
+                      ],
+                    ),
                   ),
-                ))
-            // }) }),),
-            // bottomNavigationBar: Obx(
-            //   () => CustomBottomNavBar(
-            //       currentIndex: controller.temp.value,
-            //       onTap: (i) {
-            //         controller.temp.value = i;
-            //       },
-            //       isClient: false),
-            // )
-            ));
+                ],
+              ),
+            )));
   }
 
   Widget _buildBasicInfo() {
-    
     String? cName;
     if (controller.user.value?.countryCode != null) {
       final country =
           CountryCode.fromCountryCode(controller.user.value?.countryCode ?? "");
       cName = country.name;
     }
-    final String gender =
-        controller.user.value?.gender == 'female' ? "انثى" : "ذكر";
+    final String gender = controller.user.value?.gender != null
+        ? controller.user.value?.gender == 'female'
+            ? "انثى"
+            : "ذكر"
+        : "غير محدد";
 
     return Wrap(
       alignment: WrapAlignment.center,
@@ -87,7 +77,7 @@ class ProfileView extends StatelessWidget {
       runSpacing: 6,
       children: [
         _infoItem(Icons.location_on, cName ?? "غير محدد"),
-        _infoItem(Icons.person, gender ?? "غير محدد"),
+        _infoItem(Icons.person, gender),
         _infoItem(
             Icons.cake,
             controller.user.value?.birthDate != null
@@ -100,27 +90,27 @@ class ProfileView extends StatelessWidget {
   TextStyle get _headerMetaStyle =>
       AppTextStyles.link.copyWith(color: AppColors.black);
 
-  Widget _buildAccountStats() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _statRow(
-          icon: Icons.stars_rounded,
-          label: 'النقاط',
-          value: '${controller.pointsCount}',
-        ),
-        SizedBox(width: 20.w),
-        _statRow(
-          icon: Icons.assignment_turned_in_outlined,
-          label: 'المشاريع المكتملة',
-          value: '${controller.completedProjectsCount}',
-        ),
-      ],
-    );
-  }
+  // Widget _buildAccountStats() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       _statRow(
+  //         icon: Icons.stars_rounded,
+  //         label: 'النقاط',
+  //         value: '${controller.pointsCount}',
+  //       ),
+  //       SizedBox(width: 20.w),
+  //       _statRow(
+  //         icon: Icons.assignment_turned_in_outlined,
+  //         label: 'المشاريع المكتملة',
+  //         value: '${controller.completedProjectsCount}',
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _statRow({
-    required IconData icon,
+    // required IconData icon,
     required String label,
     required String value,
   }) {
@@ -128,8 +118,8 @@ class ProfileView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 18, color: AppColors.vividPurple),
-        SizedBox(width: 6.w),
+        // Icon(icon, size: 18, color: AppColors.vividPurple),
+        // SizedBox(width: 6.w),
         Text(label, style: _headerMetaStyle),
         SizedBox(width: 6.w),
         Text(
@@ -187,6 +177,15 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                 ),
+              Positioned(
+                top: MediaQuery.of(Get.context!).padding.top + 17,
+                left: MediaQuery.of(Get.context!).padding.top + 0,
+                child: _statRow(
+                  // icon: Icons.stars_rounded,
+                  label: 'النقاط',
+                  value: '${controller.pointsCount}',
+                ),
+              )
             ],
           ),
           //للصورة
@@ -204,7 +203,7 @@ class ProfileView extends StatelessWidget {
                   init: Get.find<ImageUploadController>(),
                   builder: (c) {
                     return GestureDetector(
-                      onLongPress: controller.isOwnProfile
+                      onTap: controller.isOwnProfile
                           ? controller.changeProfileImage
                           : null,
                       child: CircleAvatar(
@@ -277,8 +276,8 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                _buildAccountStats(),
-                SizedBox(height: 6.h),
+                // _buildAccountStats(),
+                // SizedBox(height: 6.h),
                 _buildBasicInfo(),
                 SizedBox(height: 8.h),
                 _buildActionButtons(),
@@ -575,6 +574,16 @@ class ProfileView extends StatelessWidget {
     return Obx(() => SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
           child: Column(children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: _statRow(
+                label: "عدد المشاريع المكتملة",
+                value: '${controller.completedProjectsCount}',
+              ),
+            ),
+            SizedBox(
+              height: AppSpaces.heightSmall,
+            ),
             ...List.generate(controller.works.length, (index) {
               final work = controller.works[index];
               // print(work.imageUrl);

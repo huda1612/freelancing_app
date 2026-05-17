@@ -1,38 +1,12 @@
-// import 'package:flutter/material.dart';
-// import 'package:freelancing_platform/core/classes/user_session.dart';
-// import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
-// import 'package:freelancing_platform/core/widgets/custom_bottom_nav_bar.dart';
-// import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
-// import 'package:get/get.dart';
-
-// class MainView extends StatelessWidget {
-//   MainView({super.key});
-
-//   final controller = Get.find<NavigationController>();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Obx(
-//       () => Scaffold(
-//         body: controller.pages[controller.currentIndex.value],
-//         bottomNavigationBar: CustomBottomNavBar(
-//           currentIndex: controller.currentIndex.value,
-//           onTap: controller.changePage,
-//           isClient:
-//               UserSession.role == UserRole.client, // أو false حسب نوع المستخدم
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_bottom_nav_bar.dart';
-import 'package:freelancing_platform/views/main_section/main_controllers/main_controller.dart';
+import 'package:freelancing_platform/views/main_section/main_controllers/navigation_controller.dart';
 import 'package:get/get.dart';
 
 class MainView extends StatelessWidget {
@@ -89,32 +63,6 @@ class MainView extends StatelessWidget {
     );
   }
 
-  // Widget _buildTabNavigator({
-  //   required GlobalKey<NavigatorState> navigatorKey,
-  //   required Widget child,
-  // }) {
-  //   return Navigator(
-  //     key: navigatorKey,
-  //     onGenerateRoute: (settings) {
-  //       final page = AppPages.pages.firstWhere(
-  //         (route) => route.name == settings.name,
-  //         orElse: () => GetPage(
-  //           name: '/',
-  //           page: () => child,
-  //         ),
-  //       );
-
-  //       return GetPageRoute(
-  //         routeName: settings.name,
-  //         page: page.page,
-  //         binding: page.binding,
-  //         middlewares: page.middlewares,
-  //         transition: page.transition,
-  //         settings: settings,
-  //       );
-  //     },
-  //   );
-  // }
   Widget _buildTabNavigator({
     required GlobalKey<NavigatorState> navigatorKey,
     required String initialRoute,
@@ -134,7 +82,26 @@ class MainView extends StatelessWidget {
         return GetPageRoute(
             routeName: settings.name,
             page: page.page,
-            binding: page.binding,
+            // binding: page.binding,
+            binding: BindingsBuilder(() {
+              // شغل binding الأصلي
+              page.binding?.dependencies();
+
+              // خزّن arguments الحالية
+              if (settings.arguments != null &&
+                  settings.arguments is Map<String, dynamic>) {
+                // final routeTag =
+                //     "${settings.name}_${controller.currentIndex.value}";
+                final routeTag = NavigationService.routeTag(
+                  settings.name!,
+                  tabIndex: controller.currentIndex.value,
+                );
+                Get.put<Map<String, dynamic>>(
+                  settings.arguments as Map<String, dynamic>,
+                  tag: routeTag,
+                );
+              }
+            }),
             middlewares: page.middlewares,
             transition: page.transition,
             settings: settings
@@ -147,3 +114,31 @@ class MainView extends StatelessWidget {
     );
   }
 }
+
+
+// import 'package:flutter/material.dart';
+// import 'package:freelancing_platform/core/classes/user_session.dart';
+// import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
+// import 'package:freelancing_platform/core/widgets/custom_bottom_nav_bar.dart';
+// import 'package:get/get.dart';
+
+// class MainView extends StatelessWidget {
+//   MainView({super.key});
+
+//   final controller = Get.find<NavigationController>();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(
+//       () => Scaffold(
+//         body: controller.pages[controller.currentIndex.value],
+//         bottomNavigationBar: CustomBottomNavBar(
+//           currentIndex: controller.currentIndex.value,
+//           onTap: controller.changePage,
+//           isClient:
+//               UserSession.role == UserRole.client, // أو false حسب نوع المستخدم
+//         ),
+//       ),
+//     );
+//   }
+// }
