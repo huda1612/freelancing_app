@@ -11,11 +11,10 @@ import 'package:freelancing_platform/views/project_section/project_widgets/clien
 import 'package:get/get.dart';
 
 class ClientProjectView extends StatelessWidget {
-  
+  final ClientProjectController controller =
+      Get.find<ClientProjectController>();
 
-  final ClientProjectController controller = Get.find< ClientProjectController >();
-
-   ClientProjectView({super.key});
+  ClientProjectView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class ClientProjectView extends StatelessWidget {
         appBar: CustomAppBar(
           title: 'مشاريعي',
           backgroundGradient: AppColors.gradientColor,
-          leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
+          // leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
           onLeadingPressed: () => Get.back(),
         ),
         body: Obx(

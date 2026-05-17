@@ -5,8 +5,10 @@ import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:get/get.dart';
 
 class PersonalInfoController extends GetxController {
@@ -152,7 +154,16 @@ class PersonalInfoController extends GetxController {
         }
         savingIsLoading.value = false;
         update();
-        Get.snackbar("تم الحفظ", "تم تعديل البيانات بنجاح");
+        customSnackbar(message: "تم تعديل البيانات بنجاح");
+        final profileController = Get.find<ProfileController>();
+        profileController.user.value = profileController.user.value?.copyWith(
+          fname: firstNameController.text,
+          lname: lastNameController.text,
+          username: usernameController.text,
+          gender: gender.value,
+          countryCode: countryCode.value,
+          birthDate: DateTime(yearInt, monthInt, dayInt),
+        );
       } else {
         savingIsLoading.value = false;
         update();
@@ -176,11 +187,11 @@ class PersonalInfoController extends GetxController {
     final doc =
         await firestore.collection(CollectionsNames.usernames).doc(value).get();
 
-    //  إذا الاسم موجود
+    //  إذا الاسم ما موجود
     if (!doc.exists) return null;
 
     //  إذا الاسم نفسه للمستخدم الحالي
-    // if (value == oldUsername) return null;
+    if (value == oldUsername) return null;
     if (doc.data()?['uid'] == UserSession.uid) return null;
 
     return "اسم المستخدم هذا محجوز مسبقاً";

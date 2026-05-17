@@ -17,12 +17,12 @@ class CustomButton extends StatelessWidget {
   final TextStyle? textStyle;
   final BorderRadiusGeometry? borderRadius;
   final ButtonType buttonType;
-   final Gradient? gradient;
+  final Gradient? gradient;
   final Widget? prefix;
   final bool isLoading;
   final bool isDisable;
 
-  const CustomButton (
+  const CustomButton(
       {super.key,
       required this.text,
       required this.onTap,
@@ -32,7 +32,7 @@ class CustomButton extends StatelessWidget {
       this.color = AppColors.vividPurple,
       this.textStyle,
       this.borderRadius,
-       this.gradient,
+      this.gradient,
       this.buttonType = ButtonType.filled,
       this.prefix,
       this.isLoading = false,
@@ -61,7 +61,7 @@ class CustomButton extends StatelessWidget {
                     ? Theme.of(context).colorScheme.onSurface.withOpacity(0.12)
                     : color)
                 : AppColors.white,
-                gradient: buttonType == ButtonType.filled && !effectiveDisable
+            gradient: buttonType == ButtonType.filled && !effectiveDisable
                 ? gradient
                 : null,
             borderRadius:

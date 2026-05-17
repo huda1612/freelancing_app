@@ -66,42 +66,92 @@ class CustomBottomNavBar extends StatelessWidget {
   }) {
     final isSelected = currentIndex == index;
 
-    return GestureDetector(
+    return InkWell(
       onTap: () => onTap(index),
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ShaderMask(
-            shaderCallback: (bounds) {
-              return LinearGradient(
-                colors: isSelected
-                    ? AppColors.gradientColor.colors
-                    : [AppColors.grey, AppColors.grey],
-              ).createShader(bounds);
-            },
-            child: Icon(
-              icon,
-              size: 26,
-              color: AppColors.white, // اللون يتحدد من ShaderMask
-            ),
-          ),
-          if (isSelected)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              height: 3,
-              width: 18,
-              decoration: BoxDecoration(
-                gradient:
-                    LinearGradient(colors: AppColors.gradientColor.colors),
-                borderRadius: BorderRadius.circular(2),
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 14.w,
+          vertical: 10.h,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ShaderMask(
+              shaderCallback: (bounds) {
+                return LinearGradient(
+                  colors: isSelected
+                      ? AppColors.gradientColor.colors
+                      : [AppColors.grey, AppColors.grey],
+                ).createShader(bounds);
+              },
+              child: Icon(
+                icon,
+                size: 26,
+                color: Colors.white,
               ),
             ),
-        ],
+            if (isSelected)
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                height: 3,
+                width: 18,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: AppColors.gradientColor.colors,
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
+
+  // Widget _buildNavItem({
+  //   required IconData icon,
+  //   required int index,
+  // }) {
+  //   final isSelected = currentIndex == index;
+
+  //   return GestureDetector(
+  //     onTap: () => onTap(index),
+  //     behavior: HitTestBehavior.opaque,
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         ShaderMask(
+  //           shaderCallback: (bounds) {
+  //             return LinearGradient(
+  //               colors: isSelected
+  //                   ? AppColors.gradientColor.colors
+  //                   : [AppColors.grey, AppColors.grey],
+  //             ).createShader(bounds);
+  //           },
+  //           child: Icon(
+  //             icon,
+  //             size: 26,
+  //             color: AppColors.white, // اللون يتحدد من ShaderMask
+  //           ),
+  //         ),
+  //         if (isSelected)
+  //           Container(
+  //             margin: const EdgeInsets.only(top: 4),
+  //             height: 3,
+  //             width: 18,
+  //             decoration: BoxDecoration(
+  //               gradient:
+  //                   LinearGradient(colors: AppColors.gradientColor.colors),
+  //               borderRadius: BorderRadius.circular(2),
+  //             ),
+  //           ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildFabButton() {
     return GestureDetector(

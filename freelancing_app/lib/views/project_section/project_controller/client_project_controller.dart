@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
@@ -57,9 +59,7 @@ class ClientProjectController extends GetxController {
       ProjectStatus.clientTabStatuses[activeTabIndex.value];
 
   List<ProjectModel> projectsForActiveTab() {
-    return projects
-        .where((p) => p.status == statusForActiveTab)
-        .toList();
+    return projects.where((p) => p.status == statusForActiveTab).toList();
   }
 
   void setTabIndex(int index) {
@@ -68,7 +68,7 @@ class ClientProjectController extends GetxController {
 
   void openProjectDetails(ProjectModel project) {
     selectedProject = project;
-    Get.toNamed(
+    NavigationService.toNamed(
       AppRoutes.projectDetails,
       arguments: {'project': project},
     );

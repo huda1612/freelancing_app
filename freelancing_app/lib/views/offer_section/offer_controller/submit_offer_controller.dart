@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/normalize_numbers.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
@@ -139,7 +140,7 @@ class SubmitOfferController extends GetxController {
           update();
           return;
         }
-        Get.back();
+        Get.back(result: true);
         customSnackbar(
           message: "تم تقديم العرض بنجاح",
         );
