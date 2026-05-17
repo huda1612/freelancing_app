@@ -5,6 +5,8 @@ import 'package:freelancing_platform/core/bindings/main_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
@@ -38,11 +40,13 @@ import 'package:freelancing_platform/views/profile_section/profile_views/work_de
 import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/freelance_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_views/active_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/bowse_projects_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/client_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
+import 'package:freelancing_platform/views/project_section/project_views/freelance_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
 
@@ -284,9 +288,15 @@ class AppPages {
     //جديدة
     GetPage(
       name: AppRoutes.myProjects,
-      page: () => ClientProjectView(),
+      page: () => UserSession.role == UserRole.freelancer
+          ? FreelancerProjectView()
+          : ClientProjectView(),
       binding: BindingsBuilder(() {
-        Get.lazyPut(() => ClientProjectController());
+        if (UserSession.role == UserRole.freelancer) {
+          Get.lazyPut(() => FreelancerProjectController());
+        } else {
+          Get.lazyPut(() => ClientProjectController());
+        }
       }),
       middlewares: [AuthMiddleware()],
     ),
