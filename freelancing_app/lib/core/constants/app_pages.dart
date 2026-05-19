@@ -17,8 +17,10 @@ import 'package:freelancing_platform/views/offer_section/offer_controller/projec
 import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/project_offers_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/dashboard_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_views/dashboard_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/personal_info_view.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_request_datails_controller.dart';
 import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_controller/admin_requests_list_controller.dart';
@@ -227,6 +229,16 @@ class AppPages {
           Get.lazyPut(() => WorkDetailsController());
         }),
         middlewares: [AuthMiddleware()]),
+
+
+         GetPage(
+      name: AppRoutes.dashboard,
+      page: () => DashboardView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => DashboardController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
 
     //**********************************************helpful pages****************************************
 
