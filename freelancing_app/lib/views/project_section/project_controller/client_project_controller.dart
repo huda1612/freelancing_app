@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
@@ -66,12 +66,15 @@ class ClientProjectController extends GetxController {
     activeTabIndex.value = index;
   }
 
-  void openProjectDetails(ProjectModel project) {
+  void openProjectDetails(ProjectModel project) async {
     selectedProject = project;
-    NavigationService.toNamed(
+    final result = await NavigationService.toNamed(
       AppRoutes.projectDetails,
       arguments: {'project': project},
     );
+    if (result == true) {
+      loadProjects();
+    }
   }
 
   void openActiveProject(ProjectModel project) {

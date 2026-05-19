@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
@@ -26,7 +27,8 @@ import 'package:get/get.dart';
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
 
-  final ProfileController controller = Get.find<ProfileController>();
+  final ProfileController controller = Get.find<ProfileController>(
+      tag: Get.arguments?["userId"] ?? UserSession.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -165,18 +167,24 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
               ),
-              if (controller.isOwnProfile)
-                Positioned(
-                  top: MediaQuery.of(Get.context!).padding.top + 8,
-                  right: 12,
-                  child: Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(Icons.menu_rounded,
-                          color: AppColors.white, size: 28),
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                    ),
+              // if (controller.isOwnProfile)
+              Positioned(
+                top: MediaQuery.of(Get.context!).padding.top + 8,
+                right: 12,
+                child: Builder(
+                  builder: (context) => IconButton(
+                    icon: Icon(
+                        controller.isOwnProfile
+                            ? Icons.menu_rounded
+                            : Icons.arrow_back,
+                        color: AppColors.white,
+                        size: 28),
+                    onPressed: controller.isOwnProfile
+                        ? () => Scaffold.of(context).openDrawer()
+                        : () => Get.back(),
                   ),
                 ),
+              ),
               // Positioned(
               //   top: MediaQuery.of(Get.context!).padding.top + 17,
               //   left: MediaQuery.of(Get.context!).padding.top + 0,

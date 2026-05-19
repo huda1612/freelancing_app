@@ -30,7 +30,7 @@ class ProjectService {
           var doc = _firebaseFirestore.collection(CollectionsNames.projects).doc(project.id);
           transaction.delete(doc);
 
-          /// جلب العروض الخاصة بالمشروع
+    /// جلب العروض الخاصة بالمشروع
     final offersQuery = await _firebaseFirestore
         .collection(CollectionsNames.offers)
         .where("projectId", isEqualTo: project.id)

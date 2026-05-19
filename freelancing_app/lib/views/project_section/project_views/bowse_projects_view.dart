@@ -62,14 +62,16 @@ class BrowseProjectsView extends StatelessWidget {
                     else
                       ...filteredProjects.map(
                         (project) => GestureDetector(
-                            onTap: () 
-                            // => controller.onProjectSelect(project),
-                            {
-                            
-                              NavigationService.toNamed(
-                                 AppRoutes.projectDetails,
+                            onTap: () async
+                                // => controller.onProjectSelect(project),
+                                {
+                              final result = await NavigationService.toNamed(
+                                  AppRoutes.projectDetails,
                                   arguments: {"project": project});
-                             },
+                              if (result == true) {
+                                await controller.fetchOpenProjectAndSpec();
+                              }
+                            },
                             child: ProjectCard(project: project)),
                       ),
                   ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
@@ -10,6 +11,7 @@ import 'package:freelancing_platform/models/project_collections/offer_model.dart
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_widgets/project_offer_tile.dart';
 import 'package:get/get.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class ProjectOffersView extends StatelessWidget {
   ProjectOffersView({super.key});
@@ -32,14 +34,18 @@ class ProjectOffersView extends StatelessWidget {
                 message: "تعذر تحميل العروض، معلومات المشروع ناقصة",
               )
             : Obx(
-                () => UiStateHandler(
-                  status: controller.pageState.value,
-                  fetchDataFun: controller.loadOffers,
-                  child: Column(
-                    children: [
-                      if (controller.showTabs) _tabsBar(),
-                      Expanded(child: _buildOffersList(context)),
-                    ],
+                () => ModalProgressHUD(
+                  inAsyncCall:
+                      controller.isAccepting.value == StatusClasses.isloading,
+                  child: UiStateHandler(
+                    status: controller.pageState.value,
+                    fetchDataFun: controller.loadOffers,
+                    child: Column(
+                      children: [
+                        if (controller.showTabs) _tabsBar(),
+                        Expanded(child: _buildOffersList(context)),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -136,46 +142,46 @@ class ProjectOffersView extends StatelessWidget {
     return Obx(() {
       final items = controller.offersForActiveTab();
       if (items.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.all(24.w),
-            child: customEmptyMessage(
-              message: controller.showTabs
-                  ? _emptyMessageForTab(controller.activeTabIndex.value)
-                  : 'لا توجد عروض معلقة على هذا المشروع.',
-            ),
-          ),
+        return customEmptyMessage(
+          message: controller.showTabs
+              ? _emptyMessageForTab(controller.activeTabIndex.value)
+              : 'لا توجد عروض معلقة على هذا المشروع.',
         );
       }
 
-      return ListView.builder(
-        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final OfferModel offer = items[index];
-          return GetBuilder<ProjectOffersController>(
-            builder: (c) => ProjectOfferTile(
-              offer: offer,
-              isProjectOwner: c.isProjectOwner,
-              isBusy: c.isBusy(offer.id),
-              onProfileTap: () => c.openFreelancerProfile(offer.freelancerId),
-              onAccept: c.isProjectOwner && offer.status == OfferStatus.pending
-                  ? () => c.acceptOffer(offer)
-                  : null,
-              onReject: c.isProjectOwner && offer.status == OfferStatus.pending
-                  ? () => c.rejectOffer(offer)
-                  : null,
-              onWithdraw:
-                  c.isOfferOwner(offer) && offer.status == OfferStatus.pending
-                      ? () => c.withdrawOffer(offer)
-                      : null,
-              onEdit:
-                  c.isOfferOwner(offer) && offer.status == OfferStatus.pending
-                      ? () => c.editOffer(offer)
-                      : null,
-            ),
-          );
-        },
+      return RefreshIndicator(
+        onRefresh: controller.loadOffers,
+        child: ListView.builder(
+          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final OfferModel offer = items[index];
+            return GetBuilder<ProjectOffersController>(
+              builder: (c) => ProjectOfferTile(
+                offer: offer,
+                isProjectOwner: c.isProjectOwner,
+                isBusy: c.isBusy(offer.id),
+                onProfileTap: () => c.openFreelancerProfile(offer.freelancerId),
+                onAccept:
+                    c.isProjectOwner && offer.status == OfferStatus.pending
+                        ? () => c.acceptOffer(offer)
+                        : null,
+                onReject:
+                    c.isProjectOwner && offer.status == OfferStatus.pending
+                        ? () => c.rejectOffer(offer)
+                        : null,
+                onWithdraw:
+                    c.isOfferOwner(offer) && offer.status == OfferStatus.pending
+                        ? () => c.withdrawOffer(offer)
+                        : null,
+                onEdit:
+                    c.isOfferOwner(offer) && offer.status == OfferStatus.pending
+                        ? () => c.editOffer(offer)
+                        : null,
+              ),
+            );
+          },
+        ),
       );
     });
   }

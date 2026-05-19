@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/utils/helper_function/normalize_numbers.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -164,8 +165,7 @@ class CreateProjectController extends GetxController {
       ),
       skillsRequired: selectedSkills.toList(),
       budget: double.parse(normalizeNumbers(budgetController.text.trim())),
-      durationDays:
-          int.parse(normalizeNumbers(durationController.text.trim())),
+      durationDays: int.parse(normalizeNumbers(durationController.text.trim())),
       createdAt: null,
     );
 
@@ -173,7 +173,7 @@ class CreateProjectController extends GetxController {
     submitLoading.value = false;
 
     if (response == StatusClasses.success) {
-      Get.snackbar('نجاح', 'تم إنشاء المشروع بنجاح');
+      customSnackbar(message: 'تم إنشاء المشروع بنجاح');
       _clearForm();
       return;
     }

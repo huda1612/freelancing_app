@@ -19,6 +19,8 @@ class ProjectModel {
   final int durationDays;
   final String status;
   final String? acceptedOfferId;
+  final String? acceptedFreelancerId;
+
   final Timestamp? createdAt;
 
   ProjectModel({
@@ -32,6 +34,7 @@ class ProjectModel {
     required this.durationDays,
     this.status = ProjectStatus.newProject,
     this.acceptedOfferId,
+    this.acceptedFreelancerId,
     this.createdAt,
   });
 
@@ -46,6 +49,7 @@ class ProjectModel {
       'durationDays': durationDays,
       'status': status,
       'acceptedOfferId': acceptedOfferId,
+      'acceptedFreelancerId': acceptedFreelancerId,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
     };
   }
@@ -62,8 +66,38 @@ class ProjectModel {
       durationDays: map['durationDays'] ?? 0,
       status: map['status'] ?? 'new',
       acceptedOfferId: map['acceptedOfferId'],
+      acceptedFreelancerId: map['acceptedFreelancerId'],
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
+    );
+  }
+  ProjectModel copyWith({
+    String? id,
+    String? clientId,
+    String? title,
+    String? description,
+    SpecializationSnapshot? category,
+    List<String>? skillsRequired,
+    double? budget,
+    int? durationDays,
+    String? status,
+    String? acceptedOfferId,
+    String? acceptedFreelancerId,
+    Timestamp? createdAt,
+  }) {
+    return ProjectModel(
+      id: id ?? this.id,
+      clientId: clientId ?? this.clientId,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      skillsRequired: skillsRequired ?? this.skillsRequired,
+      budget: budget ?? this.budget,
+      durationDays: durationDays ?? this.durationDays,
+      status: status ?? this.status,
+      acceptedOfferId: acceptedOfferId ?? this.acceptedOfferId,
+      acceptedFreelancerId: acceptedFreelancerId ?? this.acceptedFreelancerId,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

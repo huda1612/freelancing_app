@@ -24,6 +24,7 @@ class ProjectDetailsController extends GetxController {
   //هي لازم تكون بObx ما GetBuilder لان عم حدث القيم من صفحه ثانيه ما لازم يكون في update ما بأثر بعدين
   final hasOffer = false.obs;
   final loadingCheckOldOffer = true.obs;
+  bool loadingDelete = false;
 
   OfferModel? oldOffer;
 
@@ -33,15 +34,6 @@ class ProjectDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     //Load project details
-    //جديدة
-    // project = Get.find<BrowseProjectsController>().selectedProject;
-    // final argProject = Get.arguments?['project'];
-    // if (argProject is ProjectModel) {
-    //   project = argProject;
-    // } else if (Get.isRegistered<BrowseProjectsController>()) {
-    //   project = Get.find<BrowseProjectsController>().selectedProject;
-    // }
-    //لهون
     //طريقه اشتغلت بس اختصرتها بالخدمه
     // final args = Get.find<Map<String, dynamic>>(
     //   tag: AppRoutes.projectDetails,
@@ -140,12 +132,21 @@ class ProjectDetailsController extends GetxController {
 
   //لازم ضيف حاله للصفحه وقت تحميل الحذف
   Future<void> deleteProject() async {
+    loadingDelete = true;
+    update();
     final response = await ProjectService().deleteProject(project!);
     if (response != StatusClasses.success) {
       customSnackbar(message: "خطأ :  ${response.type} / ${response.message}");
+      loadingDelete = false;
+      update();
       return;
     }
+    loadingDelete = false;
+    update();
+    NavigationService.back(result: true);
+
     customSnackbar(message: "تم حذف المشروع بنجاح");
+
     return;
   }
 
