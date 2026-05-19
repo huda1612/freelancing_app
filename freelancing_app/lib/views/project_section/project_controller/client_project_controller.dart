@@ -3,6 +3,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
@@ -57,9 +58,7 @@ class ClientProjectController extends GetxController {
       ProjectStatus.clientTabStatuses[activeTabIndex.value];
 
   List<ProjectModel> projectsForActiveTab() {
-    return projects
-        .where((p) => p.status == statusForActiveTab)
-        .toList();
+    return projects.where((p) => p.status == statusForActiveTab).toList();
   }
 
   void setTabIndex(int index) {
@@ -68,7 +67,7 @@ class ClientProjectController extends GetxController {
 
   void openProjectDetails(ProjectModel project) {
     selectedProject = project;
-    Get.toNamed(
+    NavigationService.toNamed(
       AppRoutes.projectDetails,
       arguments: {'project': project},
     );
@@ -76,7 +75,7 @@ class ClientProjectController extends GetxController {
 
   void openActiveProject(ProjectModel project) {
     selectedProject = project;
-    Get.toNamed(
+    NavigationService.toNamed(
       AppRoutes.activeProject,
       arguments: {'project': project},
     );
@@ -139,6 +138,10 @@ class ClientProjectController extends GetxController {
     }
     projects.removeWhere((p) => p.id == project.id);
     customSnackbar(message: "تم حذف المشروع");
+  }
+
+  void updateProjectStatusLocally(String projectId, String status) {
+    _updateLocalProjectStatus(projectId, status);
   }
 
   void _updateLocalProjectStatus(String projectId, String status) {

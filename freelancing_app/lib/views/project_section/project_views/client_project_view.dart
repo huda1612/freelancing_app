@@ -6,16 +6,16 @@ import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/client_project_tile.dart';
 import 'package:get/get.dart';
 
 class ClientProjectView extends StatelessWidget {
-  
+  final ClientProjectController controller =
+      Get.find<ClientProjectController>();
 
-  final ClientProjectController controller = Get.find< ClientProjectController >();
-
-   ClientProjectView({super.key});
+  ClientProjectView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +26,8 @@ class ClientProjectView extends StatelessWidget {
         appBar: CustomAppBar(
           title: 'مشاريعي',
           backgroundGradient: AppColors.gradientColor,
-          leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onLeadingPressed: () => Get.back(),
+          // leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
+          onLeadingPressed: NavigationService.back,
         ),
         body: Obx(
           () => UiStateHandler(
@@ -173,6 +173,8 @@ class ClientProjectView extends StatelessWidget {
         c.openActiveProject(project);
         break;
       case ClientProjectTileMode.delivered:
+        c.openActiveProject(project);
+        break;
       case ClientProjectTileMode.withdrawn:
         break;
     }

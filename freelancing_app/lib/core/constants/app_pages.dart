@@ -303,13 +303,12 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.activeProject,
-      page: () => ActiveProjectView(),
+      page: () => const ActiveProjectView(),
       binding: BindingsBuilder(() {
         Get.lazyPut(() => ActiveProjectController());
       }),
       middlewares: [AuthMiddleware()],
     ),
-
     //جديدة
 
     //**********************************************offer pages****************************************

@@ -233,4 +233,32 @@ class OfferService {
     if (s.isEmpty || s == ProjectStatus.newProject) return true;
     return s == OfferStatus.pending;
   }
+
+  //جديد
+  
+  /// العرض المقبول على مشروع معيّن (إن وُجد).
+  Future<Either<StatusClasses, OfferModel?>> getAcceptedOfferForProject({
+    required String projectId,
+    String? acceptedOfferId,
+  }) async {
+    if (acceptedOfferId != null && acceptedOfferId.isNotEmpty) {
+      final doc = await _firebaseFirestore
+          .collection(CollectionsNames.offers)
+          .doc(acceptedOfferId)
+          .get();
+      if (doc.exists && doc.data() != null) {
+        return Right(OfferModel.fromMap(doc.data()!, doc.id));
+      }
+    }
+
+    final res = await getProjectOffers(projectId: projectId);
+    return res.map((list) {
+      for (final offer in list) {
+        if (offer.status == OfferStatus.accepted) return offer;
+      }
+      return null;
+    });
+  }
 }
+
+
