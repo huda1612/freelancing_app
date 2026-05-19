@@ -1,32 +1,45 @@
 class TaskModel {
   final String id;
-  final String name;
+  //بدل الاسم
+  final int orderNumber;
   final String description;
   final bool isDone;
 
   TaskModel({
     required this.id,
-    required this.name,
+    required this.orderNumber,
     this.description = '',
     this.isDone = false,
   });
 
-  // 🔹 تحويل من Object إلى Map
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
+      'orderNumber': orderNumber,
       'description': description,
       'isDone': isDone,
     };
   }
 
-  // 🔹 تحويل من Map إلى Object
   factory TaskModel.fromMap(Map<String, dynamic> map, String docId) {
     return TaskModel(
       id: docId,
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
+      orderNumber: (map['orderNumber'] as num?)?.toInt() ??
+          (map['order_number'] as num?)?.toInt() ??
+          0,
+      description: map['description'] ?? map['name'] ?? '',
       isDone: map['isDone'] ?? false,
+    );
+  }
+
+  TaskModel copyWith({
+    String? description,
+    bool? isDone,
+  }) {
+    return TaskModel(
+      id: id,
+      orderNumber: orderNumber,
+      description: description ?? this.description,
+      isDone: isDone ?? this.isDone,
     );
   }
 }

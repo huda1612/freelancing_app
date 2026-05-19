@@ -76,7 +76,7 @@ class ClientProjectController extends GetxController {
 
   void openActiveProject(ProjectModel project) {
     selectedProject = project;
-    Get.toNamed(
+    NavigationService.toNamed(
       AppRoutes.activeProject,
       arguments: {'project': project},
     );
@@ -139,6 +139,10 @@ class ClientProjectController extends GetxController {
     }
     projects.removeWhere((p) => p.id == project.id);
     customSnackbar(message: "تم حذف المشروع");
+  }
+
+  void updateProjectStatusLocally(String projectId, String status) {
+    _updateLocalProjectStatus(projectId, status);
   }
 
   void _updateLocalProjectStatus(String projectId, String status) {
