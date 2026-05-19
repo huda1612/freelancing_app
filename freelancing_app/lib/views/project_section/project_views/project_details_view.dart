@@ -195,64 +195,64 @@ class ProjectDetailsView extends StatelessWidget {
 
             // زر تقديم عرض + زر العروض المقدّمة (للفريلانسر) أو عرض العروض للعميل
             if (controller.project!.status == ProjectStatus.newProject)
-              GetBuilder<ProjectDetailsController>(builder: (c) {
-                if (c.isFreelancer) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          text: c.hasOffer ? 'لديك عرض معلّق' : 'تقديم عرض',
-                          height: 44,
-                          width: null,
-                          onTap: c.onOfferSubmit,
-                          isDisable: c.hasOffer,
-                          prefix: Icon(
-                            Icons.send_rounded,
-                            color: AppColors.white,
-                            size: 18.sp,
-                          ),
-                          gradient: AppColors.gradientColor,
-                          textStyle: AppTextStyles.button.copyWith(
-                            color: AppColors.white,
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Expanded(
-                        child: CustomButton(
-                          text: 'العروض المقدَّمة',
-                          height: 44,
-                          width: null,
-                          onTap: c.onOfferView,
-                          buttonType: ButtonType.outlined,
-                          color: AppColors.vividPurple,
-                          textStyle: AppTextStyles.link.copyWith(
-                            color: AppColors.vividPurple,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          prefix: Icon(
-                            Icons.visibility_outlined,
-                            color: AppColors.vividPurple,
-                            size: 18.sp,
+              // GetBuilder<ProjectDetailsController>(
+              //   builder:
+              if (controller.isFreelancer)
+                Obx(() => Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            isLoading: controller.loadingCheckOldOffer.value,
+                            text: controller.hasOffer.value
+                                ? 'تعديل العرض المرسل'
+                                : 'تقديم عرض',
+                            height: 44,
+                            width: null,
+                            onTap: controller.onOfferSubmit,
+                            prefix: Icon(
+                              controller.hasOffer.value
+                                  ? Icons.mode
+                                  : Icons.send_rounded,
+                              color: AppColors.white,
+                              size: 18.sp,
+                            ),
+                            gradient: AppColors.gradientColor,
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }
-                return CustomButton(
-                  text: "عرض العروض المستلمة",
-                  onTap: c.onOfferView,
-                  prefix: const Icon(
-                    Icons.content_paste,
-                    color: AppColors.white,
-                  ),
-                  gradient: AppColors.gradientColor,
-                );
-              }),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: CustomButton(
+                            text: 'العروض المقدَّمة',
+                            height: 44,
+                            width: null,
+                            onTap: controller.onOfferView,
+                            buttonType: ButtonType.outlined,
+                            color: AppColors.vividPurple,
+                            textStyle: AppTextStyles.link.copyWith(
+                              color: AppColors.vividPurple,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            prefix: Icon(
+                              Icons.visibility_outlined,
+                              color: AppColors.vividPurple,
+                              size: 18.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+            if (!controller.isFreelancer)
+              CustomButton(
+                text: "عرض العروض المستلمة",
+                onTap: controller.onOfferView,
+                prefix: const Icon(
+                  Icons.content_paste,
+                  color: AppColors.white,
+                ),
+                gradient: AppColors.gradientColor,
+              ),
             SizedBox(height: AppSpaces.heightMedium),
           ],
         ),

@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
-import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
+// import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/user_notification_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/user_collections/notification_model.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
-// import 'package:freelancing_platform/core/bindings/auth_binding.dart';
 
 class NotificationSenderServices {
   static String projectId = 'freelance-app-78e07';
@@ -48,6 +47,8 @@ class NotificationSenderServices {
         }),
       );
       if (response.statusCode < 200 || response.statusCode >= 300) {
+        debugPrint(
+            "sending notification error : ${response.statusCode} ${response.body}");
         return StatusClasses.customError(
             "sending notification error : ${response.statusCode} ${response.body}");
       }
@@ -66,9 +67,11 @@ class NotificationSenderServices {
       Map<String, dynamic>? data}) async {
     final response = await UserService().fetchUserData2(uId);
     response.fold((errorStatus) {
-      customSnackbar(message: "${errorStatus.type} / ${errorStatus.message}");
+      debugPrint("${errorStatus.type} / ${errorStatus.message}");
+      // customSnackbar(message: "${errorStatus.type} / ${errorStatus.message}");
       return;
     }, (user) async {
+      print(user.uid);
       final userFcmToken = user.fcmToken;
       if (userFcmToken == null || userFcmToken.isEmpty) {
         print("!!!! no token");
@@ -81,9 +84,11 @@ class NotificationSenderServices {
         data: data,
       );
       if (sendingResponse != StatusClasses.success) {
-        customSnackbar(
-            message:
-                "sending notification error : ${sendingResponse.type} ${sendingResponse.message}");
+        debugPrint(
+            "sending notification error 1: ${sendingResponse.type} ${sendingResponse.message}");
+        // customSnackbar(
+        //     message:
+        //         "sending notification error : ${sendingResponse.type} ${sendingResponse.message}");
       }
       final notificationAddRes = await UserNotificationService()
           .addUserNotification(
@@ -91,9 +96,11 @@ class NotificationSenderServices {
               notification: NotificationModel(
                   title: title, body: body, type: data?['type']));
       if (notificationAddRes != StatusClasses.success) {
-        customSnackbar(
-            message:
-                "sending notification error : ${notificationAddRes.type} ${notificationAddRes.message}");
+        debugPrint(
+            "sending notification error2 : ${notificationAddRes.type} ${notificationAddRes.message}");
+        // customSnackbar(
+        //     message:
+        //         "sending notification error : ${notificationAddRes.type} ${notificationAddRes.message}");
         return;
       }
     });

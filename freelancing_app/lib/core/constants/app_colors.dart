@@ -51,7 +51,8 @@ class AppColors {
   static const Color owhite = Color.fromARGB(170, 255, 255, 255); // أبيض نقي
   static const Color veryLightGrey = Color(0xFFF5F5F5); // رمادي شبه أبيض
   static const Color grey = Color(0xFFE0E0E0); // رمادي شبه أبيض
-  static Color disableButton = const Color.fromARGB(255, 198, 198, 198);
+  static const Color disableButton =  Color.fromARGB(255, 198, 198, 198);
+  static const Color normalGrey =  Color.fromARGB(255, 168, 168, 168); // رمادي  
 
   //اخضر
   static const Color lightGreen = Color.fromARGB(255, 214, 245, 192);

@@ -139,7 +139,7 @@ class SubmitOfferController extends GetxController {
           update();
           return;
         }
-        Get.back();
+        Get.back(result: true);
         customSnackbar(
           message: "تم تقديم العرض بنجاح",
         );

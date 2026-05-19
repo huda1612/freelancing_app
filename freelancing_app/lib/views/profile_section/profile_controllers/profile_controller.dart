@@ -2,11 +2,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_image_preset.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
+import 'package:freelancing_platform/core/services/local_storage_service.dart';
+import 'package:freelancing_platform/core/services/notification_services.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
@@ -54,14 +58,20 @@ class ProfileController extends GetxController {
   final certificates = <CertificateModel>[].obs;
   final works = <WorksampleModel>[].obs;
   final TextEditingController bioController = TextEditingController();
-
   var newCertificate = Rxn<CertificateModel>();
-
   List<String> get skills => user.value?.skills ?? const <String>[];
+
+  //notifications variables
+  final notificationsEnabled = true.obs;
+  final notificationsPermissioned = true.obs;
 
   @override
   void onInit() {
     super.onInit();
+    pageInit();
+  }
+
+  Future<void> pageInit() async {
     if (!isLogin()) {
       return;
     }
@@ -72,6 +82,7 @@ class ProfileController extends GetxController {
     }
 
     loadProfile();
+    loadNotificationDisableValue();
   }
 
   void addWork() {
@@ -170,6 +181,11 @@ class ProfileController extends GetxController {
 
   ///ما مستخدم !!!!!!!!!!!!!!
   // int get completedProjects => user.value?.completedProjects ?? works.length;
+  Future<void> loadNotificationDisableValue() async {
+    notificationsEnabled.value = AppConstantData.notificationsEnable ?? true;
+    notificationsPermissioned.value =
+        await NotificationServices().areNotificationsAllowed();
+  }
 
   Future<void> loadProfile() async {
     pageState.value = StatusClasses.isloading;
@@ -279,6 +295,15 @@ class ProfileController extends GetxController {
         }
       },
     );
+  }
+
+  void toggleNotifications(bool value) async {
+    notificationsEnabled.value = value;
+    await LocalStorageService.setBoolValue(AppKeys.notificationsEnable, value);
+    await LocalStorageService.setConstantisNotificationsEnable();
+    if (value == false) {
+      NotificationServices().deleteToken();
+    }
   }
   //--------------------------------------skills manage-----------------------------------------------
 
@@ -490,6 +515,7 @@ class ProfileController extends GetxController {
   void setTabIndex(int index) {
     activeTabIndex.value = index;
   }
+
   //هاد بلاه احسن بس خليته احتياط
   void _setFallbackData() {
     user.value = UserModel(
