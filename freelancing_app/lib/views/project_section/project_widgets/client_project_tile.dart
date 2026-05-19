@@ -21,6 +21,8 @@ class ClientProjectTile extends StatelessWidget {
     required this.project,
     required this.mode,
     this.isBusy = false,
+    this.tasksDone,
+    this.tasksTotal,
     this.onTap,
     this.onApproveCompletion,
     this.onRepublish,
@@ -30,6 +32,8 @@ class ClientProjectTile extends StatelessWidget {
   final ProjectModel project;
   final ClientProjectTileMode mode;
   final bool isBusy;
+  final int? tasksDone;
+  final int? tasksTotal;
   final VoidCallback? onTap;
   final VoidCallback? onApproveCompletion;
   final VoidCallback? onRepublish;
@@ -37,26 +41,16 @@ class ClientProjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return ProjectCard(
+      project: project,
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ProjectCard(project: project),
-          if (_showActions) ...[
-            SizedBox(height: 8.h),
-            _buildActions(),
-          ],
-        ],
-      ),
+      tasksDone: mode == ClientProjectTileMode.inProgress ? tasksDone : null,
+      tasksTotal: mode == ClientProjectTileMode.inProgress ? tasksTotal : null,
+      footer: _buildFooter(),
     );
   }
 
-  bool get _showActions =>
-      mode == ClientProjectTileMode.delivered ||
-      mode == ClientProjectTileMode.withdrawn;
-
-  Widget _buildActions() {
+  Widget? _buildFooter() {
     if (mode == ClientProjectTileMode.delivered) {
       return CustomButton(
         text: 'الموافقة على إنهاء المشروع',
@@ -72,40 +66,44 @@ class ClientProjectTile extends StatelessWidget {
       );
     }
 
-    return Row(
-      children: [
-        Expanded(
-          child: CustomButton(
-            text: 'إعادة نشر',
-            height: 44,
-            width: null,
-            isLoading: isBusy,
-            onTap: onRepublish ?? () {},
-            gradient: AppColors.gradientColor,
-            textStyle: AppTextStyles.link.copyWith(
-              color: AppColors.white,
-              fontSize: 12.sp,
+    if (mode == ClientProjectTileMode.withdrawn) {
+      return Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: 'إعادة نشر',
+              height: 44,
+              width: null,
+              isLoading: isBusy,
+              onTap: onRepublish ?? () {},
+              gradient: AppColors.gradientColor,
+              textStyle: AppTextStyles.link.copyWith(
+                color: AppColors.white,
+                fontSize: 12.sp,
+              ),
             ),
           ),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: CustomButton(
-            text: 'حذف',
-            height: 44,
-            width: null,
-            isLoading: isBusy,
-            onTap: onDelete ?? () {},
-            buttonType: ButtonType.outlined,
-            color: Colors.red,
-            textStyle: AppTextStyles.link.copyWith(
+          SizedBox(width: 10.w),
+          Expanded(
+            child: CustomButton(
+              text: 'حذف',
+              height: 44,
+              width: null,
+              isLoading: isBusy,
+              onTap: onDelete ?? () {},
+              buttonType: ButtonType.outlined,
               color: Colors.red,
-              fontSize: 12.sp,
+              textStyle: AppTextStyles.link.copyWith(
+                color: Colors.red,
+                fontSize: 12.sp,
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
+
+    return null;
   }
 
   static ClientProjectTileMode modeFromStatus(String status) {

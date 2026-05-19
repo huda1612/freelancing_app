@@ -39,6 +39,7 @@ class AppRoutes {
   static const profile = '/profile';
   static const personalInfo = '/personal_info';
   static const workDetails = '/work_details';
+  static const dashboard = '/dashboard';
 
   //search route
   static const search = '/search';

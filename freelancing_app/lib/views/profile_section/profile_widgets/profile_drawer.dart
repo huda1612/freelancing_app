@@ -6,7 +6,6 @@ import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({

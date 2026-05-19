@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
+import 'package:freelancing_platform/models/project_collections/project_task_progress.dart';
 import 'package:freelancing_platform/models/project_collections/task_model.dart';
 
 class ProjectTaskService {
@@ -17,6 +18,16 @@ class ProjectTaskService {
         .collection(CollectionsNames.projects)
         .doc(projectId)
         .collection(CollectionsNames.projectTasks);
+  }
+
+  Future<Either<StatusClasses, ProjectTaskProgress>> getTaskProgress({
+    required String projectId,
+  }) async {
+    final res = await getTasks(projectId: projectId);
+    return res.map((list) {
+      final done = list.where((t) => t.isDone).length;
+      return ProjectTaskProgress(done: done, total: list.length);
+    });
   }
 
   Future<Either<StatusClasses, List<TaskModel>>> getTasks({

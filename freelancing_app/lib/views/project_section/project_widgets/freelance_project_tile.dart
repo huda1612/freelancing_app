@@ -15,20 +15,25 @@ class FreelancerProjectTile extends StatelessWidget {
     super.key,
     required this.project,
     required this.mode,
+    this.tasksDone,
+    this.tasksTotal,
     this.onTap,
   });
 
   final ProjectModel project;
   final FreelancerProjectTileMode mode;
+  final int? tasksDone;
+  final int? tasksTotal;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final canTap = mode == FreelancerProjectTileMode.inProgress;
-
-    return GestureDetector(
-      onTap: canTap ? onTap : null,
-      child: ProjectCard(project: project),
+    return ProjectCard(
+      project: project,
+      onTap: onTap,
+      tasksDone: mode == FreelancerProjectTileMode.inProgress ? tasksDone : null,
+      tasksTotal:
+          mode == FreelancerProjectTileMode.inProgress ? tasksTotal : null,
     );
   }
 
