@@ -27,7 +27,7 @@ void main() async {
 
   runApp(const MyApp());
 
-  //الغاء تهيئة الاشعارات لو المستخدم لغالها من داخل اتطبيق
+  //الغاء تهيئة الاشعارات لو المستخدم لغالها من داخل التطبيق
   if (AppConstantData.notificationsEnable == false) {
     return;
   }

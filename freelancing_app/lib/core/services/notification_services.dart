@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:get/get.dart';
 
@@ -21,6 +22,9 @@ class NotificationServices {
   );
   Future<void> initialize(
       {required void Function(String token) onToken}) async {
+    if (AppConstantData.notificationsEnable == false) {
+      return;
+    }
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     await _requestPermission();
@@ -160,5 +164,9 @@ class NotificationServices {
     final status = settings.authorizationStatus;
     return status == AuthorizationStatus.authorized ||
         status == AuthorizationStatus.provisional;
+  }
+
+  Future<void> deleteToken() async {
+    _messaging.deleteToken();
   }
 }

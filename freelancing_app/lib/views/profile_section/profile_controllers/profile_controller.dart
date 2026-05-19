@@ -301,6 +301,9 @@ class ProfileController extends GetxController {
     notificationsEnabled.value = value;
     await LocalStorageService.setBoolValue(AppKeys.notificationsEnable, value);
     await LocalStorageService.setConstantisNotificationsEnable();
+    if (value == false) {
+      NotificationServices().deleteToken();
+    }
   }
   //--------------------------------------skills manage-----------------------------------------------
 
