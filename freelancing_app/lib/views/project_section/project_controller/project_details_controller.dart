@@ -8,20 +8,24 @@ import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
+import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:get/get.dart';
 
 class ProjectDetailsController extends GetxController {
-  //  ProjectModel? project =ProjectModel(id: "", clientId:"", title: "", description: "", category: SpecializationSnapshot(slug: "", name: ""), budget: 0, durationDays: 0) ;
   ProjectModel? project;
 
-  // var clientId = "G63CQ2p5DheAmfph21A9tCAJyWJ3";
   bool get isOwnProject {
+    if (project == null) return false;
     if (project!.clientId == UserSession.uid) return true;
     return false;
   }
 
-  bool hasOffer = false;
+  //هي لازم تكون بObx ما GetBuilder لان عم حدث القيم من صفحه ثانيه ما لازم يكون في update ما بأثر بعدين
+  final hasOffer = false.obs;
+  final loadingCheckOldOffer = true.obs;
+
+  OfferModel? oldOffer;
 
   bool get isFreelancer => UserSession.role == UserRole.freelancer;
 
@@ -29,8 +33,6 @@ class ProjectDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     //Load project details
-    // project = Get.arguments?["project"];
-
     //جديدة
     // project = Get.find<BrowseProjectsController>().selectedProject;
     // final argProject = Get.arguments?['project'];
@@ -47,7 +49,6 @@ class ProjectDetailsController extends GetxController {
     // project = args["project"]!;
 
     final args = NavigationService.routeArguments(AppRoutes.projectDetails);
-
     project = args?["project"];
 
     if (project == null) {
@@ -65,37 +66,62 @@ class ProjectDetailsController extends GetxController {
   }
 
   Future<void> hasOldOffer() async {
+    loadingCheckOldOffer.value = true;
+    // update();
+
     final hasOfferRes = await OfferService().freelancerOfferOnProject(
       projectId: project!.id,
       freelancerId: UserSession.uid!,
     );
     return hasOfferRes.fold((err) {
       customSnackbar(message: "${err.type} / ${err.message}");
-      hasOffer = false;
+      hasOffer.value = false;
+      loadingCheckOldOffer.value = false;
+      // update();
     }, (offer) {
       if (offer.isNotEmpty && offer.first.status == OfferStatus.pending) {
-        customSnackbar(message: "لديك عرض مسبق على هذا المشروع");
-        hasOffer = true;
-        update();
+        // customSnackbar(message: "لديك عرض مسبق على هذا المشروع");
+        hasOffer.value = true;
+        oldOffer = offer[0];
       }
+      loadingCheckOldOffer.value = false;
+      // update();
     });
   }
 
-  void onOfferView() {
-    NavigationService.toNamed(AppRoutes.projectOffers, arguments: {
+  Future<void> onOfferView() async {
+    // final didSomething =
+    await NavigationService.toNamed(AppRoutes.projectOffers, arguments: {
       'project': project,
       'projectId': project!.id,
     });
+    // if (didSomething == true) {
+    //   await hasOldOffer();
+    // }
   }
 
   Future<void> onOfferSubmit() async {
-    Get.toNamed(AppRoutes.submitOffer, arguments: {
+    final didSomething = await Get.toNamed(AppRoutes.submitOffer, arguments: {
       "projectBudget": project!.budget,
       "projectDurationDays": project!.durationDays,
       "projectId": project!.id,
-      "clientId": project!.clientId
+      "clientId": project!.clientId,
+      "offer": oldOffer
     });
+    if (didSomething == true) {
+      await hasOldOffer();
+    }
   }
+
+  // void onOfferEdit() async {
+  //   Get.toNamed(AppRoutes.submitOffer, arguments: {
+  //     "projectBudget": project!.budget,
+  //     "projectDurationDays": project!.durationDays,
+  //     "projectId": project!.id,
+  //     "clientId": project!.clientId,
+  //     "offer" :
+  //   });
+  // }
 
   void onDeleteProject() {
     Get.defaultDialog(

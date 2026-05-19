@@ -36,7 +36,7 @@ class ProjectOfferTile extends StatelessWidget {
   final VoidCallback? onWithdraw;
   final VoidCallback? onEdit;
 
-  static const int _previewMaxChars = 110;
+  // static const int _previewMaxChars = 110;
 
   bool get _isOfferOwner =>
       UserSession.uid != null && UserSession.uid == offer.freelancerId;
@@ -52,11 +52,11 @@ class ProjectOfferTile extends StatelessWidget {
       offer.status == OfferStatus.pending &&
       (onWithdraw != null || onEdit != null);
 
-  String _preview(String text) {
-    final t = text.trim();
-    if (t.length <= _previewMaxChars) return t;
-    return '${t.substring(0, _previewMaxChars)}…';
-  }
+  // String _preview(String text) {
+  //   final t = text.trim();
+  //   if (t.length <= _previewMaxChars) return t;
+  //   return '${t.substring(0, _previewMaxChars)}…';
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +154,10 @@ class ProjectOfferTile extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  _preview(offer.proposalText),
+                  offer.proposalText,
+                  // _preview(offer.proposalText),
                   style: AppTextStyles.body.copyWith(color: AppColors.black),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

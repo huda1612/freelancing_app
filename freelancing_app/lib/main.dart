@@ -26,13 +26,20 @@ void main() async {
   await AppInitializer.init();
 
   runApp(const MyApp());
-  final notificationServices = Get.put(NotificationServices());
-  //لو الاشعارات مفعله بتكون null والا بتكون ما null لو ما مفعله
-  if (AppConstantData.isNotificationsDisable == null) {
-    await notificationServices.initialize(
-      onToken: checkFcmToken,
-    );
+
+  //الغاء تهيئة الاشعارات لو المستخدم لغالها من داخل اتطبيق
+  if (AppConstantData.notificationsEnable == false) {
+    return;
   }
+  final notificationServices = Get.put(NotificationServices());
+
+  // if (AppConstantData.notificationsEnable == true ||
+  //     AppConstantData.notificationsEnable == null) //مابعرف اذا هالشرط اله داعي
+  // {
+  await notificationServices.initialize(
+    onToken: checkFcmToken,
+  );
+  // }
 }
 
 class MyApp extends StatelessWidget {

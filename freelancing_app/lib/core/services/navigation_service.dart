@@ -100,10 +100,8 @@ class NavigationService {
     );
   }
 
-  static void back({int? id}) {
-    Get.back(
-      id: id ?? currentTab,
-    );
+  static void back({int? id, bool? result}) {
+    Get.back(id: id ?? currentTab, result: result);
   }
 
   /// Root Navigation

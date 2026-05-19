@@ -7,7 +7,7 @@ class AppInitializer {
     // LocalStorageService.setConstantRole();
     await UserSession.load();
     await LocalStorageService.setConstantFirstOpen();
-    await LocalStorageService.setConstantisNotificationsDisable();
+    await LocalStorageService.setConstantisNotificationsEnable();
     //مافي داعي اله لان مارح احتاجه جوا التطبيق ليش لاعمل مصدرين للتوكن زضل حدثهم مع بعض
     // await LocalStorageService.setConstantFcm();
   }

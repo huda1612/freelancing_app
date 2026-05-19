@@ -28,6 +28,7 @@ class ClientProjectView extends StatelessWidget {
           backgroundGradient: AppColors.gradientColor,
           // leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
           onLeadingPressed: NavigationService.back,
+
         ),
         body: Obx(
           () => UiStateHandler(
