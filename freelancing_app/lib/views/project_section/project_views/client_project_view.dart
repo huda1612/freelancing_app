@@ -19,27 +19,22 @@ class ClientProjectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        appBar: CustomAppBar(
-          title: 'مشاريعي',
-          backgroundGradient: AppColors.gradientColor,
-          // leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onLeadingPressed: NavigationService.back,
-
-        ),
-        body: Obx(
-          () => UiStateHandler(
-            status: controller.pageState.value,
-            fetchDataFun: controller.loadProjects,
-            child: Column(
-              children: [
-                _tabsBar(),
-                Expanded(child: _buildProjectsList()),
-              ],
-            ),
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: CustomAppBar(
+        title: 'مشاريعي',
+        backgroundGradient: AppColors.gradientColor,
+        onLeadingPressed: NavigationService.back,
+      ),
+      body: Obx(
+        () => UiStateHandler(
+          status: controller.pageState.value,
+          fetchDataFun: controller.loadProjects,
+          child: Column(
+            children: [
+              _tabsBar(),
+              Expanded(child: _buildProjectsList()),
+            ],
           ),
         ),
       ),
@@ -131,31 +126,35 @@ class ClientProjectView extends StatelessWidget {
         );
       }
 
-      return ListView.builder(
-        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final ProjectModel project = items[index];
-          final mode = ClientProjectTile.modeFromStatus(project.status);
+      return RefreshIndicator(
+        color: AppColors.vividPurple,
+        onRefresh: controller.loadProjects,
+        child: ListView.builder(
+          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final ProjectModel project = items[index];
+            final mode = ClientProjectTile.modeFromStatus(project.status);
 
-          return GetBuilder<ClientProjectController>(
-            builder: (c) => ClientProjectTile(
-              project: project,
-              mode: mode,
-              isBusy: c.isBusy(project.id),
-              onTap: () => _onProjectTap(c, project, mode),
-              onApproveCompletion: mode == ClientProjectTileMode.delivered
-                  ? () => c.approveProjectCompletion(project)
-                  : null,
-              onRepublish: mode == ClientProjectTileMode.withdrawn
-                  ? () => c.republishProject(project)
-                  : null,
-              onDelete: mode == ClientProjectTileMode.withdrawn
-                  ? () => c.confirmDeleteProject(project)
-                  : null,
-            ),
-          );
-        },
+            return GetBuilder<ClientProjectController>(
+              builder: (c) => ClientProjectTile(
+                project: project,
+                mode: mode,
+                isBusy: c.isBusy(project.id),
+                onTap: () => _onProjectTap(c, project, mode),
+                onApproveCompletion: mode == ClientProjectTileMode.delivered
+                    ? () => c.approveProjectCompletion(project)
+                    : null,
+                onRepublish: mode == ClientProjectTileMode.withdrawn
+                    ? () => c.republishProject(project)
+                    : null,
+                onDelete: mode == ClientProjectTileMode.withdrawn
+                    ? () => c.confirmDeleteProject(project)
+                    : null,
+              ),
+            );
+          },
+        ),
       );
     });
   }

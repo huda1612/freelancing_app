@@ -59,26 +59,15 @@ class ProfileDrawer extends StatelessWidget {
                 ),
               ),
             ]),
-            if (controller.isClient && controller.isOwnProfile)
-              _drawerTile(
-                  icon: Icons.folder_outlined,
-                  title: 'مشاريعي',
-                  onTap: () {
-                    // Get.back();
-                    NavigationService.toNamed(AppRoutes.myProjects);
-                  }),
-            // ListTile(
-            //   leading: const Icon(Icons.folder_outlined,
-            //       color: AppColors.vividPurple),
-            //   title: Text(
-            //     'مشاريعي',
-            //     style: AppTextStyles.body.copyWith(color: AppColors.black),
-            //   ),
-            //   onTap: () {
-            //     Get.back();
-            //     NavigationService.toNamed(AppRoutes.myProjects);
-            //   },
-            // ),
+            // if (controller.isClient && controller.isOwnProfile)
+            //   _drawerTile(
+            //       icon: Icons.folder_outlined,
+            //       title: 'مشاريعي',
+            //       onTap: () {
+            //         // Get.back();
+            //         NavigationService.toNamed(AppRoutes.myProjects);
+            //       }),
+
             Obx(
               () => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,31 +104,35 @@ class ProfileDrawer extends StatelessWidget {
               ),
             ),
 
- 
             if ((controller.isClient || controller.isFreelancer) &&
                 controller.isOwnProfile)
-              ListTile(
-                leading: const Icon(Icons.folder_outlined,
-                    color: AppColors.vividPurple),
-                title: Text(
-                  'مشاريعي',
-                  style: AppTextStyles.body.copyWith(color: AppColors.black),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  NavigationService.toNamed(AppRoutes.myProjects);
-                },
-              ),
-            const Spacer(),
-            ListTile(
-              leading: const Icon(Icons.close, color: AppColors.grey),
-              title: Text(
-                'إغلاق',
-                style: AppTextStyles.link.copyWith(color: AppColors.darkGrey),
-              ),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-
+              _drawerTile(
+                  icon: Icons.folder_outlined,
+                  title: 'مشاريعي',
+                  onTap: () {
+                    NavigationService.toNamed(AppRoutes.myProjects);
+                  }),
+            // ListTile(
+            //   leading: const Icon(Icons.folder_outlined,
+            //       color: AppColors.vividPurple),
+            //   title: Text(
+            //     'مشاريعي',
+            //     style: AppTextStyles.body.copyWith(color: AppColors.black),
+            //   ),
+            //   onTap: () {
+            //     Navigator.of(context).pop();
+            //     NavigationService.toNamed(AppRoutes.myProjects);
+            //   },
+            // ),
+            // const Spacer(),
+            // ListTile(
+            //   leading: const Icon(Icons.close, color: AppColors.grey),
+            //   title: Text(
+            //     'إغلاق',
+            //     style: AppTextStyles.link.copyWith(color: AppColors.darkGrey),
+            //   ),
+            //   onTap: () => Navigator.of(context).pop(),
+            // ),
           ],
         ),
       ),
