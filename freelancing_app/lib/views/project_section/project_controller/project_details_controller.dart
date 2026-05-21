@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 
 class ProjectDetailsController extends GetxController {
   ProjectModel? project;
+  String? projectId;
 
   bool get isOwnProject {
     if (project == null) return false;
@@ -25,36 +26,61 @@ class ProjectDetailsController extends GetxController {
   final hasOffer = false.obs;
   final loadingCheckOldOffer = true.obs;
   bool loadingDelete = false;
+  StatusClasses pageState = StatusClasses.isloading;
 
   OfferModel? oldOffer;
 
   bool get isFreelancer => UserSession.role == UserRole.freelancer;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     //Load project details
-    //طريقه اشتغلت بس اختصرتها بالخدمه
-    // final args = Get.find<Map<String, dynamic>>(
-    //   tag: AppRoutes.projectDetails,
-    // );
-    // project = args["project"]!;
-
     final args = NavigationService.routeArguments(AppRoutes.projectDetails);
     project = args?["project"];
 
     if (project == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        customSnackbar(
-          message: "تعذر تحميل بيانات المشروع",
-        );
-      });
+      projectId = args?["projectId"];
+      print("!!!!!!!!! id $projectId");
 
-      return;
+      if (projectId == null) {
+        print("!!!!!!!!! id is null");
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          customSnackbar(
+            message: "تعذر تحميل بيانات المشروع",
+          );
+        });
+        pageState = StatusClasses.customError("تعذر تحميل بيانات المشروع");
+        return;
+      }
+      await loadProject();
+    } else {
+      pageState = StatusClasses.success;
     }
     if (UserSession.role == UserRole.freelancer) {
       hasOldOffer();
     }
+  }
+
+  Future<void> loadProject() async {
+    // if (projectId == null) {
+    //   return;
+    // }
+    pageState = StatusClasses.isloading;
+    update();
+    final profectRes = await ProjectService().getProject(
+      projectId!,
+    );
+    return profectRes.fold((err) {
+      customSnackbar(message: "${err.type} / ${err.message}");
+      pageState = StatusClasses.customError("${err.type} / ${err.message}");
+      update();
+    }, (p) {
+      print("Prrrrrrrrrooooject $p");
+      project = p;
+      pageState = StatusClasses.success;
+      update();
+    });
   }
 
   Future<void> hasOldOffer() async {

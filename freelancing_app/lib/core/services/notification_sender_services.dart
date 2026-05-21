@@ -120,8 +120,8 @@ class NotificationSenderServices {
       final notificationAddRes = await UserNotificationService()
           .addUserNotification(
               uId: uId,
-              notification: NotificationModel(
-                  title: title, body: body, data: data));
+              notification:
+                  NotificationModel(title: title, body: body, data: data));
       if (notificationAddRes != StatusClasses.success) {
         debugPrint(
             "sending notification error2 : ${notificationAddRes.type} ${notificationAddRes.message}");

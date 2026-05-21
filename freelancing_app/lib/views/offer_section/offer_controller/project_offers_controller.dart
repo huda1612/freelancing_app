@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/classes/app_notifications.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
+import 'package:freelancing_platform/core/services/notification_sender_services.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
@@ -44,15 +46,19 @@ class ProjectOffersController extends GetxController {
     project =
         NavigationService.routeArguments(AppRoutes.projectOffers)?["project"];
     projectId = project?.id;
+
     if (projectId == null || projectId!.isEmpty) {
       //لو ما مبعوت المشروع بتأكد لو مبعوت الرقم اله ( من الاشعار بينبعت رقم المشروع)
       projectId = NavigationService.routeArguments(
           AppRoutes.projectOffers)?["projectId"];
+      print("!!!!!!!!!!!!! projId : $projectId");
       //لو حتى الاي دي ما مرسل
       if (projectId == null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           customSnackbar(message: "تعذر تحميل العروض، معلومات المشروع ناقصة");
         });
+        pageState.value = StatusClasses.customError(
+            "تعذر تحميل العروض، معلومات المشروع ناقصة");
         return;
       }
       loadProjectAndOffers();
@@ -141,7 +147,7 @@ class ProjectOffersController extends GetxController {
     );
   }
 
-//لهون الكنترولر تمام تأكدت من القبول من صفحة مشاريعي بس لازم شوف القبول من صفحة البحث كمان
+//ok
   Future<void> acceptOffer(OfferModel offer) async {
     isAccepting.value = StatusClasses.isloading;
     final res = await _offerService.acceptOfferAndRejectOthers(
@@ -168,8 +174,16 @@ class ProjectOffersController extends GetxController {
 
       controller.update();
     }
+    final AppNotification acceptNotification =
+        AppNotification.offerAccepted(project!.title, project!.id);
+    NotificationSenderServices.sendNotificationToUser(
+        uId: offer.freelancerId,
+        title: acceptNotification.title,
+        body: acceptNotification.body,
+        data: acceptNotification.data);
   }
 
+//ok
   Future<void> rejectOffer(OfferModel offer) async {
     _startAction(offer.id);
     final res = await _offerService.setOfferStatus(
@@ -183,8 +197,16 @@ class ProjectOffersController extends GetxController {
     }
     customSnackbar(message: "تم رفض العرض");
     await loadOffers();
+    final AppNotification rejectNotification =
+        AppNotification.offerRejected(project!.title, project!.id);
+    NotificationSenderServices.sendNotificationToUser(
+        uId: offer.freelancerId,
+        title: rejectNotification.title,
+        body: rejectNotification.body,
+        data: rejectNotification.data);
   }
 
+//ok
   Future<void> withdrawOffer(OfferModel offer) async {
     _startAction(offer.id);
     final res = await _offerService.setOfferStatus(
@@ -196,9 +218,8 @@ class ProjectOffersController extends GetxController {
       customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
       return;
     }
-
-    await loadOffers();
     customSnackbar(message: "تم سحب العرض");
+    await loadOffers();
 
     if (Get.isRegistered<ProjectDetailsController>()) {
       Get.find<ProjectDetailsController>().hasOffer.value = false;
@@ -206,6 +227,7 @@ class ProjectOffersController extends GetxController {
     }
   }
 
+  //ok
   Future<void> editOffer(OfferModel offer) async {
     if (project == null) {
       customSnackbar(message: "بيانات المشروع غير متوفرة للتعديل");

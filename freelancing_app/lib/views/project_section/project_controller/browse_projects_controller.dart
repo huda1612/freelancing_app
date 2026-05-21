@@ -19,11 +19,11 @@ class BrowseProjectsController extends GetxController {
   final selectedSpecialization = RxnString();
 
   ProjectModel? selectedProject;
-  void onProjectSelect(ProjectModel project) {
-    selectedProject = project;
-    // NavigationService.toNamed(AppRoutes.projectDetails,
-    //     arguments: {"project": project});
-  }
+  // void onProjectSelect(ProjectModel project) {
+  //   selectedProject = project;
+  //   // NavigationService.toNamed(AppRoutes.projectDetails,
+  //   //     arguments: {"project": project});
+  // }
 
   // هي بتحدد المشاريع اللي رح تظهر بالقائمه بالصفحه
   List<ProjectModel> get filteredProjects {

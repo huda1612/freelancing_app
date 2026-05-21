@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
@@ -103,20 +104,38 @@ class RouteHandler {
         break;
 
       case AppNotificationTypes.newOffer:
-
         // 1. روحي لتاب العروض
         NavigationService.changeTab(3);
         // 2. افتحي صفحة داخل نفس التاب
         NavigationService.toNamed(
           AppRoutes.projectOffers,
           arguments: {
-            "offerId": id,
+            "projectId": id,
           },
           id: 3, // مهم جداً = نفس التاب navigator
         );
 
         break;
-
+      case AppNotificationTypes.offerAccepted:
+        NavigationService.changeTab(3);
+        NavigationService.toNamed(
+          AppRoutes.activeProject,
+          arguments: {
+            "projectId": id,
+          },
+          id: 3,
+        );
+        break;
+      case AppNotificationTypes.offerRejected:
+        NavigationService.changeTab(3);
+        NavigationService.toNamed(
+          AppRoutes.projectDetails,
+          arguments: {
+            "projectId": id,
+          },
+          id: 3,
+        );
+        break;
       // case AppNotificationTypes.userRequest:
       //   NavigationService.changeTab(0);
 

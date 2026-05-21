@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
+import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:get/get.dart';
 
@@ -11,9 +12,11 @@ class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({
     super.key,
     required this.controller,
+    required this.singoutController,
   });
 
   final ProfileController controller;
+  final SignOutController singoutController;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +127,12 @@ class ProfileDrawer extends StatelessWidget {
             //     NavigationService.toNamed(AppRoutes.myProjects);
             //   },
             // ),
-            // const Spacer(),
+            const Spacer(),
+            _drawerTile(
+              icon: Icons.output_rounded,
+              onTap: singoutController.signOut,
+              title: "تسجيل الخروج",
+            ),
             // ListTile(
             //   leading: const Icon(Icons.close, color: AppColors.grey),
             //   title: Text(

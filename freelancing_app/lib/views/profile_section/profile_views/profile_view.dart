@@ -10,11 +10,13 @@ import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
+import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/card_container.dart';
 import 'package:freelancing_platform/core/widgets/profile_certificate_tile.dart';
@@ -23,6 +25,7 @@ import 'package:freelancing_platform/views/profile_section/profile_widgets/profi
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_skill_chip.dart';
 import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
 import 'package:get/get.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
@@ -32,32 +35,42 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: AppColors.white,
-        drawer: controller.isOwnProfile
-            ? ProfileDrawer(controller: controller)
-            : null,
-        body: Obx(() =>
-            // GetBuilder<ProfileController>(builder: (_) {
-            UiStateHandler(
-              status: controller.pageState.value,
-              fetchDataFun: controller.loadProfile,
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  _tabsBar(),
-                  Expanded(
-                    child: IndexedStack(
-                      index: controller.activeTabIndex.value,
-                      children: [
-                        _buildProfileTab(),
-                        _buildWorksTab(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )));
+    return GetBuilder<SignOutController>(
+        init: Get.find<SignOutController>(),
+        builder: (singoutController) {
+          return ModalProgressHUD(
+            inAsyncCall: singoutController.signOutIsLoading,
+            child: Scaffold(
+                backgroundColor: AppColors.white,
+                drawer: controller.isOwnProfile
+                    ? ProfileDrawer(
+                        controller: controller,
+                        singoutController: singoutController,
+                      )
+                    : null,
+                body: Obx(() =>
+                    // GetBuilder<ProfileController>(builder: (_) {
+                    UiStateHandler(
+                      status: controller.pageState.value,
+                      fetchDataFun: controller.loadProfile,
+                      child: Column(
+                        children: [
+                          _buildHeader(),
+                          _tabsBar(),
+                          Expanded(
+                            child: IndexedStack(
+                              index: controller.activeTabIndex.value,
+                              children: [
+                                _buildProfileTab(),
+                                _buildWorksTab(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))),
+          );
+        });
   }
 
   Widget _buildBasicInfo() {
@@ -356,7 +369,7 @@ class ProfileView extends StatelessWidget {
             text: 'لوحة التحكم',
             textStyle: AppTextStyles.link.copyWith(color: AppColors.white),
             onTap: () {
-              // customSnackbar();
+              NavigationService.toNamed(AppRoutes.dashboard);
             },
             width: 150.w,
           ),
