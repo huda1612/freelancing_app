@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/fcm_token_array_service.dart';

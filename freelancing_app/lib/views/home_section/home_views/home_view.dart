@@ -1,88 +1,225 @@
 import 'package:flutter/material.dart';
-import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/services/notification_sender_services.dart';
-import 'package:freelancing_platform/core/widgets/custom_button.dart';
-import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_spaces.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
+import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
+import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
+import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/models/user_collections/user_model.dart';
+import 'package:freelancing_platform/views/home_section/home_controller/home_controller.dart';
+import 'package:freelancing_platform/views/home_section/home_widgets/home_freelancer_card.dart';
+import 'package:freelancing_platform/views/home_section/home_widgets/home_project_card.dart';
 import 'package:get/get.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  HomeView({super.key});
+
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("الرئيسية"),
-        elevation: 0,
-        actions: [
-          IconButton(
-              onPressed: () =>
-                  Get.put<SignOutController>(SignOutController()).signOut(),
-              icon: Icon(Icons.output_rounded))
-        ],
+      backgroundColor: AppColors.veryLightGrey,
+      appBar: CustomAppBar(
+        title: ' الصفحة الرئيسية ',
+        backgroundGradient: AppColors.gradientColor,
+        trailingIcon: const Icon(Icons.notifications_outlined, color: AppColors.white),
+        onTrailingPressed: controller.openNotifications,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text(
-              "مرحباً بك 👋",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "إليك بعض الاقتراحات والمشاريع المناسبة لك",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
+      body: Obx(
+        () => UiStateHandler(
+          status: controller.pageState.value,
+          fetchDataFun: controller.fetchHomeData,
+          child: SafeArea(
+            top: false,
+            child: RefreshIndicator(
+              onRefresh: controller.fetchHomeData,
+              color: AppColors.vividPurple,
               child: ListView(
+                padding: EdgeInsets.all(AppSpaces.paddingMedium),
                 children: [
-                  _SuggestionCard(title: "مشاريع مقترحة لك"),
-                  _SuggestionCard(title: "أفضل المستقلين"),
-                  _SuggestionCard(title: "عملاء يبحثون عن خدماتك"),
-                  CustomButton(
-                      text: "ارسال اشعار",
-                      onTap: () {
-                        NotificationSenderServices.sendNotificationToUser(
-                            uId: UserSession.uid!,
-                            // "fsj9w7PuTcuXGzU_eao0lQ:APA91bHC0i7q8sioMsD_cGIqbxa5V2JuVGVi5V9fc3ZwC4RHbfRF9OVpVh1nwaU8ZKi_v5zadTPb2ktJ1qPe8yzyU0Mi2fcky-qnbm0djmFqDpRezWdv3Es",
-                            title: "test",
-                            body: "its just a test notification");
-                      })
+                  _buildWelcomeSection(),
+                  SizedBox(height: AppSpaces.heightLarge),
+                  if (controller.isFreelancer) ...[
+                    _buildSuggestedProjectsSection(),
+                    SizedBox(height: AppSpaces.heightLarge),
+                    _buildNewProjectsSection(),
+                  ] else if (controller.isClient) ...[
+                    _buildFeaturedFreelancersSection(),
+                    SizedBox(height: AppSpaces.heightLarge),
+                    _buildNewFreelancersSection(),
+                  ],
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
-}
 
-class _SuggestionCard extends StatelessWidget {
-  final String title;
+  Widget _buildWelcomeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'مرحباً، ${controller.welcomeMessage} 👋',
+          style: AppTextStyles.heading.copyWith(
+            color: AppColors.darkPurple,
+            fontSize: 24.sp,
+          ),
+        ),
+        SizedBox(height: AppSpaces.heightSmall),
+        Text(
+          controller.isFreelancer
+              ? 'إليك المشاريع المقترحة لك'
+              : 'اكتشف أفضل المستقلين لمشاريعك',
+          style: AppTextStyles.body.copyWith(
+            color: AppColors.darkGrey,
+            fontSize: 16.sp,
+          ),
+        ),
+      ],
+    );
+  }
 
-  const _SuggestionCard({required this.title});
+  Widget _buildSuggestedProjectsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'مشاريع مقترحة لك',
+          style: AppTextStyles.blacksubheading.copyWith(
+            color: AppColors.darkPurple,
+            fontSize: 20.sp,
+          ),
+        ),
+        SizedBox(height: AppSpaces.heightMedium),
+        _buildProjectsGrid(controller.suggestedProjects, showAcceptanceRate: true),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6),
-        ],
+  Widget _buildNewProjectsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'مشاريع جديدة في تخصصك',
+          style: AppTextStyles.blacksubheading.copyWith(
+            color: AppColors.darkPurple,
+            fontSize: 20.sp,
+          ),
+        ),
+        SizedBox(height: AppSpaces.heightMedium),
+        _buildProjectsGrid(controller.newProjects, showAcceptanceRate: false),
+      ],
+    );
+  }
+
+  Widget _buildProjectsGrid(RxList<ProjectModel> projects, {required bool showAcceptanceRate}) {
+    if (projects.isEmpty) {
+      return const Center(
+        child: Text(
+          'لا توجد مشاريع حالياً',
+          style: TextStyle(color: AppColors.darkGrey),
+        ),
+      );
+    }
+
+    // تقسيم إلى صفين
+    final firstRow = projects.take(5).toList();
+    final secondRow = projects.skip(5).take(5).toList();
+
+    return Column(
+      children: [
+        _buildProjectRow(firstRow, showAcceptanceRate),
+        if (secondRow.isNotEmpty) SizedBox(height: AppSpaces.heightMedium),
+        if (secondRow.isNotEmpty) _buildProjectRow(secondRow, showAcceptanceRate),
+      ],
+    );
+  }
+
+  Widget _buildProjectRow(List<ProjectModel> rowProjects, bool showAcceptanceRate) {
+    return SizedBox(
+      height: 180.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: rowProjects.length,
+        separatorBuilder: (_, __) => SizedBox(width: AppSpaces.width),
+        itemBuilder: (context, index) {
+          final project = rowProjects[index];
+          return SizedBox(
+            width: 280.w,
+            child: HomeProjectCard(
+              project: project,
+              showAcceptanceRate: showAcceptanceRate,
+              onTap: () => controller.openProjectDetails(project),
+            ),
+          );
+        },
       ),
-      child: Text(
-        title,
-        textAlign: TextAlign.right,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+    );
+  }
+
+  Widget _buildFeaturedFreelancersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'فريلانسر مميزين',
+          style: AppTextStyles.blacksubheading.copyWith(
+            color: AppColors.darkPurple,
+            fontSize: 20.sp,
+          ),
+        ),
+        SizedBox(height: AppSpaces.heightMedium),
+        _buildFreelancersList(controller.featuredFreelancers, showStats: true),
+      ],
+    );
+  }
+
+  Widget _buildNewFreelancersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'فريلانسر جدد',
+          style: AppTextStyles.blacksubheading.copyWith(
+            color: AppColors.darkPurple,
+            fontSize: 20.sp,
+          ),
+        ),
+        SizedBox(height: AppSpaces.heightMedium),
+        _buildFreelancersList(controller.newFreelancers, showStats: false),
+      ],
+    );
+  }
+
+  Widget _buildFreelancersList(RxList<UserModel> freelancers, {required bool showStats}) {
+    if (freelancers.isEmpty) {
+      return const Center(
+        child: Text(
+          'لا يوجد فريلانسر حالياً',
+          style: TextStyle(color: AppColors.darkGrey),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: freelancers.length,
+      separatorBuilder: (_, __) => SizedBox(height: AppSpaces.heightSmall),
+      itemBuilder: (context, index) {
+        final freelancer = freelancers[index];
+        return HomeFreelancerCard(
+          freelancer: freelancer,
+          showStats: showStats,
+          onTap: () => controller.openFreelancerProfile(freelancer),
+        );
+      },
     );
   }
 }
