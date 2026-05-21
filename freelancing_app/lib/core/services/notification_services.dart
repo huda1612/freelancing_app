@@ -4,7 +4,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_notification_types.dart';
-import 'package:freelancing_platform/core/constants/app_routes.dart';
 
 import 'package:get/get.dart';
 
