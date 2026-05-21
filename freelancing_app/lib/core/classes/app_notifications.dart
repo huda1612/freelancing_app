@@ -35,7 +35,7 @@ class AppNotification {
   }) {
     return AppNotification(
       title: "لقد تم رفض طلبك",
-      body: "سبب الرفض هو $rejectComment",
+      body: "سبب الرفض : $rejectComment",
       data: {
         "type": AppNotificationTypes.userRequest,
       },
@@ -50,6 +50,15 @@ class AppNotification {
       data: {
         "type": AppNotificationTypes.userRequest,
       },
+    );
+  }
+
+  ///اشعار ارسال عرض جديد لمشروع
+  factory AppNotification.newOfferSubmit(String projectTitle, String offerId) {
+    return AppNotification(
+      title: "لديك عرض جديد",
+      body: "لديك عرض جديد على مشروعك $projectTitle",
+      data: {"type": AppNotificationTypes.newOffer, "id": offerId},
     );
   }
 

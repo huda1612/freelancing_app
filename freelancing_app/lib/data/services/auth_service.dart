@@ -80,7 +80,9 @@ class AuthService {
         username: username,
         email: email,
         role: role,
-        fcmToken: fcmToken);
+        // fcmToken: fcmToken
+        fcmTokens: fcmToken != null ? [fcmToken] : []
+        );
 
     try {
       await _authRepository.saveUser(newUser);

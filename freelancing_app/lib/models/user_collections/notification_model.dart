@@ -43,9 +43,6 @@ class NotificationModel {
     );
   }
 
-  // factory NotificationModel.rejectRequest(String? rejectComment){
-  //   return NotificationModel(title: title, body: body , type:  da)
-  // }
 
   NotificationModel copyWith({
     String? id,

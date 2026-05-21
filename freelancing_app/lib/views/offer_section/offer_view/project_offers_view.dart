@@ -142,11 +142,35 @@ class ProjectOffersView extends StatelessWidget {
     return Obx(() {
       final items = controller.offersForActiveTab();
       if (items.isEmpty) {
-        return customEmptyMessage(
-          message: controller.showTabs
-              ? _emptyMessageForTab(controller.activeTabIndex.value)
-              : 'لا توجد عروض معلقة على هذا المشروع.',
+        return RefreshIndicator(
+          onRefresh: controller.loadOffers,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Center(
+                    child: customEmptyMessage(
+                      message: controller.showTabs
+                          ? _emptyMessageForTab(
+                              controller.activeTabIndex.value,
+                            )
+                          : 'لا توجد عروض معلقة على هذا المشروع.',
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         );
+        // return customEmptyMessage(
+        //   message: controller.showTabs
+        //       ? _emptyMessageForTab(controller.activeTabIndex.value)
+        //       : 'لا توجد عروض معلقة على هذا المشروع.',
+        // );
       }
 
       return RefreshIndicator(

@@ -22,7 +22,7 @@ class UserModel {
   final int completedProjects;
   final int points;
   final Timestamp? createdAt;
-  final String? fcmToken;
+  final List<String>? fcmTokens;
 
   //بحال كان عميل بس
   final String? clientType;
@@ -47,7 +47,7 @@ class UserModel {
     this.completedProjects = 0,
     this.points = 0,
     this.createdAt,
-    this.fcmToken,
+    this.fcmTokens = const [],
     //بحال كان عميل بس
     this.clientType,
   });
@@ -74,7 +74,7 @@ class UserModel {
       'points': points,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'clientType': clientType,
-      'fcmToken': fcmToken,
+      'fcmTokens': fcmTokens,
     };
   }
 
@@ -115,7 +115,10 @@ class UserModel {
 
       //بحال كان عميل بس
       clientType: map['clientType'],
-      fcmToken: map['fcmToken'],
+      fcmTokens: (map['fcmTokens'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
   UserModel copyWith({
@@ -139,7 +142,7 @@ class UserModel {
     int? points,
     Timestamp? createdAt,
     String? clientType,
-    String? fcmToken,
+    List<String>? fcmTokens,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -162,7 +165,7 @@ class UserModel {
       points: points ?? this.points,
       createdAt: createdAt ?? this.createdAt,
       clientType: clientType ?? this.clientType,
-      fcmToken: fcmToken ?? this.fcmToken,
+      fcmTokens: fcmTokens ?? this.fcmTokens,
     );
   }
 }

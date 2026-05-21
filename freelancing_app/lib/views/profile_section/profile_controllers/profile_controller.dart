@@ -16,6 +16,7 @@ import 'package:freelancing_platform/core/utils/helper_function/check_login.dart
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/certificate_service.dart';
+import 'package:freelancing_platform/data/services/fcm_token_array_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/data/services/work_sample_service.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
@@ -195,7 +196,7 @@ class ProfileController extends GetxController {
   Future<void> loadNotificationDisableValue() async {
     notificationsEnabled.value = AppConstantData.notificationsEnable ?? true;
     notificationsPermissioned.value =
-        await NotificationServices().areNotificationsAllowed();
+        await Get.find<NotificationServices>().areNotificationsAllowed();
   }
 
   Future<void> loadProfile() async {
@@ -313,10 +314,26 @@ class ProfileController extends GetxController {
     await LocalStorageService.setBoolValue(AppKeys.notificationsEnable, value);
     await LocalStorageService.setConstantisNotificationsEnable();
     if (value == false) {
-      await NotificationServices().deleteToken();
-      await _userService.updateUserData2({"fcmToken": null}, UserSession.uid!);
+      try {
+        //delete device fcm token
+        await Get.find<NotificationServices>().deleteToken();
+        final token =
+            await LocalStorageService.getStringValue(AppKeys.fcmToken);
+        if (token == null || token.isEmpty) return;
+
+        //remove the fcm token from the user in firestore
+        await FcmTokenArrayService()
+            .removeToken(uid: UserSession.uid!, token: token);
+
+        //remove the fcm token from shared pref
+        await LocalStorageService.removeValue(AppKeys.fcmToken);
+      } catch (e) {
+        debugPrint('Error removing FCM token: $e');
+      }
+
+      // await _userService.updateUserData2({"fcmToken": null}, UserSession.uid!);
     } else if (value == true) {
-      await NotificationServices().initialize(onToken: checkFcmToken);
+      await Get.find<NotificationServices>().initialize(onToken: checkFcmToken);
     }
   }
   //--------------------------------------skills manage-----------------------------------------------

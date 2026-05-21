@@ -44,8 +44,12 @@ class RequestShortcut extends StatelessWidget {
               RequestType(
                 requestStatus,
               ),
-              Text(
-                "created At : $dateFormatted",
+              // SizedBox(width: 10.w),
+              Expanded(
+                child: Text(
+                  "created At : $dateFormatted",
+                  textAlign: TextAlign.end,
+                ),
               ),
             ]),
             Divider(

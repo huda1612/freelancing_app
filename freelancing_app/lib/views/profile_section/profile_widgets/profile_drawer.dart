@@ -98,7 +98,7 @@ class ProfileDrawer extends StatelessWidget {
                     onChanged: controller.notificationsPermissioned.value
                         ? controller.toggleNotifications
                         : null,
-                    activeThumbColor: AppColors.vividPurple,
+                    activeColor: AppColors.vividPurple,
                   ),
                 ],
               ),

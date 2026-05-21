@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/app_notifications.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/constants/app_notification_types.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/reuest_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_status.dart';
@@ -105,7 +106,10 @@ class AdminRequestDatailsController extends GetxController {
       await NotificationSenderServices.sendNotificationToUser(
           uId: request.uId,
           title: appNotification.title,
-          body: appNotification.body);
+          body: appNotification.body,
+          data: {
+            "type": AppNotificationTypes.userRequest,
+          });
 
       return;
     } else {
@@ -165,6 +169,12 @@ class AdminRequestDatailsController extends GetxController {
       update();
       Get.back(result: true);
       Get.snackbar("نجاح", "تم قبول الطلب بنجاح");
+      final appNotification = AppNotification.requestAccepted();
+      await NotificationSenderServices.sendNotificationToUser(
+          uId: request.uId,
+          title: appNotification.title,
+          body: appNotification.body,
+          data: appNotification.data);
 
       return;
       // true;

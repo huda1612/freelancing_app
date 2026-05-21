@@ -105,122 +105,109 @@ class AdminRequestsListView extends StatelessWidget {
                     child: TabBarView(
                       children: [
                         //-----tab1-----------
-                        Container(
-                            color: AppColors.veryLightGrey,
-                            child: controller.pendingRequests.isNotEmpty
-                                ? ListView.builder(
-                                    itemCount:
-                                        controller.pendingRequests.length,
-                                    itemBuilder: (context, index) {
-                                      return RequestShortcut(
-                                        // id: controller.pendingRequests[index].id,
-                                        requestStatus: controller
-                                            .pendingRequests[index].status,
-                                        usrename: controller
-                                            .pendingRequests[index].userType,
-                                        date: controller
-                                            .pendingRequests[index].createdAt,
-                                        onTab: () async {
-                                          final result = await Get.toNamed(
-                                              AppRoutes.adminRequestDetails,
-                                              arguments: [
-                                                controller
-                                                    .pendingRequests[index]
-                                              ]);
-                                          if (result == true) {
-                                            controller.fetchAllRequests();
-                                          }
-                                        },
-                                      );
-                                    })
-                                : customEmptyMessage(
-                                    message: "لا يوجد طلبات معلقة")
-                            // : Center(
-                            //     child: Text(
-                            //       "لا يوجد طلبات معلقة",
-                            //       style: AppTextStyles.blacksubheading
-                            //           .copyWith(color: AppColors.grey),
-                            //     ),
-                            //   ),
-                            ),
+                        RefreshIndicator(
+                          onRefresh: controller.fetchAllRequests,
+                          child: Container(
+                              color: AppColors.veryLightGrey,
+                              child: controller.pendingRequests.isNotEmpty
+                                  ? ListView.builder(
+                                      itemCount:
+                                          controller.pendingRequests.length,
+                                      itemBuilder: (context, index) {
+                                        return RequestShortcut(
+                                          // id: controller.pendingRequests[index].id,
+                                          requestStatus: controller
+                                              .pendingRequests[index].status,
+                                          usrename: controller
+                                              .pendingRequests[index].userType,
+                                          date: controller
+                                              .pendingRequests[index].createdAt,
+                                          onTab: () async {
+                                            final result = await Get.toNamed(
+                                                AppRoutes.adminRequestDetails,
+                                                arguments: [
+                                                  controller
+                                                      .pendingRequests[index]
+                                                ]);
+                                            if (result == true) {
+                                              controller.fetchAllRequests();
+                                            }
+                                          },
+                                        );
+                                      })
+                                  : customEmptyMessage(
+                                      message: "لا يوجد طلبات معلقة")),
+                        ),
                         //-----tab2-----------
-                        Container(
-                            color: AppColors.veryLightGrey,
-                            child: controller.approvedRequests.isNotEmpty
-                                ? ListView.builder(
-                                    itemCount:
-                                        controller.approvedRequests.length,
-                                    itemBuilder: (context, index) {
-                                      return RequestShortcut(
-                                        // id: controller.approvedRequests[index].id,
-                                        requestStatus: controller
-                                            .approvedRequests[index].status,
-                                        usrename: controller
-                                            .approvedRequests[index].userType,
-                                        date: controller
-                                            .approvedRequests[index].createdAt,
-                                        onTab: () async {
-                                          final result = await Get.toNamed(
-                                              AppRoutes.adminRequestDetails,
-                                              arguments: [
-                                                controller
-                                                    .approvedRequests[index]
-                                              ]);
-                                          if (result == true) {
-                                            controller.fetchAllRequests();
-                                          }
-                                        },
-                                      );
-                                    })
-                                : customEmptyMessage(
-                                    message: "لا يوجد طلبات مقبولة")
-                            // : Center(
-                            //     child: Text(
-                            //       "لا يوجد طلبات مقبولة",
-                            //       style: AppTextStyles.blacksubheading
-                            //           .copyWith(color: AppColors.grey),
-                            //     ),
-                            //   ),
-                            ),
+                        RefreshIndicator(
+                          onRefresh: controller.fetchAllRequests,
+                          child: Container(
+                              color: AppColors.veryLightGrey,
+                              child: controller.approvedRequests.isNotEmpty
+                                  ? ListView.builder(
+                                      itemCount:
+                                          controller.approvedRequests.length,
+                                      itemBuilder: (context, index) {
+                                        return RequestShortcut(
+                                          // id: controller.approvedRequests[index].id,
+                                          requestStatus: controller
+                                              .approvedRequests[index].status,
+                                          usrename: controller
+                                              .approvedRequests[index].userType,
+                                          date: controller
+                                              .approvedRequests[index]
+                                              .createdAt,
+                                          onTab: () async {
+                                            final result = await Get.toNamed(
+                                                AppRoutes.adminRequestDetails,
+                                                arguments: [
+                                                  controller
+                                                      .approvedRequests[index]
+                                                ]);
+                                            if (result == true) {
+                                              controller.fetchAllRequests();
+                                            }
+                                          },
+                                        );
+                                      })
+                                  : customEmptyMessage(
+                                      message: "لا يوجد طلبات مقبولة")),
+                        ),
                         //-----tab3-----------
-                        Container(
-                            color: AppColors.veryLightGrey,
-                            child: controller.rejectedRequests.isNotEmpty
-                                ? ListView.builder(
-                                    itemCount:
-                                        controller.rejectedRequests.length,
-                                    itemBuilder: (context, index) {
-                                      return RequestShortcut(
-                                        // id: controller.rejectedRequests[index].id,
-                                        requestStatus: controller
-                                            .rejectedRequests[index].status,
-                                        usrename: controller
-                                            .rejectedRequests[index].userType,
-                                        date: controller
-                                            .rejectedRequests[index].createdAt,
-                                        onTab: () async {
-                                          final result = await Get.toNamed(
-                                              AppRoutes.adminRequestDetails,
-                                              arguments: [
-                                                controller
-                                                    .rejectedRequests[index]
-                                              ]);
-                                          if (result == true) {
-                                            controller.fetchAllRequests();
-                                          }
-                                        },
-                                      );
-                                    })
-                                : customEmptyMessage(
-                                    message: "لا يوجد طلبات مرفوضة")
-                            // : Center(
-                            //     child: Text(
-                            //       "لا يوجد طلبات مرفوضة",
-                            //       style: AppTextStyles.blacksubheading
-                            //           .copyWith(color: AppColors.grey),
-                            //     ),
-                            //   ),
-                            ),
+                        RefreshIndicator(
+                          onRefresh: controller.fetchAllRequests,
+                          child: Container(
+                              color: AppColors.veryLightGrey,
+                              child: controller.rejectedRequests.isNotEmpty
+                                  ? ListView.builder(
+                                      itemCount:
+                                          controller.rejectedRequests.length,
+                                      itemBuilder: (context, index) {
+                                        return RequestShortcut(
+                                          // id: controller.rejectedRequests[index].id,
+                                          requestStatus: controller
+                                              .rejectedRequests[index].status,
+                                          usrename: controller
+                                              .rejectedRequests[index].userType,
+                                          date: controller
+                                              .rejectedRequests[index]
+                                              .createdAt,
+                                          onTab: () async {
+                                            final result = await Get.toNamed(
+                                                AppRoutes.adminRequestDetails,
+                                                arguments: [
+                                                  controller
+                                                      .rejectedRequests[index]
+                                                ]);
+                                            if (result == true) {
+                                              controller.fetchAllRequests();
+                                            }
+                                          },
+                                        );
+                                      })
+                                  : customEmptyMessage(
+                                      message: "لا يوجد طلبات مرفوضة")),
+                        ),
                       ],
                     ),
                   ),

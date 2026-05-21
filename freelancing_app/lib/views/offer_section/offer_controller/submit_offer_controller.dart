@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/classes/app_notifications.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/services/notification_sender_services.dart';
 import 'package:freelancing_platform/core/utils/helper_function/normalize_numbers.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
@@ -21,6 +23,8 @@ class SubmitOfferController extends GetxController {
   int projectDurationDays = 0;
   String? projectId;
   String? clientId;
+  String? projectTitle;
+
   // Loading state
   bool submitLoading = false;
 
@@ -35,6 +39,7 @@ class SubmitOfferController extends GetxController {
     projectDurationDays = Get.arguments?["projectDurationDays"];
     projectId = Get.arguments?['projectId'];
     clientId = Get.arguments?['clientId'];
+    projectTitle = Get.arguments?['projectTitle'];
 
     offerToEdit = Get.arguments?["offer"] as OfferModel?;
     if (offerToEdit != null) {
@@ -143,12 +148,14 @@ class SubmitOfferController extends GetxController {
         customSnackbar(
           message: "تم تقديم العرض بنجاح",
         );
+        final offerSubmitNotification =
+            AppNotification.newOfferSubmit(projectTitle ?? "", offer.id);
+        await NotificationSenderServices.sendNotificationToUser(
+            uId: clientId!,
+            title: offerSubmitNotification.title,
+            body: offerSubmitNotification.body,
+            data: offerSubmitNotification.data);
       }
-      // Clear fields after success
-      priceController.clear();
-      durationController.clear();
-      detailsController.clear();
-
       submitLoading = false;
       update();
     });
