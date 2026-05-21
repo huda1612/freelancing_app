@@ -7,6 +7,7 @@ import 'package:freelancing_platform/core/constants/data_constsnats/project_stat
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
+import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
@@ -44,13 +45,43 @@ class ProjectOffersController extends GetxController {
         NavigationService.routeArguments(AppRoutes.projectOffers)?["project"];
     projectId = project?.id;
     if (projectId == null || projectId!.isEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        customSnackbar(message: "تعذر تحميل العروض، معلومات المشروع ناقصة");
-      });
-
-      return;
+      //لو ما مبعوت المشروع بتأكد لو مبعوت الرقم اله ( من الاشعار بينبعت رقم المشروع)
+      projectId = NavigationService.routeArguments(
+          AppRoutes.projectOffers)?["projectId"];
+      //لو حتى الاي دي ما مرسل
+      if (projectId == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          customSnackbar(message: "تعذر تحميل العروض، معلومات المشروع ناقصة");
+        });
+        return;
+      }
+      loadProjectAndOffers();
+    } else {
+      loadOffers();
     }
-    loadOffers();
+  }
+
+  //هي بحال انا جايه من الاشعار
+  Future<void> loadProjectAndOffers() async {
+    pageState.value = StatusClasses.isloading;
+    final projectRes = await ProjectService().getProject(projectId!);
+    projectRes.fold((err) async {
+      pageState.value = err;
+    }, (p) async {
+      project = p;
+      final res = await _offerService.getProjectOffers(
+          projectId: projectId!, justPendingOffers: !isProjectOwner);
+
+      res.fold(
+        (err) {
+          pageState.value = err;
+        },
+        (list) {
+          offers.assignAll(list);
+          pageState.value = StatusClasses.success;
+        },
+      );
+    });
   }
 
   Future<void> loadOffers() async {

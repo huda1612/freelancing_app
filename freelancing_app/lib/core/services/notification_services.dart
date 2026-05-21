@@ -5,7 +5,6 @@ import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_notification_types.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-
 import 'package:get/get.dart';
 
 @pragma('vm:entry-point')
@@ -120,22 +119,24 @@ class NotificationServices {
   }
 
   void _navigateFromData(Map<String, dynamic> data) async {
+    Future.delayed(Duration(milliseconds: 200), () {
+      RouteHandler.notificationRouteHandler(data);
+    });
     //هون انا لازم زبطه للانتقال للصفحات عكيفي حسب شو البيانات المرسله بالاشعار
-    final type = data['type'];
-    // print(data);
-    String? id = data['id'];
-    if (type == null) return;
-    switch (type) {
-      case AppNotificationTypes.userRequest:
-        // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! called");
-        final route = await RouteHandler.firstRoutHandler();
-        Get.offAllNamed(route);
-        break;
-      case AppNotificationTypes.newOffer:
-        // Get.offAllNamed(AppRoutes.main);
-        break;
-      default:
-    }
+    // final type = data['type'];
+    // // print(data);
+    // String? id = data['id'];
+    // if (type == null) return;
+    // switch (type) {
+    //   case AppNotificationTypes.userRequest:
+    //     final route = await RouteHandler.firstRoutHandler();
+    //     Get.offAllNamed(route);
+    //     break;
+    //   case AppNotificationTypes.newOffer:
+    //     // Get.offAllNamed(AppRoutes.main);
+    //     break;
+    //   default:
+    // }
   }
 
   void _handLocalNotificationClick(String? payload) {
