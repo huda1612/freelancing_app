@@ -36,13 +36,18 @@ class AppRoutes {
   static const home = '/home';
 
   //profile routes
-  static const profile = '/profile';
+  // static const profile = '/profile';
+  static const myProfile = '/my_profile';
+  static const userProfile = '/user_profile';
+
   static const personalInfo = '/personal_info';
   static const workDetails = '/work_details';
   static const dashboard = '/dashboard';
 
   //search route
   static const search = '/search';
+  static const searchClients = '/search_clients';
+  static const searchFreelancers = '/search_freelancers';
 
   //chat routes
   static const chat = '/chat';
@@ -53,13 +58,12 @@ class AppRoutes {
   static const createProject = '/create_project';
   static const browseProjects = '/browse_projects';
   static const projectDetails = '/project_details';
-   static const myProjects = '/my_projects';
+  static const myProjects = '/my_projects';
   static const activeProject = '/active_project';
 
   //offers routes
   static const submitOffer = '/submit_offer';
   static const projectOffers = '/project_offers';
-
 
   //settings routes
 }

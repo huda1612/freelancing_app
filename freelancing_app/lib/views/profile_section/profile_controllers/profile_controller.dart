@@ -30,6 +30,7 @@ class ProfileController extends GetxController {
   final CertificateService _certificateService;
 
   ProfileController({
+    required this.userId,
     UserService? userService,
     WorkSampleService? workSampleService,
     CertificateService? certificateService,
@@ -52,7 +53,7 @@ class ProfileController extends GetxController {
 
   //UI variables
   final user = Rxn<UserModel>();
-  String userId = '';
+  final String userId;
   final profileImage = ''.obs;
   final reviews = <ReviewModel>[].obs;
   final certificates = <CertificateModel>[].obs;
@@ -72,14 +73,21 @@ class ProfileController extends GetxController {
   }
 
   Future<void> pageInit() async {
+    // print("itsssssssssssssssssss o n inittttttttttttttttttttttttttt ");
     if (!isLogin()) {
       return;
     }
-    if (isOwnProfile) {
-      userId = UserSession.uid!;
-    } else {
-      userId = Get.arguments['id'] ?? Get.arguments['userId'] ?? '';
-    }
+    // userId = NavigationService.routeArguments(AppRoutes.profile)?['userId'] ??
+    //     UserSession.uid;
+
+    // if (isOwnProfile) {
+    //   userId = UserSession.uid!;
+    // } else {
+    //   // userId = Get.arguments['id'] ?? Get.arguments['userId'] ?? '';
+    //   userId =
+    //       NavigationService.routeArguments(AppRoutes.profile)?['userId'] ?? '';
+    // }
+    print("uid $userId");
 
     loadProfile();
     loadNotificationDisableValue();
@@ -96,13 +104,15 @@ class ProfileController extends GetxController {
   }
 
   //لو مررت وسيط رقم المستخدم للصفحه وانا عم انتقلها معناها هي ما صفحتي صفحة مستخدم ما
-  bool get isOwnProfile {
-    // final String? argUserId = Get.parameters['id'];
-    final String? argUserId = Get.arguments?['id'];
-
-    if (argUserId == null || argUserId == UserSession.uid) return true;
-    return false;
-  }
+  // bool get isOwnProfile {
+  //   // final String? argUserId = Get.parameters['id'];
+  //   // final argUserId =
+  //   //     NavigationService.routeArguments(AppRoutes.profile)?['userId'];
+  //   // print("argid $argUserId");
+  //   // if (argUserId == null || argUserId == UserSession.uid) return true;
+  //   // return false;
+  // }
+  bool get isOwnProfile => userId == UserSession.uid;
 
   String? get role {
     if (user.value == null) return null;

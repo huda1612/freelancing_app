@@ -35,16 +35,16 @@ class OfferService {
     final query = _firebaseFirestore
         .collection(CollectionsNames.offers)
         .where("freelancerId", isEqualTo: freelancerId);
-        //.orderBy("createdAt", descending: true);
+    //.orderBy("createdAt", descending: true);
 
     final response = await FirebaseCrud.runGetQuery<OfferModel>(
       query: query,
       fromMap: (data, id) => OfferModel.fromMap(data, id),
     );
 
-   // return response;
+    // return response;
 //جديد
- return response.map((list) {
+    return response.map((list) {
       _sortOffersByCreatedAtDesc(list);
       return list;
     });
@@ -104,9 +104,9 @@ class OfferService {
   // }
   // جلب عروض مشروع معيّن
   Future<Either<StatusClasses, List<OfferModel>>> getProjectOffers(
-      {required String projectId, bool? justPendingOffers}) async {
+      {required String projectId, bool justPendingOffers = false}) async {
     Query<Map<String, dynamic>> query;
-    if (justPendingOffers != null && justPendingOffers == true) {
+    if (justPendingOffers == true) {
       query = _firebaseFirestore
           .collection(CollectionsNames.offers)
           .where("projectId", isEqualTo: projectId)
@@ -169,50 +169,163 @@ class OfferService {
   }
 
   /// قبول عرض معيّن ورفض باقي العروض المعلقة على نفس المشروع تلقائياً.
+  // Future<StatusClasses> acceptOfferAndRejectOthers({
+  //   required String projectId,
+  //   required String acceptedOfferId,
+  //   required String acceptedFreelancerId,
+  // }) async {
+  //   try {
+  //     //جلب العروض للمشروع كلها
+  //     final query = _firebaseFirestore
+  //         .collection(CollectionsNames.offers)
+  //         .where('projectId', isEqualTo: projectId);
+  //     final offersResponse = await FirebaseCrud.runGetQuery(
+  //         query: query, fromMap: (data, id) => OfferModel.fromMap(data, id));
+  //     // final snapshot = await query.get();
+  //     return offersResponse.fold((err) {
+  //       return err;
+  //     }, (offers) {
+  //       //هون لازم حدث حاله المشروع ورقم الفريلانسر اللي انقبل
+
+  //       //اذا مافي اي عروض عالمشروع
+  //       if (offers.isEmpty) {
+  //         return StatusClasses.notFound;
+  //       }
+
+  //       //اذا رقم العرض المقبول ما موجود اصلا
+  //       final hasAccepted = offers.any((offer) => offer.id == acceptedOfferId);
+  //       if (!hasAccepted) {
+  //         return StatusClasses.notFound;
+  //       }
+  //       final res = FirebaseCrud.runTransaction(action: (transiction) async{
+
+  //       });
+  //       final response = FirebaseCrud.runBatch(action: (batch) {
+  //         final ts = FieldValue.serverTimestamp();
+
+  //         for (final offer in offers) {
+  //           // final data = doc.data();
+  //           final statusRaw = offer.status;
+  //           if (offer.id == acceptedOfferId) {
+  //             final docRef = _firebaseFirestore
+  //                 .collection(CollectionsNames.offers)
+  //                 .doc(offer.id);
+  //             batch.update(docRef, {
+  //               'status': OfferStatus.accepted,
+  //               'updatedAt': ts,
+  //             });
+  //           } else if (_isPendingOfferStatus(statusRaw)) {
+  //             batch.update(doc.reference, {
+  //               'status': OfferStatus.rejected,
+  //               'updatedAt': ts,
+  //             });
+  //           }
+  //         }
+  //       });
+  //       // final batch = _firebaseFirestore.batch();
+
+  //       // await batch.commit();
+  //       return StatusClasses.success;
+  //     });
+  //   } on FirebaseException catch (e) {
+  //     return mapFirestoreError(e);
+  //   } catch (e) {
+  //     return StatusClasses.customError(e.toString());
+  //   }
+  // }
+
+  /// قبول عرض معيّن ورفض باقي العروض المعلقة على نفس المشروع تلقائياً.
   Future<StatusClasses> acceptOfferAndRejectOthers({
     required String projectId,
     required String acceptedOfferId,
+    required String acceptedFreelancerId,
   }) async {
-    try {
-      final query = _firebaseFirestore
-          .collection(CollectionsNames.offers)
-          .where('projectId', isEqualTo: projectId);
+    // try {
+    final offersQuery = _firebaseFirestore
+        .collection(CollectionsNames.offers)
+        .where('projectId', isEqualTo: projectId);
 
-      final snapshot = await query.get();
-      if (snapshot.docs.isEmpty) {
-        return StatusClasses.notFound;
-      }
-      final hasAccepted = snapshot.docs.any((doc) => doc.id == acceptedOfferId);
-      if (!hasAccepted) {
-        return StatusClasses.notFound;
-      }
+    final offersResponse = await FirebaseCrud.runGetQuery(
+      query: offersQuery,
+      fromMap: (data, id) => OfferModel.fromMap(data, id),
+    );
 
-      final batch = _firebaseFirestore.batch();
-      final ts = FieldValue.serverTimestamp();
-
-      for (final doc in snapshot.docs) {
-        final data = doc.data();
-        final statusRaw = data['status'];
-        if (doc.id == acceptedOfferId) {
-          batch.update(doc.reference, {
-            'status': OfferStatus.accepted,
-            'updatedAt': ts,
-          });
-        } else if (_isPendingOfferStatus(statusRaw)) {
-          batch.update(doc.reference, {
-            'status': OfferStatus.rejected,
-            'updatedAt': ts,
-          });
+    return await offersResponse.fold(
+      (err) async => err,
+      (offers) async {
+        /// اذا مافي عروض
+        if (offers.isEmpty) {
+          return StatusClasses.notFound;
         }
-      }
 
-      await batch.commit();
-      return StatusClasses.success;
-    } on FirebaseException catch (e) {
-      return mapFirestoreError(e);
-    } catch (e) {
-      return StatusClasses.customError(e.toString());
-    }
+        /// اذا العرض المطلوب مو موجود
+        final hasAccepted = offers.any((offer) => offer.id == acceptedOfferId);
+
+        if (!hasAccepted) {
+          return StatusClasses.notFound;
+        }
+
+        final response = await FirebaseCrud.runTransaction(
+          action: (transaction) async {
+            /// مرجع المشروع
+            final projectRef = _firebaseFirestore
+                .collection(CollectionsNames.projects)
+                .doc(projectId);
+            final projectSnap = await transaction.get(projectRef);
+
+            if (!projectSnap.exists) {
+              throw Exception("Project not found");
+            }
+
+            final data = projectSnap.data() as Map<String, dynamic>;
+            final currentStatus = data['status']?.toString();
+            if (currentStatus != ProjectStatus.newProject) {
+              throw Exception("Project already accepted");
+            }
+            final ts = FieldValue.serverTimestamp();
+
+      
+            /// تحديث المشروع
+            transaction.update(projectRef, {
+              'status': ProjectStatus.inProgress,
+              'acceptedFreelancerId': acceptedFreelancerId,
+              'acceptedOfferId': acceptedOfferId,
+              'updatedAt': ts,
+            });
+
+            /// تحديث العروض
+            for (final offer in offers) {
+              final offerRef = _firebaseFirestore
+                  .collection(CollectionsNames.offers)
+                  .doc(offer.id);
+
+              /// قبول العرض المحدد
+              if (offer.id == acceptedOfferId) {
+                transaction.update(offerRef, {
+                  'status': OfferStatus.accepted,
+                  'updatedAt': ts,
+                });
+              }
+
+              /// رفض باقي العروض المعلقة فقط
+              else if (_isPendingOfferStatus(offer.status)) {
+                transaction.update(offerRef, {
+                  'status': OfferStatus.rejected,
+                  'updatedAt': ts,
+                });
+              }
+            }
+          },
+        );
+
+        return response;
+      },
+    );
+    // } on FirebaseException catch (e) {
+    //   return mapFirestoreError(e);
+    // } catch (e) {
+    //   return StatusClasses.customError(e.toString());
+    // }
   }
 
   Future<StatusClasses> setOfferStatus({
@@ -228,6 +341,7 @@ class OfferService {
     );
   }
 
+  ///تابع مساعد هدفه يتحقق إذا حالة العرض تعتبر "معلقة" أو لا
   bool _isPendingOfferStatus(dynamic raw) {
     final s = raw?.toString() ?? '';
     if (s.isEmpty || s == ProjectStatus.newProject) return true;
@@ -235,7 +349,7 @@ class OfferService {
   }
 
   //جديد
-  
+
   /// العرض المقبول على مشروع معيّن (إن وُجد).
   Future<Either<StatusClasses, OfferModel?>> getAcceptedOfferForProject({
     required String projectId,
@@ -260,5 +374,3 @@ class OfferService {
     });
   }
 }
-
-

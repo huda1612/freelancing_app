@@ -259,6 +259,7 @@ class FirebaseCrud {
       return StatusClasses.customError(e.toString());
     }
   }
+
   //معالجه حالات الخطأ عم تصير هون كلها
   //مافي داعي عالح الخطأ داخل المناقله اللي بكتبها بعدين لو في حالة بدها خطـ بعمل رمي للخطأ فبتوقف و هون بينلقط الخطأ
   //هام !! جوا المناقله لا تعدلي الواجهة ولا تعملي update ولا تستندي حاله لمتغير الحاله فقط ارمي خطأ لو بدك يصير خطأ
@@ -303,6 +304,34 @@ class FirebaseCrud {
 // } else {
 //   print("Error: $result");
 // }
+  ///تابع لتنفيذ ال batch
+  static Future<StatusClasses> runBatch({
+    required Future<void> Function(WriteBatch batch) action,
+  }) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+
+      final batch = firestore.batch();
+
+      await action(batch);
+
+      await batch.commit();
+
+      return StatusClasses.success;
+    } on FirebaseException catch (e) {
+      return mapFirestoreError(e);
+    } catch (e) {
+      return StatusClasses.customError(e.toString());
+    }
+  }
+  //how to use :
+  //   return FirebaseCrud.runBatch(
+  //   action: (batch) async {
+  //     batch.update(...);
+  //     ......
+  //     batch.delete(...);
+  //   },
+  // );
 }
 
 StatusClasses mapFirestoreError(FirebaseException e) {

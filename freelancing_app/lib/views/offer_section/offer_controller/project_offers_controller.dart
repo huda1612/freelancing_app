@@ -3,11 +3,13 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +17,7 @@ class ProjectOffersController extends GetxController {
   final OfferService _offerService = OfferService();
 
   var pageState = StatusClasses.isloading.obs;
+  var isAccepting = StatusClasses.idle.obs;
 
   ProjectModel? project;
   String? projectId;
@@ -23,20 +26,20 @@ class ProjectOffersController extends GetxController {
 
   final activeTabIndex = 0.obs;
 
-  String? actionOfferId;
+//لازم جرب اذا بيمشي الحال اعمل تعديل عاكتر من عرض بنف الوقت لان هي كانت متغير وانا عملتها مصفوفه
+  List<String> actionOfferId = [];
 
-  bool get showTabs =>
+  bool get showTabs => isProjectOwner;
+
+  bool get isProjectOwner =>
       project != null &&
       UserSession.uid != null &&
       UserSession.uid == project!.clientId;
 
-  bool get isProjectOwner => showTabs;
-
   @override
   void onInit() {
     super.onInit();
-    // project = Get.arguments?['project'] as ProjectModel?;
-    // projectId = Get.arguments?['projectId'] as String? ?? project?.id;
+    actionOfferId = [];
     project =
         NavigationService.routeArguments(AppRoutes.projectOffers)?["project"];
     projectId = project?.id;
@@ -48,10 +51,6 @@ class ProjectOffersController extends GetxController {
       return;
     }
     loadOffers();
-    // .catchError((err, stack) {
-    //   debugPrint('loadOffers error: $err');
-    //   debugPrint('$stack');
-    // });
   }
 
   Future<void> loadOffers() async {
@@ -106,25 +105,38 @@ class ProjectOffersController extends GetxController {
 
   void openFreelancerProfile(String freelancerId) {
     Get.toNamed(
-      AppRoutes.profile,
-      // "${AppRoutes.profile}?id=$freelancerId",
+      AppRoutes.userProfile,
       arguments: {'userId': freelancerId},
     );
   }
 
+//لهون الكنترولر تمام تأكدت من القبول من صفحة مشاريعي بس لازم شوف القبول من صفحة البحث كمان
   Future<void> acceptOffer(OfferModel offer) async {
-    _startAction(offer.id);
+    isAccepting.value = StatusClasses.isloading;
     final res = await _offerService.acceptOfferAndRejectOthers(
-      projectId: projectId!,
-      acceptedOfferId: offer.id,
-    );
-    _endAction();
+        projectId: projectId!,
+        acceptedOfferId: offer.id,
+        acceptedFreelancerId: offer.freelancerId);
+    //لازم حدث حاله المشروع و حط رقم الفريلانسر
+    isAccepting.value = StatusClasses.idle;
     if (res != StatusClasses.success) {
       customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
       return;
     }
     customSnackbar(message: "تم قبول العرض ورفض الباقي تلقائياً");
     await loadOffers();
+    //لان حدثنا حاله المشروع فلازم نحدث المشاريع بصفحة مشاريعي للعميل
+    if (Get.isRegistered<ClientProjectController>()) {
+      Get.find<ClientProjectController>().loadProjects();
+    }
+    if (Get.isRegistered<ProjectDetailsController>()) {
+      final controller = Get.find<ProjectDetailsController>();
+
+      controller.project =
+          controller.project?.copyWith(status: ProjectStatus.inProgress);
+
+      controller.update();
+    }
   }
 
   Future<void> rejectOffer(OfferModel offer) async {
@@ -133,7 +145,7 @@ class ProjectOffersController extends GetxController {
       offerId: offer.id,
       status: OfferStatus.rejected,
     );
-    _endAction();
+    _endAction(offer.id);
     if (res != StatusClasses.success) {
       customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
       return;
@@ -148,7 +160,7 @@ class ProjectOffersController extends GetxController {
       offerId: offer.id,
       status: OfferStatus.withdrawn,
     );
-    _endAction();
+    _endAction(offer.id);
     if (res != StatusClasses.success) {
       customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
       return;
@@ -187,17 +199,20 @@ class ProjectOffersController extends GetxController {
   }
 
   void _startAction(String offerId) {
-    actionOfferId = offerId;
+    // actionOfferId = offerId;
+    actionOfferId.add(offerId);
     update();
   }
 
-  void _endAction() {
-    actionOfferId = null;
+  void _endAction(String offerId) {
+    // actionOfferId = null;
+    actionOfferId.remove(offerId);
+
     update();
   }
 
   bool isOfferOwner(OfferModel offer) =>
       UserSession.uid != null && UserSession.uid == offer.freelancerId;
 
-  bool isBusy(String offerId) => actionOfferId == offerId;
+  bool isBusy(String offerId) => actionOfferId.contains(offerId);
 }

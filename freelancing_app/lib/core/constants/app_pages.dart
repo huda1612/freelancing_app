@@ -1,7 +1,6 @@
 import 'package:freelancing_platform/core/bindings/auth_binding.dart';
 import 'package:freelancing_platform/core/bindings/client_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/entry_test_binding.dart';
-import 'package:freelancing_platform/core/bindings/main_binding.dart';
 import 'package:freelancing_platform/core/bindings/onboarding_binding.dart';
 import 'package:freelancing_platform/core/bindings/freelancer_request_binding.dart';
 import 'package:freelancing_platform/core/bindings/splash_binding.dart';
@@ -50,6 +49,10 @@ import 'package:freelancing_platform/views/project_section/project_views/client_
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/freelance_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
+import 'package:freelancing_platform/views/search_section/search_controllers/search_clients_controller.dart';
+import 'package:freelancing_platform/views/search_section/search_controllers/search_freelancers_controller.dart';
+import 'package:freelancing_platform/views/search_section/search_views/search_clients_view.dart';
+import 'package:freelancing_platform/views/search_section/search_views/search_freelancers_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
 
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
@@ -71,11 +74,13 @@ import 'app_routes.dart';
 class AppPages {
   static final pages = [
     //**********************************************auth pages****************************************
-    GetPage(name: "/main", page: () => MainView(), binding: MainBinding()
-        // binding: BindingsBuilder(() {
-        //   Get.lazyPut(() => MainController());
-        // }),
-        ),
+    GetPage(
+      name: "/main", page: () => MainView(),
+      //  binding: MainBinding()
+      // binding: BindingsBuilder(() {
+      //   Get.lazyPut(() => MainController());
+      // }),
+    ),
     GetPage(
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
@@ -210,11 +215,32 @@ class AppPages {
     ),
 
     GetPage(
-      name: AppRoutes.profile,
+      name: AppRoutes.myProfile,
       page: () => ProfileView(),
       binding: BindingsBuilder(() {
-        Get.lazyPut(() => ProfileController());
+        // Get.lazyPut(() => ProfileController());
+        Get.lazyPut(
+          () => ProfileController(userId: UserSession.uid!),
+          tag: UserSession.uid!,
+        );
         Get.lazyPut(() => ImageUploadController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    GetPage(
+      name: AppRoutes.userProfile,
+      page: () => ProfileView(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut(() => ProfileController());\
+        // final userId =
+        // NavigationService.routeArguments(AppRoutes.userProfile)?['userId'];
+        final userId = Get.arguments['userId'];
+        Get.lazyPut(
+          () => ProfileController(userId: userId),
+          tag: userId,
+        );
+        // Get.lazyPut(() => ImageUploadController());
       }),
       middlewares: [AuthMiddleware()],
     ),
@@ -230,8 +256,7 @@ class AppPages {
         }),
         middlewares: [AuthMiddleware()]),
 
-
-         GetPage(
+    GetPage(
       name: AppRoutes.dashboard,
       page: () => DashboardView(),
       binding: BindingsBuilder(() {
@@ -268,7 +293,22 @@ class AppPages {
       name: AppRoutes.search,
       page: () => SearchView(),
     ),
-
+GetPage(
+      name: AppRoutes.searchClients,
+      page: () => SearchClientsView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SearchClientsController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.searchFreelancers,
+      page: () => SearchFreelancersView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SearchFreelancersController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
     //**********************************************project pages****************************************
 
     GetPage(

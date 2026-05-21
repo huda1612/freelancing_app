@@ -49,7 +49,7 @@ class MainView extends StatelessWidget {
               _buildTabNavigator(
                 navigatorKey: controller.navigatorKeys[3]!,
                 // child: ProfileView(),
-                initialRoute: AppRoutes.profile,
+                initialRoute: AppRoutes.myProfile,
               ),
             ],
           ),

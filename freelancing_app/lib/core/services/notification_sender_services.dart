@@ -11,7 +11,7 @@ class NotificationSenderServices {
   static String projectId = 'freelance-app-78e07';
   static String servicesData = r'''
 {
-  
+ 
 }
 ''';
   static Future<StatusClasses> sendNotificationToSelectedToken(

@@ -341,8 +341,8 @@ class ActiveProjectController extends GetxController {
 
   void openPartnerProfile() {
     if (partnerUserId.value.isEmpty) return;
-    NavigationService.toNamed(
-      AppRoutes.profile,
+    Get.toNamed(
+      AppRoutes.userProfile,
       arguments: {'userId': partnerUserId.value},
     );
   }

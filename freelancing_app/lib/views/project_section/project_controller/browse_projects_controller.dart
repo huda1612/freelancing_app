@@ -1,7 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
-import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -23,8 +21,8 @@ class BrowseProjectsController extends GetxController {
   ProjectModel? selectedProject;
   void onProjectSelect(ProjectModel project) {
     selectedProject = project;
-    NavigationService.toNamed(AppRoutes.projectDetails);
-    // ,arguments: {"project": project});
+    // NavigationService.toNamed(AppRoutes.projectDetails,
+    //     arguments: {"project": project});
   }
 
   // هي بتحدد المشاريع اللي رح تظهر بالقائمه بالصفحه

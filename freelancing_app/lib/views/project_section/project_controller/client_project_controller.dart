@@ -65,12 +65,15 @@ class ClientProjectController extends GetxController {
     activeTabIndex.value = index;
   }
 
-  void openProjectDetails(ProjectModel project) {
+  void openProjectDetails(ProjectModel project) async {
     selectedProject = project;
-    NavigationService.toNamed(
+    final result = await NavigationService.toNamed(
       AppRoutes.projectDetails,
       arguments: {'project': project},
     );
+    if (result == true) {
+      loadProjects();
+    }
   }
 
   void openActiveProject(ProjectModel project) {
