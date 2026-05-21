@@ -11,6 +11,7 @@ import 'package:freelancing_platform/core/general_controllers.dart/image_upload_
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:freelancing_platform/core/services/notification_services.dart';
+import 'package:freelancing_platform/core/utils/helper_function/check_fcm_token.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
@@ -312,7 +313,10 @@ class ProfileController extends GetxController {
     await LocalStorageService.setBoolValue(AppKeys.notificationsEnable, value);
     await LocalStorageService.setConstantisNotificationsEnable();
     if (value == false) {
-      NotificationServices().deleteToken();
+      await NotificationServices().deleteToken();
+      await _userService.updateUserData2({"fcmToken": null}, UserSession.uid!);
+    } else if (value == true) {
+      await NotificationServices().initialize(onToken: checkFcmToken);
     }
   }
   //--------------------------------------skills manage-----------------------------------------------

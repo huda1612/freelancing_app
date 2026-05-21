@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
@@ -24,14 +26,9 @@ class SignOutController extends GetxController {
     GoogleSignIn googleSignIn = GoogleSignIn();
     googleSignIn.signOut();
 
-    //لازم احذف الsharedPrefrences المحفوظه للمستخدم بعد ما سجل دخوله
-    // await LocalStorageService.removeValue(AppKeys.uid);
-    // await LocalStorageService.removeValue(AppKeys.role);
-    // await LocalStorageService.setConstantUid();
-    // await LocalStorageService.setConstantRole();
-
     final uId = UserSession.uid;
-    print("!!!!!!!!!!$uId");
+    // print("!!!!!!!!!!$uId");
+    //لازم احذف الsharedPrefrences المحفوظه للمستخدم بعد ما سجل دخوله
     UserSession.clear();
 
     //تسجيل خروج اذا مسجل بالايميل
@@ -44,5 +41,6 @@ class SignOutController extends GetxController {
     if (uId != null) {
       UserService().updateUserData2({"fcmToken": null}, uId);
     }
+    // LocalStorageService.removeValue(AppKeys.fcmToken);
   }
 }

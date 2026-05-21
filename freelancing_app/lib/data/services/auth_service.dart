@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_constant_data.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
+import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:freelancing_platform/data/repositories/auth_repository.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 
@@ -27,6 +30,7 @@ class AuthService {
     //   throw Exception("لا يوجد دور للمستخدم!!");
     // }
     await saveUserSession(passedRole: null);
+
     return uc;
   }
 
@@ -69,14 +73,15 @@ class AuthService {
     final userCredential =
         await _authRepository.register(email: email, password: password);
     final uid = userCredential.user!.uid;
+    final fcmToken = await LocalStorageService.getStringValue(AppKeys.fcmToken);
     final newUser = UserModel(
-      uid: uid,
-      fname: firstName,
-      lname: lastName,
-      username: username,
-      email: email,
-      role: role,
-    );
+        uid: uid,
+        fname: firstName,
+        lname: lastName,
+        username: username,
+        email: email,
+        role: role,
+        fcmToken: fcmToken);
 
     try {
       await _authRepository.saveUser(newUser);

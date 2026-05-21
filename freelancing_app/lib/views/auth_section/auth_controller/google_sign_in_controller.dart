@@ -3,15 +3,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
+import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/auth_controller.dart';
 
 import 'package:freelancing_platform/views/auth_section/widgets/role_username_set_dialog.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../../core/services/local_storage_service.dart';
 
 class GoogleSignInController extends GetxController {
   Future<void> signInWithGoogle() async {
@@ -42,10 +47,8 @@ class GoogleSignInController extends GetxController {
       }
       await _addUserToFirestoreIfItsNotExistAndSaveTheUserSeeion(user);
       //لازم وجهه !!!!!
-       var nextRoute = await RouteHandler.firstRoutHandler();
+      var nextRoute = await RouteHandler.firstRoutHandler();
       Get.offAllNamed(nextRoute);
-      //مؤقتا
-      // Get.offAllNamed(AppRoutes.personalInfo);
     } catch (e) {
       Get.snackbar("فشل", "فشل تسجيل الدخول $e");
     }
@@ -121,6 +124,10 @@ class GoogleSignInController extends GetxController {
         //بعد ما خلص بحفظ الجلسة
         final AuthService authService = Get.find<AuthService>();
         await authService.saveUserSession(passedRole: role);
+        final fcmToken =
+            await LocalStorageService.getStringValue(AppKeys.fcmToken);
+        await UserService()
+            .updateUserData2({"fcmToken": fcmToken}, UserSession.uid!);
       } catch (e) {
         //هي بحال فشل ادخال سجل للمستخدم بقاعدة البيانات
         await FirebaseAuth.instance.currentUser?.delete();
@@ -131,8 +138,12 @@ class GoogleSignInController extends GetxController {
       //في حال وجود المستخدم مسبقا فقط نحفظ المستخدم في الجلسه
       final AuthService authService = Get.find<AuthService>();
       await authService.saveUserSession(passedRole: null);
-
+      final fcmToken =
+          await LocalStorageService.getStringValue(AppKeys.fcmToken);
+      await UserService()
+          .updateUserData2({"fcmToken": fcmToken}, UserSession.uid!);
       Get.snackbar("نجاح", "تم تسجيل الدخول");
+
       return;
     }
   }

@@ -1,4 +1,3 @@
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_keys.dart';
@@ -10,6 +9,7 @@ Future<void> checkFcmToken(String token) async {
   debugPrint("FCM Token : $token");
   final oldFcmToken =
       await LocalStorageService.getStringValue(AppKeys.fcmToken);
+  debugPrint("!!!old fcm !$oldFcmToken");
   if (token == oldFcmToken) return;
 
   await LocalStorageService.setStringValue(AppKeys.fcmToken, token);
