@@ -8,6 +8,7 @@ import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/utils/helper_function/handle_firebase_check.dart';
 import 'package:freelancing_platform/data/services/auth_service.dart';
+import 'package:freelancing_platform/data/services/fcm_token_array_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/auth_controller.dart';
@@ -126,8 +127,18 @@ class GoogleSignInController extends GetxController {
         await authService.saveUserSession(passedRole: role);
         final fcmToken =
             await LocalStorageService.getStringValue(AppKeys.fcmToken);
-        await UserService()
-            .updateUserData2({"fcmToken": fcmToken}, UserSession.uid!);
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          await FcmTokenArrayService()
+              .addToken(uid: UserSession.uid!, token: fcmToken);
+          // await FirebaseFirestore.instance
+          //     .collection(CollectionsNames.users)
+          //     .doc(UserSession.uid!)
+          //     .set({
+          //   "fcmTokens": FieldValue.arrayUnion([fcmToken])
+          // }, SetOptions(merge: true));
+        }
+        // await UserService()
+        // .updateUserData2({"fcmToken": fcmToken}, UserSession.uid!);
       } catch (e) {
         //هي بحال فشل ادخال سجل للمستخدم بقاعدة البيانات
         await FirebaseAuth.instance.currentUser?.delete();

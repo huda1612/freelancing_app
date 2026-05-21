@@ -15,7 +15,6 @@ import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out
 import 'package:freelancing_platform/views/user_request_section/request_controller/rejected_controller.dart';
 import 'package:get/get.dart';
 
-
 class RejectedView extends StatelessWidget {
   const RejectedView({super.key});
 
@@ -83,10 +82,18 @@ class RejectedView extends StatelessWidget {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                "يؤسفنا اخبارك بأنه قد تم رفض طلب الانضمام الى المنصة الذي قدمته مسبقا ",
+                                "يؤسفنا اخبارك بأنه قد تم رفض طلب الانضمام الى المنصة . ",
                                 style: AppTextStyles.body.copyWith(
                                   color: AppColors.darkGrey,
                                   fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "تنبيه : سيتم حذف الحساب خلال 15 يوما في حال عدم اعادة تقديم الطلب ",
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColors.red,
+                                  fontSize: 12,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

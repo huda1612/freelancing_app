@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:freelancing_platform/core/classes/app_notifications.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_notification_types.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
-import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:get/get.dart';
 
 @pragma('vm:entry-point')
@@ -121,15 +119,19 @@ class NotificationServices {
   }
 
   void _navigateFromData(Map<String, dynamic> data) async {
-    // Get.toNamed(AppRoutes.search);
     //هون انا لازم زبطه للانتقال للصفحات عكيفي حسب شو البيانات المرسله بالاشعار
     final type = data['type'];
-    // String? id = data['id'];
+    // print(data);
+    String? id = data['id'];
     if (type == null) return;
     switch (type) {
       case AppNotificationTypes.userRequest:
+        // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! called");
         final route = await RouteHandler.firstRoutHandler();
-        Get.toNamed(route);
+        Get.offAllNamed(route);
+        break;
+      case AppNotificationTypes.newOffer:
+        // Get.offAllNamed(AppRoutes.main);
         break;
       default:
     }

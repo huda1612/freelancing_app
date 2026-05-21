@@ -98,6 +98,7 @@ class ProjectDetailsController extends GetxController {
       "projectDurationDays": project!.durationDays,
       "projectId": project!.id,
       "clientId": project!.clientId,
+      "projectTitle": project!.title,
       "offer": oldOffer
     });
     if (didSomething == true) {

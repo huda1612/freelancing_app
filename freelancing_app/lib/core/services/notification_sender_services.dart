@@ -11,7 +11,7 @@ class NotificationSenderServices {
   static String projectId = 'freelance-app-78e07';
   static String servicesData = r'''
 {
-
+  
 }
 ''';
   static Future<StatusClasses> sendNotificationToSelectedToken(
@@ -29,6 +29,19 @@ class NotificationSenderServices {
       'https://www.googleapis.com/auth/firebase.messaging',
     ]);
     try {
+      print(
+        jsonEncode({
+          'message': {
+            'token': fcmToken.trim(),
+            'notification': {'title': title, 'body': body},
+            'data': data,
+            'android': {
+              'priority': 'high',
+              'notification': {'sound': 'default'},
+            },
+          },
+        }),
+      );
       final response = await client.post(
         Uri.parse(
           'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
@@ -78,21 +91,30 @@ class NotificationSenderServices {
       // }
       //
       ///2- sending notification to user if there is a fcm token
-      final userFcmToken = user.fcmToken;
-      if (userFcmToken != null && userFcmToken.isNotEmpty) {
-        final sendingResponse = await sendNotificationToSelectedToken(
-          fcmToken: userFcmToken,
+      // final userFcmToken = user.fcmToken;
+      final tokens = user.fcmTokens;
+      for (final token in tokens ?? []) {
+        await sendNotificationToSelectedToken(
+          fcmToken: token,
           title: title,
           body: body,
           data: data,
         );
-        if (sendingResponse != StatusClasses.success) {
-          debugPrint(
-              "sending notification error 1: ${sendingResponse.type} ${sendingResponse.message}");
-        }
-      } else {
-        debugPrint("!!!! no token");
       }
+      // if (userFcmToken != null && userFcmToken.isNotEmpty) {
+      //   final sendingResponse = await sendNotificationToSelectedToken(
+      //     fcmToken: userFcmToken,
+      //     title: title,
+      //     body: body,
+      //     data: data,
+      //   );
+      //   if (sendingResponse != StatusClasses.success) {
+      //     debugPrint(
+      //         "sending notification error 1: ${sendingResponse.type} ${sendingResponse.message}");
+      //   }
+      // } else {
+      //   debugPrint("!!!! no token");
+      // }
 
       ///3- store the notification in the uesr's notification collection in firestore
       final notificationAddRes = await UserNotificationService()

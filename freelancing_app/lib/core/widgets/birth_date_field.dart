@@ -41,8 +41,8 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                // initialValue: year,
-                initialValue: year,
+                // value: year,
+                value: year,
                 decoration: unifiedDecoration("السنة"),
 
                 items: List.generate(
@@ -64,8 +64,8 @@ class BirthDateField extends StatelessWidget {
               width: 120.w,
               height: 55.h,
               child: DropdownButtonFormField<String>(
-                // initialValue: month,
-                initialValue: month,
+                // value: month,
+                value: month,
                 decoration: unifiedDecoration("الشهر"),
 
                 items: List.generate(
@@ -87,7 +87,7 @@ class BirthDateField extends StatelessWidget {
               height: 55.h,
               child: DropdownButtonFormField<String>(
                 //  value: day,
-                initialValue: day,
+                value: day,
                 decoration: unifiedDecoration("اليوم"),
 
                 items: List.generate(

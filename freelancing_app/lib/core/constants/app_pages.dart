@@ -54,11 +54,9 @@ import 'package:freelancing_platform/views/search_section/search_controllers/sea
 import 'package:freelancing_platform/views/search_section/search_views/search_clients_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_freelancers_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
-
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
 import 'package:freelancing_platform/views/skills_section/skills_view/skills_selection_view.dart';
 import 'package:freelancing_platform/views/splash_section/splash_view/splash_view.dart';
-import 'package:freelancing_platform/views/user_request_section/request_controller/pending_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_controller/rejected_controller.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_account_info_view.dart';
 import 'package:freelancing_platform/views/user_request_section/request_view/client_request_views/client_work_view.dart';
@@ -165,7 +163,7 @@ class AppPages {
       page: () => PendingView(),
       binding: BindingsBuilder(() {
         Get.lazyPut(() => SignOutController());
-        Get.lazyPut(() => PendingController());
+        // Get.lazyPut(() => PendingController());
       }),
       middlewares: [AuthMiddleware()],
     ),
@@ -295,7 +293,7 @@ class AppPages {
       name: AppRoutes.search,
       page: () => SearchView(),
     ),
-GetPage(
+    GetPage(
       name: AppRoutes.searchClients,
       page: () => SearchClientsView(),
       binding: BindingsBuilder(() {

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
-import 'package:freelancing_platform/core/constants/app_constant_data.dart';
 import 'package:freelancing_platform/core/constants/app_keys.dart';
 import 'package:freelancing_platform/core/services/local_storage_service.dart';
 import 'package:freelancing_platform/data/repositories/auth_repository.dart';
@@ -81,7 +80,9 @@ class AuthService {
         username: username,
         email: email,
         role: role,
-        fcmToken: fcmToken);
+        // fcmToken: fcmToken
+        fcmTokens: fcmToken != null ? [fcmToken] : []
+        );
 
     try {
       await _authRepository.saveUser(newUser);
