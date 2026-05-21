@@ -69,7 +69,7 @@ class ClientProjectController extends GetxController {
     selectedProject = project;
     final result = await NavigationService.toNamed(
       AppRoutes.projectDetails,
-      arguments: {'project': project},
+      arguments: {'project': project , "projectId": project.id},
     );
     if (result == true) {
       loadProjects();

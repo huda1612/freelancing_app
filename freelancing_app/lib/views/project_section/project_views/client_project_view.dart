@@ -24,7 +24,6 @@ class ClientProjectView extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'مشاريعي',
         backgroundGradient: AppColors.gradientColor,
-        onLeadingPressed: NavigationService.back,
       ),
       body: Obx(
         () => UiStateHandler(
@@ -42,36 +41,38 @@ class ClientProjectView extends StatelessWidget {
   }
 
   Widget _tabsBar() {
-    return Obx(
-      () => Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.grey,
-              blurRadius: 2,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(ProjectStatus.clientTabLabels.length, (i) {
-              return Padding(
-                padding: EdgeInsets.only(left: i == 0 ? 0 : 6.w),
-                child: _tabButton(
-                  label: ProjectStatus.clientTabLabels[i],
-                  selected: controller.activeTabIndex.value == i,
-                  onTap: () => controller.setTabIndex(i),
-                ),
-              );
-            }),
+    return
+        // Obx(
+        //   () =>
+        Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.grey,
+            blurRadius: 2,
+            offset: const Offset(0, 3),
           ),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(ProjectStatus.clientTabLabels.length, (i) {
+            return Padding(
+              padding: EdgeInsets.only(left: i == 0 ? 0 : 6.w),
+              child: _tabButton(
+                label: ProjectStatus.clientTabLabels[i],
+                selected: controller.activeTabIndex.value == i,
+                onTap: () => controller.setTabIndex(i),
+              ),
+            );
+          }),
         ),
       ),
     );
+    // );
   }
 
   Widget _tabButton({
@@ -93,7 +94,7 @@ class ClientProjectView extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 12.sp,
-                color: selected ? AppColors.vividPurple : AppColors.grey,
+                color: selected ? AppColors.vividPurple : AppColors.normalGrey,
               ),
             ),
             const SizedBox(height: 7),
@@ -116,14 +117,29 @@ class ClientProjectView extends StatelessWidget {
     return Obx(() {
       final items = controller.projectsForActiveTab();
       if (items.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.all(24.w),
-            child: customEmptyMessage(
-              message: _emptyMessageForTab(controller.activeTabIndex.value),
-            ),
+        return RefreshIndicator(
+          color: AppColors.vividPurple,
+          onRefresh: controller.loadProjects,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: customEmptyMessage(
+                    message:
+                        _emptyMessageForTab(controller.activeTabIndex.value),
+                  ),
+                ),
+              );
+            },
           ),
         );
+        // return customEmptyMessage(
+        //   message: _emptyMessageForTab(controller.activeTabIndex.value),
+        // );
       }
 
       return RefreshIndicator(

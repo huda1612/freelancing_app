@@ -67,7 +67,7 @@ class BrowseProjectsView extends StatelessWidget {
                                 {
                               final result = await NavigationService.toNamed(
                                   AppRoutes.projectDetails,
-                                  arguments: {"project": project});
+                                  arguments: {"project": project , "projectId": project.id});
                               if (result == true) {
                                 await controller.fetchOpenProjectAndSpec();
                               }

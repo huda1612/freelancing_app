@@ -3,10 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
-import 'package:freelancing_platform/core/constants/app_notification_types.dart';
-import 'package:freelancing_platform/core/constants/app_routes.dart';
-
-import 'package:get/get.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
@@ -120,22 +116,10 @@ class NotificationServices {
   }
 
   void _navigateFromData(Map<String, dynamic> data) async {
-    //هون انا لازم زبطه للانتقال للصفحات عكيفي حسب شو البيانات المرسله بالاشعار
-    final type = data['type'];
-    // print(data);
-    String? id = data['id'];
-    if (type == null) return;
-    switch (type) {
-      case AppNotificationTypes.userRequest:
-        // print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! called");
-        final route = await RouteHandler.firstRoutHandler();
-        Get.offAllNamed(route);
-        break;
-      case AppNotificationTypes.newOffer:
-        // Get.offAllNamed(AppRoutes.main);
-        break;
-      default:
-    }
+    //هون انا لازم زبطه للانتقال للصفحات حسب شو البيانات المرسله بالاشعار
+    Future.delayed(Duration(milliseconds: 200), () {
+      RouteHandler.notificationRouteHandler(data);
+    });
   }
 
   void _handLocalNotificationClick(String? payload) {

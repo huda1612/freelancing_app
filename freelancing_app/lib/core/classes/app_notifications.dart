@@ -54,11 +54,30 @@ class AppNotification {
   }
 
   ///اشعار ارسال عرض جديد لمشروع
-  factory AppNotification.newOfferSubmit(String projectTitle, String offerId) {
+  factory AppNotification.newOfferSubmit(
+      String projectTitle, String projectId) {
     return AppNotification(
       title: "لديك عرض جديد",
       body: "لديك عرض جديد على مشروعك $projectTitle",
-      data: {"type": AppNotificationTypes.newOffer, "id": offerId},
+      data: {"type": AppNotificationTypes.newOffer, "id": projectId},
+    );
+  }
+
+  ///اشعار قبول عرض على مشروع
+  factory AppNotification.offerAccepted(String projectTitle, String projectId) {
+    return AppNotification(
+      title: "لقد تم قبول عرضك",
+      body: "قام صاحب المشروع بقبول عرضك على المشروع $projectTitle",
+      data: {"type": AppNotificationTypes.offerAccepted, "id": projectId},
+    );
+  }
+
+  ///اشعار رفض عرض على مشروع
+  factory AppNotification.offerRejected(String projectTitle, String projectId) {
+    return AppNotification(
+      title: "لقد تم رفض عرضك",
+      body: "للاسف ! لقد قام صاحب المشروع برفض عرضك على مشروع $projectTitle",
+      data: {"type": AppNotificationTypes.offerRejected, "id": projectId},
     );
   }
 

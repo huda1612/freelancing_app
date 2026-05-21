@@ -149,7 +149,7 @@ class SubmitOfferController extends GetxController {
           message: "تم تقديم العرض بنجاح",
         );
         final offerSubmitNotification =
-            AppNotification.newOfferSubmit(projectTitle ?? "", offer.id);
+            AppNotification.newOfferSubmit(projectTitle ?? "", projectId!);
         await NotificationSenderServices.sendNotificationToUser(
             uId: clientId!,
             title: offerSubmitNotification.title,

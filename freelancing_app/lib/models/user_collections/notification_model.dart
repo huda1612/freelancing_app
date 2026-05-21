@@ -4,7 +4,7 @@ class NotificationModel {
   final String? id;
   final String title;
   final String body;
-  final String? type;
+  final Map<String, dynamic>? data;
   final String? projectId;
   final bool isRead;
   final Timestamp? createdAt;
@@ -13,7 +13,7 @@ class NotificationModel {
     this.id,
     required this.title,
     required this.body,
-    this.type,
+    this.data,
     this.projectId,
     this.isRead = false,
     this.createdAt,
@@ -23,7 +23,7 @@ class NotificationModel {
     return {
       'title': title,
       'body': body,
-      'type': type,
+      'data': data,
       'projectId': projectId,
       'isRead': isRead,
       'createdAt': createdAt ?? Timestamp.now(),
@@ -35,7 +35,7 @@ class NotificationModel {
       id: docId,
       title: map['title'] ?? '',
       body: map['body'] ?? '',
-      type: map['type'],
+      data: map['data'] ?? {},
       projectId: map['projectId'],
       isRead: map['isRead'] ?? false,
       createdAt:
@@ -43,12 +43,11 @@ class NotificationModel {
     );
   }
 
-
   NotificationModel copyWith({
     String? id,
     String? title,
     String? body,
-    String? type,
+    Map<String, dynamic>? data,
     String? projectId,
     bool? isRead,
     Timestamp? createdAt,
@@ -57,7 +56,7 @@ class NotificationModel {
       id: id ?? this.id,
       title: title ?? this.title,
       body: body ?? this.body,
-      type: type ?? this.type,
+      data: data ?? this.data,
       projectId: projectId ?? this.projectId,
       isRead: isRead ?? this.isRead,
       createdAt: createdAt ?? this.createdAt,

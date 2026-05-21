@@ -41,7 +41,7 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
 
           return UiStateHandler(
             status: controller.pageState.value,
-            fetchDataFun: controller.loadTasks,
+            fetchDataFun: controller.initPage,
             child: SingleChildScrollView(
               padding: EdgeInsets.all(AppSpaces.paddingMedium),
               child: Column(
@@ -175,7 +175,8 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
               if (controller.canEditTasks)
                 IconButton(
                   onPressed: controller.addTask,
-                  icon: const Icon(Icons.add_circle, color: AppColors.vividPurple),
+                  icon: const Icon(Icons.add_circle,
+                      color: AppColors.vividPurple),
                   tooltip: 'إضافة مهمة',
                 ),
             ],
@@ -221,7 +222,8 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
           onTap: controller.deliverProject,
           isLoading: controller.actionLoading.value,
           gradient: AppColors.gradientColor,
-          prefix: const Icon(Icons.check_circle_outline, color: AppColors.white),
+          prefix:
+              const Icon(Icons.check_circle_outline, color: AppColors.white),
         );
       }
 
