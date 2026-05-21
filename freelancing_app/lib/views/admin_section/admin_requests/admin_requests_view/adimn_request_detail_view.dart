@@ -231,7 +231,7 @@ class AdimnRequestDetailView extends StatelessWidget {
                                             val // hintText: "ادخل سبب الرفض",
                                         ),
                                     SizedBox(
-                                      height: AppSpaces.heightLarge,
+                                      height: AppSpaces.heightMedium,
                                     ),
                                     Row(
                                       mainAxisAlignment:

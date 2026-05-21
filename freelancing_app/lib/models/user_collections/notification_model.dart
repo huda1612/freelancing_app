@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class NotificationModel {
   final String? id;
@@ -42,6 +43,10 @@ class NotificationModel {
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );
   }
+
+  // factory NotificationModel.rejectRequest(String? rejectComment){
+  //   return NotificationModel(title: title, body: body , type:  da)
+  // }
 
   NotificationModel copyWith({
     String? id,

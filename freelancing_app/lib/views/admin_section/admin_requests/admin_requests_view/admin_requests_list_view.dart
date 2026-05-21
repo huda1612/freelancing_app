@@ -231,7 +231,7 @@ class AdminRequestsListView extends StatelessWidget {
                               color: AppColors.red,
                               onTap: controller.runCleanup,
                               isLoading: controller.cleanupLoading,
-                              width: 180.w,
+                              width: 220.w,
                               prefix: Icon(
                                 Icons.delete,
                                 color: AppColors.white,

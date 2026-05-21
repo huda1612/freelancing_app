@@ -8,7 +8,7 @@ class SplashController extends GetxController {
     super.onInit();
 
     // الانتقال بعد 5 ثواني
-    Future.delayed(const Duration(seconds: 5), () async {
+    Future.delayed(const Duration(seconds: 2), () async {
       // هون التوجيه الاول
       final nextRoute = await RouteHandler.firstRoutHandler();
       Get.offAllNamed(nextRoute);

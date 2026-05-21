@@ -11,7 +11,7 @@ class NotificationSenderServices {
   static String projectId = 'freelance-app-78e07';
   static String servicesData = r'''
 {
- 
+
 }
 ''';
   static Future<StatusClasses> sendNotificationToSelectedToken(
@@ -65,31 +65,36 @@ class NotificationSenderServices {
       required String title,
       required String body,
       Map<String, dynamic>? data}) async {
+    ///1- fetch user fcm token from firestore
     final response = await UserService().fetchUserData2(uId);
     response.fold((errorStatus) {
       debugPrint("${errorStatus.type} / ${errorStatus.message}");
-      // customSnackbar(message: "${errorStatus.type} / ${errorStatus.message}");
       return;
     }, (user) async {
-      print(user.uid);
+      // print(user.uid);
+      // if (userFcmToken == null || userFcmToken.isEmpty) {
+      //   print("!!!! no token");
+      //   // return;
+      // }
+      //
+      ///2- sending notification to user if there is a fcm token
       final userFcmToken = user.fcmToken;
-      if (userFcmToken == null || userFcmToken.isEmpty) {
-        print("!!!! no token");
-        return;
+      if (userFcmToken != null && userFcmToken.isNotEmpty) {
+        final sendingResponse = await sendNotificationToSelectedToken(
+          fcmToken: userFcmToken,
+          title: title,
+          body: body,
+          data: data,
+        );
+        if (sendingResponse != StatusClasses.success) {
+          debugPrint(
+              "sending notification error 1: ${sendingResponse.type} ${sendingResponse.message}");
+        }
+      } else {
+        debugPrint("!!!! no token");
       }
-      final sendingResponse = await sendNotificationToSelectedToken(
-        fcmToken: userFcmToken,
-        title: title,
-        body: body,
-        data: data,
-      );
-      if (sendingResponse != StatusClasses.success) {
-        debugPrint(
-            "sending notification error 1: ${sendingResponse.type} ${sendingResponse.message}");
-        // customSnackbar(
-        //     message:
-        //         "sending notification error : ${sendingResponse.type} ${sendingResponse.message}");
-      }
+
+      ///3- store the notification in the uesr's notification collection in firestore
       final notificationAddRes = await UserNotificationService()
           .addUserNotification(
               uId: uId,
@@ -98,9 +103,7 @@ class NotificationSenderServices {
       if (notificationAddRes != StatusClasses.success) {
         debugPrint(
             "sending notification error2 : ${notificationAddRes.type} ${notificationAddRes.message}");
-        // customSnackbar(
-        //     message:
-        //         "sending notification error : ${notificationAddRes.type} ${notificationAddRes.message}");
+
         return;
       }
     });
