@@ -14,12 +14,12 @@ class SearchPageController extends GetxController {
     SearchOptionModel(
       title: "ابحث عن عملاء",
       icon: Icons.person_search,
-      route: "",
+      route: AppRoutes.searchClients,
     ),
     SearchOptionModel(
       title: "ابحث عن مستقلين",
       icon: Icons.work_outline,
-      route: "",
+      route: AppRoutes.searchFreelancers,
     ),
   ].obs;
 

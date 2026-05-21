@@ -49,6 +49,10 @@ import 'package:freelancing_platform/views/project_section/project_views/client_
 import 'package:freelancing_platform/views/project_section/project_views/create_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/freelance_project_view.dart';
 import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
+import 'package:freelancing_platform/views/search_section/search_controllers/search_clients_controller.dart';
+import 'package:freelancing_platform/views/search_section/search_controllers/search_freelancers_controller.dart';
+import 'package:freelancing_platform/views/search_section/search_views/search_clients_view.dart';
+import 'package:freelancing_platform/views/search_section/search_views/search_freelancers_view.dart';
 import 'package:freelancing_platform/views/search_section/search_views/search_view.dart';
 
 import 'package:freelancing_platform/views/skills_section/skills_controller/skills_selection_controller.dart';
@@ -289,7 +293,22 @@ class AppPages {
       name: AppRoutes.search,
       page: () => SearchView(),
     ),
-
+GetPage(
+      name: AppRoutes.searchClients,
+      page: () => SearchClientsView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SearchClientsController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.searchFreelancers,
+      page: () => SearchFreelancersView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => SearchFreelancersController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
     //**********************************************project pages****************************************
 
     GetPage(

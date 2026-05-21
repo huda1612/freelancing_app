@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';

@@ -46,6 +46,8 @@ class AppRoutes {
 
   //search route
   static const search = '/search';
+  static const searchClients = '/search_clients';
+  static const searchFreelancers = '/search_freelancers';
 
   //chat routes
   static const chat = '/chat';

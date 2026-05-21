@@ -10,7 +10,6 @@ import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.d
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/services/local_storage_service.dart';
-import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/services/notification_services.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/core/utils/helper_function/validators.dart';

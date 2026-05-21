@@ -12,7 +12,6 @@ import 'package:freelancing_platform/models/project_collections/project_model.da
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 
 class ProjectOffersController extends GetxController {
   final OfferService _offerService = OfferService();

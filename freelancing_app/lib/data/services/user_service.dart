@@ -43,6 +43,25 @@ class UserService {
     return response;
   }
 
+  Future<Either<StatusClasses, List<UserModel>>> fetchUsersByRole({
+    required String role,
+    String? countryCode,
+  }) async {
+    Query<Map<String, dynamic>> query = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .where('role', isEqualTo: role);
+
+    if (countryCode != null && countryCode.trim().isNotEmpty) {
+      query = query.where('countryCode', isEqualTo: countryCode.trim());
+    }
+
+    final response = await FirebaseCrud.runGetQuery<UserModel>(
+      query: query,
+      fromMap: (data, id) => UserModel.fromMap(data, id),
+    );
+    return response;
+  }
+
 
   Future<void> updateUserData(Map<String, dynamic> newUser, String uid) async {
     await _firebaseFirestore
