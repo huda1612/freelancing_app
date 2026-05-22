@@ -41,6 +41,8 @@ class ProfileView extends StatelessWidget {
           return ModalProgressHUD(
             inAsyncCall: singoutController.signOutIsLoading,
             child: Scaffold(
+                // backgroundColor: Colors.grey.shade100,
+
                 backgroundColor: AppColors.white,
                 drawer: controller.isOwnProfile
                     ? ProfileDrawer(
@@ -165,6 +167,7 @@ class ProfileView extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       decoration: const BoxDecoration(
+        color: AppColors.white,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
       child: Column(

@@ -6,7 +6,6 @@ import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
-import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/client_project_tile.dart';
 import 'package:get/get.dart';
@@ -116,6 +115,7 @@ class ClientProjectView extends StatelessWidget {
   Widget _buildProjectsList() {
     return Obx(() {
       final items = controller.projectsForActiveTab();
+      // empty message 
       if (items.isEmpty) {
         return RefreshIndicator(
           color: AppColors.vividPurple,
@@ -137,11 +137,10 @@ class ClientProjectView extends StatelessWidget {
             },
           ),
         );
-        // return customEmptyMessage(
-        //   message: _emptyMessageForTab(controller.activeTabIndex.value),
-        // );
+   
       }
 
+      // project list
       return RefreshIndicator(
         color: AppColors.vividPurple,
         onRefresh: controller.loadProjects,
@@ -158,6 +157,12 @@ class ClientProjectView extends StatelessWidget {
                 mode: mode,
                 isBusy: c.isBusy(project.id),
                 onTap: () => _onProjectTap(c, project, mode),
+                tasksDone: mode == ClientProjectTileMode.inProgress
+                    ? project.completedTasksCount
+                    : null,
+                tasksTotal: mode == ClientProjectTileMode.inProgress
+                    ? project.tasksCount
+                    : null,
                 onApproveCompletion: mode == ClientProjectTileMode.delivered
                     ? () => c.approveProjectCompletion(project)
                     : null,

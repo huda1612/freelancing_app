@@ -4,7 +4,6 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
-import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/services/notification_sender_services.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
@@ -13,7 +12,6 @@ import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
-import 'package:freelancing_platform/views/project_section/project_controller/project_details_controller.dart';
 import 'package:get/get.dart';
 
 class ProjectOffersController extends GetxController {
@@ -160,20 +158,22 @@ class ProjectOffersController extends GetxController {
       customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
       return;
     }
+    NavigationService.back(result: true);
+
     customSnackbar(message: "تم قبول العرض ورفض الباقي تلقائياً");
     await loadOffers();
     //لان حدثنا حاله المشروع فلازم نحدث المشاريع بصفحة مشاريعي للعميل
     if (Get.isRegistered<ClientProjectController>()) {
       Get.find<ClientProjectController>().loadProjects();
     }
-    if (Get.isRegistered<ProjectDetailsController>()) {
-      final controller = Get.find<ProjectDetailsController>();
+    // if (Get.isRegistered<ProjectDetailsController>()) {
+    //   final controller = Get.find<ProjectDetailsController>();
 
-      controller.project =
-          controller.project?.copyWith(status: ProjectStatus.inProgress);
+    //   controller.project =
+    //       controller.project?.copyWith(status: ProjectStatus.inProgress);
 
-      controller.update();
-    }
+    //   controller.update();
+    // }
     final AppNotification acceptNotification =
         AppNotification.offerAccepted(project!.title, project!.id);
     NotificationSenderServices.sendNotificationToUser(
@@ -207,49 +207,49 @@ class ProjectOffersController extends GetxController {
   }
 
 //ok
-  Future<void> withdrawOffer(OfferModel offer) async {
-    _startAction(offer.id);
-    final res = await _offerService.setOfferStatus(
-      offerId: offer.id,
-      status: OfferStatus.withdrawn,
-    );
-    _endAction(offer.id);
-    if (res != StatusClasses.success) {
-      customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
-      return;
-    }
-    customSnackbar(message: "تم سحب العرض");
-    await loadOffers();
+  // Future<void> withdrawOffer(OfferModel offer) async {
+  //   _startAction(offer.id);
+  //   final res = await _offerService.setOfferStatus(
+  //     offerId: offer.id,
+  //     status: OfferStatus.withdrawn,
+  //   );
+  //   _endAction(offer.id);
+  //   if (res != StatusClasses.success) {
+  //     customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
+  //     return;
+  //   }
+  //   customSnackbar(message: "تم سحب العرض");
+  //   await loadOffers();
 
-    if (Get.isRegistered<ProjectDetailsController>()) {
-      Get.find<ProjectDetailsController>().hasOffer.value = false;
-      Get.find<ProjectDetailsController>().oldOffer = null;
-    }
-  }
+  //   if (Get.isRegistered<ProjectDetailsController>()) {
+  //     Get.find<ProjectDetailsController>().hasOffer.value = false;
+  //     Get.find<ProjectDetailsController>().oldOffer = null;
+  //   }
+  // }
 
   //ok
-  Future<void> editOffer(OfferModel offer) async {
-    if (project == null) {
-      customSnackbar(message: "بيانات المشروع غير متوفرة للتعديل");
-      return;
-    }
-    final result = await Get.toNamed(
-      AppRoutes.submitOffer,
-      arguments: {
-        'offer': offer,
-        'projectBudget': project!.budget,
-        'projectDurationDays': project!.durationDays,
-        'projectId': project!.id,
-        'clientId': project!.clientId,
-      },
-    );
-    if (result == true) {
-      await loadOffers();
-      if (Get.isRegistered<ProjectDetailsController>()) {
-        await Get.find<ProjectDetailsController>().hasOldOffer();
-      }
-    }
-  }
+  // Future<void> editOffer(OfferModel offer) async {
+  //   if (project == null) {
+  //     customSnackbar(message: "بيانات المشروع غير متوفرة للتعديل");
+  //     return;
+  //   }
+  //   final result = await Get.toNamed(
+  //     AppRoutes.submitOffer,
+  //     arguments: {
+  //       'offer': offer,
+  //       'projectBudget': project!.budget,
+  //       'projectDurationDays': project!.durationDays,
+  //       'projectId': project!.id,
+  //       'clientId': project!.clientId,
+  //     },
+  //   );
+  //   if (result == true) {
+  //     await loadOffers();
+  //     if (Get.isRegistered<ProjectDetailsController>()) {
+  //       await Get.find<ProjectDetailsController>().hasOldOffer();
+  //     }
+  //   }
+  // }
 
   void _startAction(String offerId) {
     // actionOfferId = offerId;

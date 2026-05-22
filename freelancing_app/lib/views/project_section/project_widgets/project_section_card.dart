@@ -67,11 +67,15 @@ class ProjectInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      // mainAxisAlignment: MainAxisAlignment,
       children: [
         Icon(icon, color: AppColors.purple),
         const SizedBox(width: 12),
         Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const Spacer(),
+        SizedBox(
+          width: AppSpaces.heightSmall,
+        ),
+        // const Spacer(),
         Flexible(
           child: Text(
             value,

@@ -3,6 +3,7 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
@@ -108,14 +109,17 @@ class ProjectDetailsController extends GetxController {
   }
 
   Future<void> onOfferView() async {
-    // final didSomething =
-    await NavigationService.toNamed(AppRoutes.projectOffers, arguments: {
+    final didSomething =
+        await NavigationService.toNamed(AppRoutes.projectOffers, arguments: {
       'project': project,
       'projectId': project!.id,
     });
-    // if (didSomething == true) {
-    //   await hasOldOffer();
-    // }
+    //لو رجع من الصفحه بعد ما قبل واحد من العروض لازم اعملهيك حتى ما يقدر يحذف المشروع
+    if (didSomething == true) {
+      // await hasOldOffer();
+      project = project?.copyWith(status: ProjectStatus.inProgress);
+      update();
+    }
   }
 
   Future<void> onOfferSubmit() async {
@@ -175,6 +179,26 @@ class ProjectDetailsController extends GetxController {
     customSnackbar(message: "تم حذف المشروع بنجاح");
 
     return;
+  }
+
+  Future<void> withdrawOffer() async {
+    // _startAction(offer.id);
+    loadingDelete = true;
+    update();
+    final res = await OfferService().setOfferStatus(
+      offerId: oldOffer!.id,
+      status: OfferStatus.withdrawn,
+    );
+    loadingDelete = false;
+    update();
+    if (res != StatusClasses.success) {
+      customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
+      return;
+    }
+    customSnackbar(message: "تم سحب العرض");
+// await hasOldOffer();
+    hasOffer.value = false;
+    oldOffer = null;
   }
 
   //تحديث المشروع

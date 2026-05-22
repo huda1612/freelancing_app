@@ -8,6 +8,7 @@ class ProjectTaskRow extends StatelessWidget {
   const ProjectTaskRow({
     super.key,
     required this.task,
+    required this.orderNumber,
     required this.controller,
     required this.canEdit,
     required this.onDescriptionChanged,
@@ -15,6 +16,7 @@ class ProjectTaskRow extends StatelessWidget {
   });
 
   final TaskModel task;
+  final int orderNumber;
   final TextEditingController controller;
   final bool canEdit;
   final ValueChanged<String> onDescriptionChanged;
@@ -35,7 +37,7 @@ class ProjectTaskRow extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 12.h),
             child: Text(
-              '${task.orderNumber}',
+              orderNumber.toString(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 15.sp,
@@ -61,4 +63,3 @@ class ProjectTaskRow extends StatelessWidget {
     );
   }
 }
-

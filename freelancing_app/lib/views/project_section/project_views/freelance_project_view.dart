@@ -7,7 +7,8 @@ import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
-import 'package:freelancing_platform/views/project_section/project_controller/freelance_project_controller.dart' show FreelancerProjectController;
+import 'package:freelancing_platform/views/project_section/project_controller/freelance_project_controller.dart'
+    show FreelancerProjectController;
 import 'package:freelancing_platform/views/project_section/project_widgets/freelance_project_tile.dart';
 import 'package:get/get.dart';
 

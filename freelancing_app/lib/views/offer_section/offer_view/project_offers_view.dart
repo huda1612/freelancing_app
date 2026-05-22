@@ -168,11 +168,7 @@ class ProjectOffersView extends StatelessWidget {
             },
           ),
         );
-        // return customEmptyMessage(
-        //   message: controller.showTabs
-        //       ? _emptyMessageForTab(controller.activeTabIndex.value)
-        //       : 'لا توجد عروض معلقة على هذا المشروع.',
-        // );
+    
       }
 
       return RefreshIndicator(
@@ -196,14 +192,14 @@ class ProjectOffersView extends StatelessWidget {
                     c.isProjectOwner && offer.status == OfferStatus.pending
                         ? () => c.rejectOffer(offer)
                         : null,
-                onWithdraw:
-                    c.isOfferOwner(offer) && offer.status == OfferStatus.pending
-                        ? () => c.withdrawOffer(offer)
-                        : null,
-                onEdit:
-                    c.isOfferOwner(offer) && offer.status == OfferStatus.pending
-                        ? () => c.editOffer(offer)
-                        : null,
+                // onWithdraw:
+                //     c.isOfferOwner(offer) && offer.status == OfferStatus.pending
+                //         ? () => c.withdrawOffer(offer)
+                //         : null,
+                // onEdit:
+                //     c.isOfferOwner(offer) && offer.status == OfferStatus.pending
+                //         ? () => c.editOffer(offer)
+                //         : null,
               ),
             );
           },

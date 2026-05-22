@@ -337,10 +337,9 @@ class AppPages {
       name: AppRoutes.projectDetails,
       page: () => ProjectDetailsView(),
       binding: BindingsBuilder(() {
-        // final projectId = NavigationService.routeArguments(
-        //     AppRoutes.projectDetails)?['projectId'];
-        // print("!!!!!!!!!!!!!!!! pid from binding: $projectId")
-        Get.lazyPut(() => ProjectDetailsController());
+        Get.create(() => ProjectDetailsController(), permanent: false);
+        // ⚠️ كل مرة تستدعي Get.find
+        // رح يطلع controller جديد.
       }),
       // binding: ProjectBinding(),
       middlewares: [AuthMiddleware()],
