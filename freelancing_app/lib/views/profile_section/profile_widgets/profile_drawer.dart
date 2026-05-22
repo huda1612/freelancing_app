@@ -115,6 +115,14 @@ class ProfileDrawer extends StatelessWidget {
                   onTap: () {
                     NavigationService.toNamed(AppRoutes.myProjects);
                   }),
+            
+            if (controller.isFreelancer && controller.isOwnProfile)
+              _drawerTile(
+                  icon: Icons.description_outlined,
+                  title: 'عروضي',
+                  onTap: () {
+                    NavigationService.toNamed(AppRoutes.freelancerOffers);
+                  }),
             // ListTile(
             //   leading: const Icon(Icons.folder_outlined,
             //       color: AppColors.vividPurple),

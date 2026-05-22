@@ -9,12 +9,13 @@ import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.d
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
-import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/chat_section/chat_views/chat_view.dart';
 import 'package:freelancing_platform/views/home_section/home_views/home_view.dart';
 import 'package:freelancing_platform/views/main_section/main_views/main_view.dart';
+import 'package:freelancing_platform/views/offer_section/offer_controller/freelancer_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
+import 'package:freelancing_platform/views/offer_section/offer_view/freelancer_offers_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/project_offers_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/dashboard_controller.dart';
@@ -385,6 +386,15 @@ class AppPages {
       page: () => ProjectOffersView(),
       binding: BindingsBuilder(() {
         Get.lazyPut(() => ProjectOffersController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+
+     GetPage(
+      name: AppRoutes.freelancerOffers,
+      page: () => FreelancerOffersView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => FreelancerOffersController());
       }),
       middlewares: [AuthMiddleware()],
     ),
