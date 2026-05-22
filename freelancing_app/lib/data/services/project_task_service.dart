@@ -6,6 +6,7 @@ import 'package:freelancing_platform/core/constants/data_constsnats/collections_
 import 'package:freelancing_platform/models/project_collections/project_task_progress.dart';
 import 'package:freelancing_platform/models/project_collections/task_model.dart';
 
+// كله بده تعديل 
 class ProjectTaskService {
   ProjectTaskService({
     FirebaseFirestore? firebaseFirestore,
@@ -30,10 +31,11 @@ class ProjectTaskService {
     });
   }
 
+//ok
   Future<Either<StatusClasses, List<TaskModel>>> getTasks({
     required String projectId,
   }) async {
-    final query = _tasksRef(projectId).orderBy('orderNumber');
+    final query = _tasksRef(projectId);
     return FirebaseCrud.runGetQuery<TaskModel>(
       query: query,
       fromMap: (data, id) => TaskModel.fromMap(data, id),
@@ -42,12 +44,12 @@ class ProjectTaskService {
 
   Future<Either<StatusClasses, TaskModel>> addTask({
     required String projectId,
-    required int orderNumber,
+    // required int orderNumber,
     String description = '',
   }) async {
     try {
       final doc = await _tasksRef(projectId).add({
-        'orderNumber': orderNumber,
+        // 'orderNumber': orderNumber,
         'description': description,
         'isDone': false,
         'createdAt': FieldValue.serverTimestamp(),
@@ -55,7 +57,7 @@ class ProjectTaskService {
       return Right(
         TaskModel(
           id: doc.id,
-          orderNumber: orderNumber,
+          // orderNumber: orderNumber,
           description: description,
         ),
       );

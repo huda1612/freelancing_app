@@ -6,6 +6,7 @@ import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
+
 // import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
@@ -42,190 +43,189 @@ class ProjectDetailsView extends StatelessWidget {
     //   );
     // }
     return GetBuilder<ProjectDetailsController>(
-        init: Get.find<ProjectDetailsController>(),
+        // init: Get.find<ProjectDetailsController>(),
         builder: (c) {
-          if (c.pageState == StatusClasses.isloading) {
-            return CustomLoading();
-          }
-          if (c.pageState != StatusClasses.isloading && c.project == null) {
-            return CustomErrorWidget(
-              message: "تعذر تحميل المشروع",
-            );
-          }
+      if (c.pageState == StatusClasses.isloading) {
+        return CustomLoading();
+      }
+      if (c.pageState != StatusClasses.isloading && c.project == null) {
+        return CustomErrorWidget(
+          message: "تعذر تحميل المشروع",
+        );
+      }
 
-          return ModalProgressHUD(
-            inAsyncCall: c.loadingDelete,
-            child: UiStateHandler(
-              status: c.pageState,
-              fetchDataFun: c.loadProject,
-              child: Scaffold(
-                backgroundColor: Colors.grey.shade100,
+      return ModalProgressHUD(
+        inAsyncCall: c.loadingDelete,
+        child: UiStateHandler(
+          status: c.pageState,
+          fetchDataFun: c.loadProject,
+          child: Scaffold(
+            backgroundColor: Colors.grey.shade100,
 
-                // App Bar
-                appBar: CustomAppBar(
-                  title: "تفاصيل المشروع",
-                  backgroundGradient: AppColors.gradientColor,
-                  trailingIcon: c.isOwnProject &&
-                          c.project!.status == ProjectStatus.newProject
-                      ? PopupMenuButton(
-                          icon: const Icon(Icons.more_vert,
-                              color: AppColors.white),
-                          onSelected: (val) => c.onDeleteProject(),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: "delete",
-                              child: Row(
-                                children: [
-                                  Icon(Icons.delete,
-                                      color: Colors.red, size: 18),
-                                  SizedBox(width: 8),
-                                  Text("حذف"),
-                                ],
-                              ),
+            // App Bar
+            appBar: CustomAppBar(
+              title: "تفاصيل المشروع",
+              backgroundGradient: AppColors.gradientColor,
+              trailingIcon: c.isOwnProject &&
+                      c.project!.status == ProjectStatus.newProject
+                  ? PopupMenuButton(
+                      icon: const Icon(Icons.more_vert, color: AppColors.white),
+                      onSelected: (val) => c.onDeleteProject(),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: "delete",
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, color: Colors.red, size: 18),
+                              SizedBox(width: 8),
+                              Text("حذف"),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : SizedBox.shrink(),
+            ),
+
+            body: SingleChildScrollView(
+              padding: EdgeInsets.all(AppSpaces.paddingMedium),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!c.isOwnProject)
+                    sectionCard(
+                      child: InkWell(
+                        onTap: () {
+                          // print(controller.project!.clientId);
+                          Get.toNamed(
+                            AppRoutes.userProfile,
+                            arguments: {"userId": c.project!.clientId},
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 22,
+                              backgroundColor: AppColors.lightPurple,
+                              child: Icon(Icons.person, color: Colors.white),
                             ),
-                          ],
-                        )
-                      : SizedBox.shrink(),
-                ),
-
-                body: SingleChildScrollView(
-                  padding: EdgeInsets.all(AppSpaces.paddingMedium),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (!c.isOwnProject)
-                        sectionCard(
-                          child: InkWell(
-                            onTap: () {
-                              // print(controller.project!.clientId);
-                              Get.toNamed(
-                                AppRoutes.userProfile,
-                                arguments: {"userId": c.project!.clientId},
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: AppColors.lightPurple,
-                                  child:
-                                      Icon(Icons.person, color: Colors.white),
+                            SizedBox(width: AppSpaces.heightSmall),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "صاحب المشروع",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.purple,
+                                  ),
                                 ),
-                                SizedBox(width: AppSpaces.heightSmall),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
-                                      "صاحب المشروع",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.purple,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      "اضغط لعرض الملف الشخصي",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 16,
-                                  color: Colors.grey,
+                                SizedBox(height: 4),
+                                Text(
+                                  "اضغط لعرض الملف الشخصي",
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.grey),
                                 ),
                               ],
                             ),
+                            const Spacer(),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  /// عنوان المشروع
+                  sectionCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        title("عنوان المشروع"),
+                        SizedBox(height: AppSpaces.heightSmall),
+                        Text(
+                          c.project!.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
+                      ],
+                    ),
+                  ),
 
-                      /// عنوان المشروع
-                      sectionCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            title("عنوان المشروع"),
-                            SizedBox(height: AppSpaces.heightSmall),
-                            Text(
-                              c.project!.title,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
+                  // وصف المشروع
+                  sectionCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        title("وصف المشروع"),
+                        SizedBox(height: AppSpaces.heightSmall),
+                        Text(
+                          c.project!.description,
+                          style: const TextStyle(height: 1.7, fontSize: 15),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
 
-                      // وصف المشروع
-                      sectionCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            title("وصف المشروع"),
-                            SizedBox(height: AppSpaces.heightSmall),
-                            Text(
-                              c.project!.description,
-                              style: const TextStyle(height: 1.7, fontSize: 15),
-                            ),
-                          ],
+                  /// الميزانية
+                  sectionCard(
+                    child: infoRow(
+                      Icons.attach_money,
+                      "الميزانية",
+                      c.project!.budget.toString(),
+                    ),
+                  ),
+
+                  // مدة التنفيذ
+                  sectionCard(
+                    child: infoRow(
+                      Icons.timer,
+                      "مدة التنفيذ",
+                      "${c.project!.durationDays.toString()} يوم",
+                    ),
+                  ),
+
+                  // التخصص
+                  sectionCard(
+                    child: infoRow(
+                      Icons.work,
+                      "التصنيف",
+                      c.project!.category.name,
+                    ),
+                  ),
+
+                  /// المهارات المطلوبة
+                  sectionCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        title("المهارات المطلوبة"),
+                        SizedBox(height: AppSpaces.heightSmall),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: c.project!.skillsRequired
+                              .map((skill) => skillChip(skill))
+                              .toList(),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
 
-                      /// الميزانية
-                      sectionCard(
-                        child: infoRow(
-                          Icons.attach_money,
-                          "الميزانية",
-                          c.project!.budget.toString(),
-                        ),
-                      ),
+                  SizedBox(height: AppSpaces.heightMedium),
 
-                      // مدة التنفيذ
-                      sectionCard(
-                        child: infoRow(
-                          Icons.timer,
-                          "مدة التنفيذ",
-                          "${c.project!.durationDays.toString()} يوم",
-                        ),
-                      ),
-
-                      // التخصص
-                      sectionCard(
-                        child: infoRow(
-                          Icons.work,
-                          "التصنيف",
-                          c.project!.category.name,
-                        ),
-                      ),
-
-                      /// المهارات المطلوبة
-                      sectionCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            title("المهارات المطلوبة"),
-                            SizedBox(height: AppSpaces.heightSmall),
-                            Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: c.project!.skillsRequired
-                                  .map((skill) => skillChip(skill))
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: AppSpaces.heightMedium),
-
-                      // زر تقديم عرض + زر العروض المقدّمة (للفريلانسر) أو عرض العروض للعميل
-                      if (c.project!.status == ProjectStatus.newProject)
-                        if (c.isFreelancer)
-                          Obx(() => Row(
+                  // زر تقديم عرض + زر العروض المقدّمة (للفريلانسر) أو عرض العروض للعميل
+                  if (c.project!.status == ProjectStatus.newProject)
+                    if (c.isFreelancer)
+                      Obx(() => Column(
+                            children: [
+                              Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
@@ -269,25 +269,45 @@ class ProjectDetailsView extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                              )),
-                      if (!c.isFreelancer)
-                        CustomButton(
-                          text: "عرض العروض المستلمة",
-                          onTap: c.onOfferView,
-                          prefix: const Icon(
-                            Icons.content_paste,
-                            color: AppColors.white,
-                          ),
-                          gradient: AppColors.gradientColor,
-                        ),
-                      SizedBox(height: AppSpaces.heightMedium),
-                    ],
-                  ),
-                ),
+                              ),
+                              if (c.hasOffer.value) ...[
+                                SizedBox(height: 15.h),
+                                CustomButton(
+                                  onTap: c.withdrawOffer,
+                                  prefix: Icon(
+                                    Icons.delete_outline,
+                                    color: AppColors.red,
+                                  ),
+                                  text: "سحب العرض",
+                                  buttonType: ButtonType.outlined,
+                                  color: Colors.red,
+                                  textStyle: AppTextStyles.link.copyWith(
+                                    color: Colors.red,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          )),
+
+                  if (!c.isFreelancer)
+                    CustomButton(
+                      text: "عرض العروض المستلمة",
+                      onTap: c.onOfferView,
+                      prefix: const Icon(
+                        Icons.content_paste,
+                        color: AppColors.white,
+                      ),
+                      gradient: AppColors.gradientColor,
+                    ),
+                  SizedBox(height: AppSpaces.heightMedium),
+                ],
               ),
             ),
-          );
-        });
+          ),
+        ),
+      );
+    });
   }
 
   /// Card

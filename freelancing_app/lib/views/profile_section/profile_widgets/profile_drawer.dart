@@ -21,6 +21,7 @@ class ProfileDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: AppColors.white,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,15 +63,15 @@ class ProfileDrawer extends StatelessWidget {
                 ),
               ),
             ]),
-            // if (controller.isClient && controller.isOwnProfile)
-            //   _drawerTile(
-            //       icon: Icons.folder_outlined,
-            //       title: 'مشاريعي',
-            //       onTap: () {
-            //         // Get.back();
-            //         NavigationService.toNamed(AppRoutes.myProjects);
-            //       }),
-
+            if ((controller.isClient || controller.isFreelancer) &&
+                controller.isOwnProfile)
+              _drawerTile(
+                  icon: Icons.folder_outlined,
+                  title: 'مشاريعي',
+                  onTap: () {
+                    NavigationService.toNamed(AppRoutes.myProjects);
+                  }),
+            const Spacer(),
             Obx(
               () => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,6 +108,7 @@ class ProfileDrawer extends StatelessWidget {
               ),
             ),
 
+
             if ((controller.isClient || controller.isFreelancer) &&
                 controller.isOwnProfile)
               _drawerTile(
@@ -141,14 +143,6 @@ class ProfileDrawer extends StatelessWidget {
               onTap: singoutController.signOut,
               title: "تسجيل الخروج",
             ),
-            // ListTile(
-            //   leading: const Icon(Icons.close, color: AppColors.grey),
-            //   title: Text(
-            //     'إغلاق',
-            //     style: AppTextStyles.link.copyWith(color: AppColors.darkGrey),
-            //   ),
-            //   onTap: () => Navigator.of(context).pop(),
-            // ),
           ],
         ),
       ),

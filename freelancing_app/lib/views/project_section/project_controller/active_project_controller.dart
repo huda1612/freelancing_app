@@ -11,6 +11,7 @@ import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/project_task_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
+import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/models/project_collections/task_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
@@ -18,22 +19,24 @@ import 'package:freelancing_platform/views/project_section/project_controller/fr
 import 'package:get/get.dart';
 
 class ActiveProjectController extends GetxController {
-  ActiveProjectController({
-    ProjectTaskService? taskService,
-    ProjectService? projectService,
-    OfferService? offerService,
-    UserService? userService,
-  })  : _taskService = taskService ?? ProjectTaskService(),
-        _projectService = projectService ?? ProjectService(),
-        _offerService = offerService ?? OfferService(),
-        _userService = userService ?? UserService();
+  // ActiveProjectController({
+  //   ProjectTaskService? taskService,
+  //   ProjectService? projectService,
+  //   OfferService? offerService,
+  //   UserService? userService,
+  // })  : _taskService = taskService ?? ProjectTaskService(),
+  //       _projectService = projectService ?? ProjectService(),
+  //       _offerService = offerService ?? OfferService(),
+  //       _userService = userService ?? UserService();
 
-  final ProjectTaskService _taskService;
-  final ProjectService _projectService;
-  final OfferService _offerService;
-  final UserService _userService;
+  final ProjectTaskService _taskService = ProjectTaskService();
+  final ProjectService _projectService = ProjectService();
+  final OfferService _offerService = OfferService();
+  final UserService _userService = UserService();
 
   final Rx<ProjectModel?> projectRx = Rx<ProjectModel?>(null);
+  final Rx<OfferModel?> offerRx = Rx<OfferModel?>(null);
+
   final tasks = <TaskModel>[].obs;
   final pageState = StatusClasses.isloading.obs;
   final partnerName = ''.obs;
@@ -42,7 +45,9 @@ class ActiveProjectController extends GetxController {
   final actionLoading = false.obs;
 
   final Map<String, TextEditingController> _taskControllers = {};
+
   ProjectModel? get project => projectRx.value;
+  OfferModel? get offer => offerRx.value;
 
   bool get isClient => UserSession.role == UserRole.client;
   bool get isFreelancer => UserSession.role == UserRole.freelancer;
@@ -54,7 +59,8 @@ class ActiveProjectController extends GetxController {
   bool get _isReadOnlyViewer {
     final status = project?.status;
     return status == ProjectStatus.completed ||
-        status == ProjectStatus.cancelled;
+        // status == ProjectStatus.cancelled ||
+        status == ProjectStatus.delivered;
   }
 
   bool get allTasksDone => tasks.isNotEmpty && tasks.every((t) => t.isDone);
@@ -76,7 +82,7 @@ class ActiveProjectController extends GetxController {
   Future<void> initPage() async {
     await _resolveProject();
     if (projectRx.value != null) {
-      _bootstrap();
+      await _bootstrap();
     } else {
       pageState.value = StatusClasses.customError('تعذر تحميل المشروع');
     }
@@ -124,12 +130,34 @@ class ActiveProjectController extends GetxController {
 
   Future<void> _bootstrap() async {
     pageState.value = StatusClasses.isloading;
-
     await Future.wait([
-      _loadPartnerInfo(),
+      loadOffer(),
       loadTasks(),
     ]);
+    await _loadPartnerInfo();
+
+    if (pageState.value != StatusClasses.isloading) {
+      return;
+    }
     pageState.value = StatusClasses.success;
+  }
+
+  Future<void> loadOffer() async {
+    final p = project;
+    if (p == null) return;
+    if (p.acceptedOfferId == null) return;
+    final offerRes = await _offerService.getAcceptedOfferForProject(
+      // projectId: p.id,
+      acceptedOfferId: p.acceptedOfferId!,
+    );
+    offerRes.fold(
+      (err) {
+        pageState.value = err;
+      },
+      (offer) {
+        offerRx.value = offer;
+      },
+    );
   }
 
   Future<void> _loadPartnerInfo() async {
@@ -139,27 +167,17 @@ class ActiveProjectController extends GetxController {
     partnerLoading.value = true;
 
     if (isClient) {
-      final offerRes = await _offerService.getAcceptedOfferForProject(
-        projectId: p.id,
-        acceptedOfferId: p.acceptedOfferId,
-      );
-      offerRes.fold(
-        (_) {},
-        (offer) {
-          if (offer != null) {
-            partnerUserId.value = offer.freelancerId;
-            partnerName.value =
-                offer.freelancerSnapshot.fullName.trim().isNotEmpty
-                    ? offer.freelancerSnapshot.fullName
-                    : offer.freelancerSnapshot.username;
-          }
-        },
-      );
+      if (offer != null) {
+        partnerUserId.value = offer!.freelancerId;
+        partnerName.value = offer!.freelancerSnapshot.fullName.trim().isNotEmpty
+            ? offer!.freelancerSnapshot.fullName
+            : offer!.freelancerSnapshot.username;
+      }
     } else {
       partnerUserId.value = p.clientId;
       final user = await _userService.fetchUserData(p.clientId);
       if (user != null) {
-        partnerName.value = '${user.fname} ${user.lname}'.trim();
+        partnerName.value = '${user.fname.trim()} ${user.lname.trim()}'.trim();
         if (partnerName.value.isEmpty) {
           partnerName.value = user.username;
         }
@@ -169,11 +187,12 @@ class ActiveProjectController extends GetxController {
     partnerLoading.value = false;
   }
 
+// اسا ما شفته
   Future<void> loadTasks() async {
-    final p = project;
-    if (p == null) return;
+    // final p = project;
+    if (project == null) return;
 
-    final res = await _taskService.getTasks(projectId: p.id);
+    final res = await _taskService.getTasks(projectId: project!.id);
     res.fold(
       (err) {
         customSnackbar(message: 'تعذر تحميل المهام');
@@ -212,26 +231,31 @@ class ActiveProjectController extends GetxController {
     );
   }
 
-  int get _nextTaskNumber {
-    if (tasks.isEmpty) return 1;
-    return tasks.map((t) => t.orderNumber).reduce((a, b) => a > b ? a : b) + 1;
-  }
+  // int get _nextTaskNumber {
+  //   if (tasks.isEmpty) return 1;
+  //   return tasks.map((t) => t.orderNumber).reduce((a, b) => a > b ? a : b) + 1;
+  // }
 
+  // Future<void> addTask() async {
+  //   if (!canEditTasks || project == null) return;
+
+  //   final res = await _taskService.addTask(
+  //     projectId: project!.id,
+  //     // orderNumber: _nextTaskNumber,
+  //   );
+
+  //   res.fold(
+  //     (_) => customSnackbar(message: 'تعذر إضافة المهمة'),
+  //     (task) {
+  //       _taskControllers[task.id] = TextEditingController();
+  //       tasks.add(task);
+  //     },
+  //   );
+  // }
   Future<void> addTask() async {
     if (!canEditTasks || project == null) return;
 
-    final res = await _taskService.addTask(
-      projectId: project!.id,
-      orderNumber: _nextTaskNumber,
-    );
-
-    res.fold(
-      (_) => customSnackbar(message: 'تعذر إضافة المهمة'),
-      (task) {
-        _taskControllers[task.id] = TextEditingController();
-        tasks.add(task);
-      },
-    );
+  //  task
   }
 
   Future<void> updateTaskDescription(String taskId, String description) async {

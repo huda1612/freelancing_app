@@ -1,20 +1,20 @@
 class TaskModel {
   final String id;
   //بدل الاسم
-  final int orderNumber;
+  // final int orderNumber;
   final String description;
   final bool isDone;
 
   TaskModel({
     required this.id,
-    required this.orderNumber,
+    // required this.orderNumber,
     this.description = '',
     this.isDone = false,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'orderNumber': orderNumber,
+      // 'orderNumber': orderNumber,
       'description': description,
       'isDone': isDone,
     };
@@ -23,9 +23,9 @@ class TaskModel {
   factory TaskModel.fromMap(Map<String, dynamic> map, String docId) {
     return TaskModel(
       id: docId,
-      orderNumber: (map['orderNumber'] as num?)?.toInt() ??
-          (map['order_number'] as num?)?.toInt() ??
-          0,
+      // orderNumber: (map['orderNumber'] as num?)?.toInt() ??
+      //     (map['order_number'] as num?)?.toInt() ??
+      //     0,
       description: map['description'] ?? map['name'] ?? '',
       isDone: map['isDone'] ?? false,
     );
@@ -37,7 +37,7 @@ class TaskModel {
   }) {
     return TaskModel(
       id: id,
-      orderNumber: orderNumber,
+      // orderNumber: orderNumber,
       description: description ?? this.description,
       isDone: isDone ?? this.isDone,
     );

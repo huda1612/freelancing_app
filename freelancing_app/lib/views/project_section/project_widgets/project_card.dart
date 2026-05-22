@@ -71,8 +71,8 @@ class ProjectCard extends StatelessWidget {
                     SizedBox(height: 10.h),
                     _InfoRow(
                       icon: Icons.category_outlined,
-                      label: 'التخصص',
-                      value: _specializationText,
+                      label: 'التصنيف',
+                      value: _categoryText,
                     ),
                     SizedBox(height: 8.h),
                     _InfoRow(
@@ -111,7 +111,7 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  String get _specializationText {
+  String get _categoryText {
     if (project.category.name.trim().isNotEmpty) {
       return project.category.name;
     }

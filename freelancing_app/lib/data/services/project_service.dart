@@ -70,6 +70,7 @@ class ProjectService {
   //اضافات جديدية 
   
   /// كل مشاريع العميل (تُصفّى حسب الحالة في الواجهة).
+  //ok
   Future<Either<StatusClasses, List<ProjectModel>>> getClientProjects({
     required String clientId,
   }) async {
@@ -108,6 +109,7 @@ class ProjectService {
     return updateProjectStatus(
       projectId: projectId,
       status: ProjectStatus.newProject,
+      
     );
   }
 

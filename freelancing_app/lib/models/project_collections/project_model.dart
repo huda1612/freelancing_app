@@ -2,12 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
 
-// enum ProjectStatus {
-//   newProject,
-//   inProgress,
-//   completed,
-// }
-
 class ProjectModel {
   final String id;
   final String clientId;
@@ -20,6 +14,8 @@ class ProjectModel {
   final String status;
   final String? acceptedOfferId;
   final String? acceptedFreelancerId;
+  final int? tasksCount;
+  final int? completedTasksCount;
 
   final Timestamp? createdAt;
 
@@ -35,6 +31,8 @@ class ProjectModel {
     this.status = ProjectStatus.newProject,
     this.acceptedOfferId,
     this.acceptedFreelancerId,
+    this.tasksCount,
+    this.completedTasksCount,
     this.createdAt,
   });
 
@@ -50,6 +48,8 @@ class ProjectModel {
       'status': status,
       'acceptedOfferId': acceptedOfferId,
       'acceptedFreelancerId': acceptedFreelancerId,
+      'tasksCount': tasksCount,
+      'completedTasksCount': completedTasksCount,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
     };
   }
@@ -67,6 +67,8 @@ class ProjectModel {
       status: map['status'] ?? 'new',
       acceptedOfferId: map['acceptedOfferId'],
       acceptedFreelancerId: map['acceptedFreelancerId'],
+      tasksCount: map['tasksCount'],
+      completedTasksCount: map['completedTasksCount'],
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );
@@ -83,6 +85,8 @@ class ProjectModel {
     String? status,
     String? acceptedOfferId,
     String? acceptedFreelancerId,
+    int? tasksCount,
+    int? completedTasksCount,
     Timestamp? createdAt,
   }) {
     return ProjectModel(
@@ -97,32 +101,9 @@ class ProjectModel {
       status: status ?? this.status,
       acceptedOfferId: acceptedOfferId ?? this.acceptedOfferId,
       acceptedFreelancerId: acceptedFreelancerId ?? this.acceptedFreelancerId,
+      tasksCount: tasksCount ?? this.tasksCount,
+      completedTasksCount: completedTasksCount ?? this.completedTasksCount,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 }
-
-
-
-
-//   static String statusToString(ProjectStatus status) {
-//   switch (status) {
-//     case ProjectStatus.newProject:
-//       return 'new';
-//     case ProjectStatus.inProgress:
-//       return 'in_progress';
-//     case ProjectStatus.completed:
-//       return 'completed';
-//   }
-// }
-
-// static ProjectStatus stringToStatus(String status) {
-//   switch (status) {
-//     case 'in_progress':
-//       return ProjectStatus.inProgress;
-//     case 'completed':
-//       return ProjectStatus.completed;
-//     default:
-//       return ProjectStatus.newProject;
-//   }
-// }

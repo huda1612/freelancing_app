@@ -284,7 +284,6 @@ class OfferService {
             }
             final ts = FieldValue.serverTimestamp();
 
-      
             /// تحديث المشروع
             transaction.update(projectRef, {
               'status': ProjectStatus.inProgress,
@@ -348,29 +347,43 @@ class OfferService {
     return s == OfferStatus.pending;
   }
 
-  //جديد
-
   /// العرض المقبول على مشروع معيّن (إن وُجد).
-  Future<Either<StatusClasses, OfferModel?>> getAcceptedOfferForProject({
-    required String projectId,
-    String? acceptedOfferId,
+  Future<Either<StatusClasses, OfferModel>> getAcceptedOfferForProject({
+    // required String projectId,
+   required String acceptedOfferId,
   }) async {
-    if (acceptedOfferId != null && acceptedOfferId.isNotEmpty) {
-      final doc = await _firebaseFirestore
+    // if (acceptedOfferId != null && acceptedOfferId.isNotEmpty) {
+      final docRef = _firebaseFirestore
           .collection(CollectionsNames.offers)
-          .doc(acceptedOfferId)
-          .get();
-      if (doc.exists && doc.data() != null) {
-        return Right(OfferModel.fromMap(doc.data()!, doc.id));
-      }
-    }
+          .doc(acceptedOfferId);
+      final offerRes = FirebaseCrud.fetchDocument(
+          docRef: docRef, fromMap: (map, id) => OfferModel.fromMap(map, id));
+      return offerRes;
+    // } else {
+    //   final query = _firebaseFirestore
+    //       .collection(CollectionsNames.offers)
+    //       .where("projectId", isEqualTo: projectId)
+    //       .where("status", isEqualTo: OfferStatus.accepted);
+    //   final offerRes = await FirebaseCrud.runGetQuery(
+    //       query: query, fromMap: (map, id) => OfferModel.fromMap(map, id));
+    //   return offerRes.fold((err) => Left(err), (list) => Right(list.first));
+    // }
+    // if (acceptedOfferId != null && acceptedOfferId.isNotEmpty) {
+    //   final doc = await _firebaseFirestore
+    //       .collection(CollectionsNames.offers)
+    //       .doc(acceptedOfferId)
+    //       .get();
+    //   if (doc.exists && doc.data() != null) {
+    //     return Right(OfferModel.fromMap(doc.data()!, doc.id));
+    //   }
+    // }
 
-    final res = await getProjectOffers(projectId: projectId);
-    return res.map((list) {
-      for (final offer in list) {
-        if (offer.status == OfferStatus.accepted) return offer;
-      }
-      return null;
-    });
+    // final res = await getProjectOffers(projectId: projectId);
+    // return res.map((list) {
+    //   for (final offer in list) {
+    //     if (offer.status == OfferStatus.accepted) return offer;
+    //   }
+    //   return null;
+    // });
   }
 }
