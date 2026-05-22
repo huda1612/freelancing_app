@@ -16,6 +16,14 @@ class ProjectService {
 
   final FirebaseFirestore _firebaseFirestore;
 
+  Future<Either<StatusClasses, ProjectModel>> getProject(String projectId) async {
+    final docRef = _firebaseFirestore.collection(CollectionsNames.projects).doc(projectId);
+    return FirebaseCrud.fetchDocument(
+      docRef: docRef,
+      fromMap: (data , id) => ProjectModel.fromMap(data,id),
+    );
+  }
+
   Future<StatusClasses> addProject(ProjectModel project) async {
     final collection = _firebaseFirestore.collection(CollectionsNames.projects);
     return FirebaseCrud.createDocument(

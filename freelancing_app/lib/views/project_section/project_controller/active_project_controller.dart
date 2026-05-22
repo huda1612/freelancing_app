@@ -57,8 +57,7 @@ class ActiveProjectController extends GetxController {
         status == ProjectStatus.cancelled;
   }
 
-  bool get allTasksDone =>
-      tasks.isNotEmpty && tasks.every((t) => t.isDone);
+  bool get allTasksDone => tasks.isNotEmpty && tasks.every((t) => t.isDone);
 
   bool get canDeliverProject =>
       canEditTasks && allTasksDone && !(actionLoading.value);
@@ -69,9 +68,13 @@ class ActiveProjectController extends GetxController {
       !(actionLoading.value);
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    _resolveProject();
+    await initPage();
+  }
+
+  Future<void> initPage() async {
+    await _resolveProject();
     if (projectRx.value != null) {
       _bootstrap();
     } else {
@@ -79,13 +82,23 @@ class ActiveProjectController extends GetxController {
     }
   }
 
-  void _resolveProject() {
+  Future<void> _resolveProject() async {
     final nestedArgs =
         NavigationService.routeArguments(AppRoutes.activeProject);
     final nestedProject = nestedArgs?['project'];
     if (nestedProject is ProjectModel) {
       projectRx.value = nestedProject;
       return;
+    }
+    //بحال كان مرسل رقم المشروع(من الاشعار)
+    final nestedProjectId = nestedArgs?['projectId'];
+    if (nestedProjectId != null) {
+      final projectRes = await ProjectService().getProject(nestedProjectId!);
+      projectRes.fold((err) async {
+        pageState.value = err;
+      }, (p) async {
+        projectRx.value = p;
+      });
     }
 
     final args = Get.arguments;
@@ -135,9 +148,10 @@ class ActiveProjectController extends GetxController {
         (offer) {
           if (offer != null) {
             partnerUserId.value = offer.freelancerId;
-            partnerName.value = offer.freelancerSnapshot.fullName.trim().isNotEmpty
-                ? offer.freelancerSnapshot.fullName
-                : offer.freelancerSnapshot.username;
+            partnerName.value =
+                offer.freelancerSnapshot.fullName.trim().isNotEmpty
+                    ? offer.freelancerSnapshot.fullName
+                    : offer.freelancerSnapshot.username;
           }
         },
       );

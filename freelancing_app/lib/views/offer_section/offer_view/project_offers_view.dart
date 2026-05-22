@@ -5,7 +5,6 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
-import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
@@ -29,26 +28,28 @@ class ProjectOffersView extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
-        child: controller.project == null || controller.projectId == null
-            ? CustomErrorWidget(
-                message: "تعذر تحميل العروض، معلومات المشروع ناقصة",
-              )
-            : Obx(
-                () => ModalProgressHUD(
-                  inAsyncCall:
-                      controller.isAccepting.value == StatusClasses.isloading,
-                  child: UiStateHandler(
-                    status: controller.pageState.value,
-                    fetchDataFun: controller.loadOffers,
-                    child: Column(
-                      children: [
-                        if (controller.showTabs) _tabsBar(),
-                        Expanded(child: _buildOffersList(context)),
-                      ],
-                    ),
-                  ),
-                ),
+        child:
+            // controller.project == null || controller.projectId == null
+            //     ? CustomErrorWidget(
+            //         message: "تعذر تحميل العروض، معلومات المشروع ناقصة",
+            //       )
+            //     :
+            Obx(
+          () => ModalProgressHUD(
+            inAsyncCall:
+                controller.isAccepting.value == StatusClasses.isloading,
+            child: UiStateHandler(
+              status: controller.pageState.value,
+              fetchDataFun: controller.loadOffers,
+              child: Column(
+                children: [
+                  if (controller.showTabs) _tabsBar(),
+                  Expanded(child: _buildOffersList(context)),
+                ],
               ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -143,6 +144,7 @@ class ProjectOffersView extends StatelessWidget {
       final items = controller.offersForActiveTab();
       if (items.isEmpty) {
         return RefreshIndicator(
+          color: AppColors.vividPurple,
           onRefresh: controller.loadOffers,
           child: LayoutBuilder(
             builder: (context, constraints) {

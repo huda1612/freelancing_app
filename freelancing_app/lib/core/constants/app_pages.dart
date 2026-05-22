@@ -12,8 +12,10 @@ import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
 import 'package:freelancing_platform/views/chat_section/chat_views/chat_view.dart';
 import 'package:freelancing_platform/views/home_section/home_views/home_view.dart';
 import 'package:freelancing_platform/views/main_section/main_views/main_view.dart';
+import 'package:freelancing_platform/views/offer_section/offer_controller/freelancer_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/submit_offer_controller.dart';
+import 'package:freelancing_platform/views/offer_section/offer_view/freelancer_offers_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/project_offers_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/dashboard_controller.dart';
@@ -202,7 +204,7 @@ class AppPages {
       middlewares: [AdminMiddleware()],
     ),
 
-    //**********************************************profile pages****************************************
+    //**********************************************main pages****************************************
     GetPage(
       name: AppRoutes.home,
       page: () => HomeView(),
@@ -214,11 +216,12 @@ class AppPages {
       middlewares: [AuthMiddleware()],
     ),
 
+    //**********************************************profile pages****************************************
     GetPage(
       name: AppRoutes.myProfile,
       page: () => ProfileView(),
       binding: BindingsBuilder(() {
-        // Get.lazyPut(() => ProfileController());
+        Get.lazyPut(() => SignOutController());
         Get.lazyPut(
           () => ProfileController(userId: UserSession.uid!),
           tag: UserSession.uid!,
@@ -232,6 +235,7 @@ class AppPages {
       name: AppRoutes.userProfile,
       page: () => ProfileView(),
       binding: BindingsBuilder(() {
+        Get.lazyPut(() => SignOutController());
         // Get.lazyPut(() => ProfileController());\
         // final userId =
         // NavigationService.routeArguments(AppRoutes.userProfile)?['userId'];
@@ -244,10 +248,12 @@ class AppPages {
       }),
       middlewares: [AuthMiddleware()],
     ),
+
     GetPage(
         name: AppRoutes.personalInfo,
         page: () => const PersonalInfoView(),
         middlewares: [AuthMiddleware()]),
+
     GetPage(
         name: AppRoutes.workDetails,
         page: () => WorkDetailsView(),
@@ -332,6 +338,9 @@ class AppPages {
       name: AppRoutes.projectDetails,
       page: () => ProjectDetailsView(),
       binding: BindingsBuilder(() {
+        // final projectId = NavigationService.routeArguments(
+        //     AppRoutes.projectDetails)?['projectId'];
+        // print("!!!!!!!!!!!!!!!! pid from binding: $projectId")
         Get.lazyPut(() => ProjectDetailsController());
       }),
       // binding: ProjectBinding(),
@@ -377,6 +386,15 @@ class AppPages {
       page: () => ProjectOffersView(),
       binding: BindingsBuilder(() {
         Get.lazyPut(() => ProjectOffersController());
+      }),
+      middlewares: [AuthMiddleware()],
+    ),
+
+     GetPage(
+      name: AppRoutes.freelancerOffers,
+      page: () => FreelancerOffersView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => FreelancerOffersController());
       }),
       middlewares: [AuthMiddleware()],
     ),

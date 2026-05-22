@@ -64,6 +64,8 @@ class AppRoutes {
   //offers routes
   static const submitOffer = '/submit_offer';
   static const projectOffers = '/project_offers';
+    static const freelancerOffers = '/freelancer_offers';
+
 
   //settings routes
 }

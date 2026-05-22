@@ -6,7 +6,6 @@ import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/dashboard_controller.dart';
 import 'package:get/get.dart';
 
-
 class DashboardView extends StatelessWidget {
   DashboardView({super.key});
 
@@ -21,14 +20,11 @@ class DashboardView extends StatelessWidget {
         appBar: CustomAppBar(
           title: 'لوحة التحكم',
           backgroundGradient: AppColors.gradientColor,
-          leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onLeadingPressed: () => Get.back(),
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(AppSpaces.paddingMedium),
           child: Column(
             children: [
-
               /// قسم الإحصائيات
               Container(
                 decoration: BoxDecoration(
@@ -44,7 +40,6 @@ class DashboardView extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-
                     /// الإحصائيات
                     Padding(
                       padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
@@ -153,7 +148,7 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  /// الكروت الداخلية 
+  /// الكروت الداخلية
   BoxDecoration get _cardDecoration => BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(8),
