@@ -90,7 +90,7 @@ class ClientProjectController extends GetxController {
   }
 
   //ينفذ عند الموافقه على انهاء المشروع
-  //بده اسا تعديل بس نضيف الدفع 
+  //بده اسا تعديل بس نضيف الدفع
   Future<void> approveProjectCompletion(ProjectModel project) async {
     _startAction(project.id);
     //1-تغيير حاله المشروع الى منتهي
@@ -121,17 +121,17 @@ class ClientProjectController extends GetxController {
     customSnackbar(message: "تم إكمال المشروع بنجاح");
   }
 
-  Future<void> republishProject(ProjectModel project) async {
-    _startAction(project.id);
-    final res = await _projectService.republishProject(project.id);
-    _endAction(project.id);
-    if (res != StatusClasses.success) {
-      customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
-      return;
-    }
-    _updateLocalProjectStatus(project.id, ProjectStatus.newProject);
-    customSnackbar(message: "تم إعادة نشر المشروع");
-  }
+  // Future<void> republishProject(ProjectModel project) async {
+  //   _startAction(project.id);
+  //   final res = await _projectService.republishProject(project.id);
+  //   _endAction(project.id);
+  //   if (res != StatusClasses.success) {
+  //     customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
+  //     return;
+  //   }
+  //   _updateLocalProjectStatus(project.id, ProjectStatus.newProject);
+  //   customSnackbar(message: "تم إعادة نشر المشروع");
+  // }
 
   void confirmDeleteProject(ProjectModel project) {
     Get.defaultDialog(

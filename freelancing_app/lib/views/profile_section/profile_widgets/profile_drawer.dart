@@ -71,6 +71,13 @@ class ProfileDrawer extends StatelessWidget {
                   onTap: () {
                     NavigationService.toNamed(AppRoutes.myProjects);
                   }),
+            if (controller.isFreelancer && controller.isOwnProfile)
+              _drawerTile(
+                  icon: Icons.description_outlined,
+                  title: 'عروضي',
+                  onTap: () {
+                    NavigationService.toNamed(AppRoutes.freelancerOffers);
+                  }),
             const Spacer(),
             Obx(
               () => Column(
@@ -107,37 +114,6 @@ class ProfileDrawer extends StatelessWidget {
                 ],
               ),
             ),
-
-
-            if ((controller.isClient || controller.isFreelancer) &&
-                controller.isOwnProfile)
-              _drawerTile(
-                  icon: Icons.folder_outlined,
-                  title: 'مشاريعي',
-                  onTap: () {
-                    NavigationService.toNamed(AppRoutes.myProjects);
-                  }),
-            
-            if (controller.isFreelancer && controller.isOwnProfile)
-              _drawerTile(
-                  icon: Icons.description_outlined,
-                  title: 'عروضي',
-                  onTap: () {
-                    NavigationService.toNamed(AppRoutes.freelancerOffers);
-                  }),
-            // ListTile(
-            //   leading: const Icon(Icons.folder_outlined,
-            //       color: AppColors.vividPurple),
-            //   title: Text(
-            //     'مشاريعي',
-            //     style: AppTextStyles.body.copyWith(color: AppColors.black),
-            //   ),
-            //   onTap: () {
-            //     Navigator.of(context).pop();
-            //     NavigationService.toNamed(AppRoutes.myProjects);
-            //   },
-            // ),
-            const Spacer(),
             _drawerTile(
               icon: Icons.output_rounded,
               onTap: singoutController.signOut,

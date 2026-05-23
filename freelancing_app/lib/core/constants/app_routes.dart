@@ -1,3 +1,5 @@
+import 'package:freelancing_platform/core/classes/app_notifications.dart';
+
 class AppRoutes {
   static const main = '/main';
 
@@ -34,6 +36,7 @@ class AppRoutes {
 
   //home routes
   static const home = '/home';
+  static const notifications = '/notifications';
 
   //profile routes
   // static const profile = '/profile';

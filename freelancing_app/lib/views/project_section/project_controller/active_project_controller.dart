@@ -19,42 +19,42 @@ import 'package:freelancing_platform/views/project_section/project_controller/fr
 import 'package:get/get.dart';
 
 class ActiveProjectController extends GetxController {
-  // ActiveProjectController({
-  //   ProjectTaskService? taskService,
-  //   ProjectService? projectService,
-  //   OfferService? offerService,
-  //   UserService? userService,
-  // })  : _taskService = taskService ?? ProjectTaskService(),
-  //       _projectService = projectService ?? ProjectService(),
-  //       _offerService = offerService ?? OfferService(),
-  //       _userService = userService ?? UserService();
-
+  //services
   final ProjectTaskService _taskService = ProjectTaskService();
   final ProjectService _projectService = ProjectService();
   final OfferService _offerService = OfferService();
   final UserService _userService = UserService();
 
+//data
   final Rx<ProjectModel?> projectRx = Rx<ProjectModel?>(null);
   final Rx<OfferModel?> offerRx = Rx<OfferModel?>(null);
 
   final tasks = <TaskModel>[].obs;
-  final pageState = StatusClasses.isloading.obs;
   final partnerName = ''.obs;
   final partnerUserId = ''.obs;
+
+  //state
+  final pageState = StatusClasses.isloading.obs;
   final partnerLoading = false.obs;
   final actionLoading = false.obs;
+  final addIsLoading = false.obs;
 
+  //controllers
   final Map<String, TextEditingController> _taskControllers = {};
+  final newTaskController = Rx<TextEditingController?>(null);
 
+  //getters
   ProjectModel? get project => projectRx.value;
   OfferModel? get offer => offerRx.value;
 
   bool get isClient => UserSession.role == UserRole.client;
   bool get isFreelancer => UserSession.role == UserRole.freelancer;
+
   bool get canEditTasks =>
       isFreelancer &&
       project?.status == ProjectStatus.inProgress &&
       !_isReadOnlyViewer;
+  bool taskIsEditing(String taskId) => _taskControllers.containsKey(taskId);
 
   bool get _isReadOnlyViewer {
     final status = project?.status;
@@ -66,12 +66,18 @@ class ActiveProjectController extends GetxController {
   bool get allTasksDone => tasks.isNotEmpty && tasks.every((t) => t.isDone);
 
   bool get canDeliverProject =>
-      canEditTasks && allTasksDone && !(actionLoading.value);
+      canEditTasks &&
+      allTasksDone &&
+      !(actionLoading.value) &&
+      !(addIsLoading.value);
 
   bool get canApproveCompletion =>
       isClient &&
       project?.status == ProjectStatus.delivered &&
-      !(actionLoading.value);
+      !(actionLoading.value) &&
+      !(addIsLoading.value);
+
+  bool get isAddingTask => newTaskController.value != null;
 
   @override
   void onInit() async {
@@ -165,22 +171,19 @@ class ActiveProjectController extends GetxController {
     if (p == null) return;
 
     partnerLoading.value = true;
+    if (p.acceptedFreelancerId == null) {
+      partnerName.value = "unKnown";
+      partnerLoading.value = false;
 
-    if (isClient) {
-      if (offer != null) {
-        partnerUserId.value = offer!.freelancerId;
-        partnerName.value = offer!.freelancerSnapshot.fullName.trim().isNotEmpty
-            ? offer!.freelancerSnapshot.fullName
-            : offer!.freelancerSnapshot.username;
-      }
-    } else {
-      partnerUserId.value = p.clientId;
-      final user = await _userService.fetchUserData(p.clientId);
-      if (user != null) {
-        partnerName.value = '${user.fname.trim()} ${user.lname.trim()}'.trim();
-        if (partnerName.value.isEmpty) {
-          partnerName.value = user.username;
-        }
+      return;
+    }
+    partnerUserId.value = isClient ? p.clientId : p.acceptedFreelancerId!;
+    final user = await _userService
+        .fetchUserData(isClient ? p.clientId : p.acceptedFreelancerId!);
+    if (user != null) {
+      partnerName.value = '${user.fname.trim()} ${user.lname.trim()}'.trim();
+      if (partnerName.value.isEmpty) {
+        partnerName.value = user.username;
       }
     }
 
@@ -199,31 +202,31 @@ class ActiveProjectController extends GetxController {
         pageState.value = err;
       },
       (list) {
-        _syncTaskControllers(list);
+        // _syncTaskControllers(list);
         tasks.assignAll(list);
       },
     );
   }
 
-  void _syncTaskControllers(List<TaskModel> list) {
-    final ids = list.map((t) => t.id).toSet();
-    for (final id in _taskControllers.keys.toList()) {
-      if (!ids.contains(id)) {
-        _taskControllers[id]?.dispose();
-        _taskControllers.remove(id);
-      }
-    }
-    for (final task in list) {
-      final ctrl = _taskControllers.putIfAbsent(
-        task.id,
-        () => TextEditingController(text: task.description),
-      );
-      if (ctrl.text != task.description) {
-        ctrl.text = task.description;
-      }
-    }
-  }
-
+  // void _syncTaskControllers(List<TaskModel> list) {
+  //   final ids = list.map((t) => t.id).toSet();
+  //   for (final id in _taskControllers.keys.toList()) {
+  //     if (!ids.contains(id)) {
+  //       _taskControllers[id]?.dispose();
+  //       _taskControllers.remove(id);
+  //     }
+  //   }
+  //   for (final task in list) {
+  //     final ctrl = _taskControllers.putIfAbsent(
+  //       task.id,
+  //       () => TextEditingController(text: task.description),
+  //     );
+  //     if (ctrl.text != task.description) {
+  //       ctrl.text = task.description;
+  //     }
+  //   }
+  // }
+//delet please
   TextEditingController taskController(String taskId) {
     return _taskControllers.putIfAbsent(
       taskId,
@@ -231,46 +234,61 @@ class ActiveProjectController extends GetxController {
     );
   }
 
-  // int get _nextTaskNumber {
-  //   if (tasks.isEmpty) return 1;
-  //   return tasks.map((t) => t.orderNumber).reduce((a, b) => a > b ? a : b) + 1;
-  // }
+  //ok
+  Future<void> onAddNewTask() async {
+    if (!canEditTasks || project == null) return;
+    if (isAddingTask) return;
+    newTaskController.value = TextEditingController(text: "");
+  }
 
-  // Future<void> addTask() async {
-  //   if (!canEditTasks || project == null) return;
+//ok
+  Future<void> cencelAddingNewTask() async {
+    newTaskController.value = null;
+  }
 
-  //   final res = await _taskService.addTask(
-  //     projectId: project!.id,
-  //     // orderNumber: _nextTaskNumber,
-  //   );
+//ok
+  void onChangeNewTask(String value) {
+    newTaskController.value!.text = value;
+  }
 
-  //   res.fold(
-  //     (_) => customSnackbar(message: 'تعذر إضافة المهمة'),
-  //     (task) {
-  //       _taskControllers[task.id] = TextEditingController();
-  //       tasks.add(task);
-  //     },
-  //   );
-  // }
-  Future<void> addTask() async {
+//ok
+  Future<void> saveNewTask() async {
     if (!canEditTasks || project == null) return;
 
-  //  task
+    final newTask = newTaskController.value?.text;
+    if (newTask == null || newTask.trim().isEmpty) {
+      customSnackbar(message: "لا يمكن اضافة مهمة فارغة");
+      return;
+    }
+    addIsLoading.value = true;
+    final addResponse = await _taskService.addTask(
+        projectId: project!.id, description: newTask);
+    if (addResponse != StatusClasses.success) {
+      customSnackbar(
+          message: "حدث خطأ :${addResponse.type} / ${addResponse.message}");
+      addIsLoading.value = false;
+      return;
+    }
+    await loadTasks();
+    // if(pageState.value != StatusClasses.success) return;
+    newTaskController.value = null;
+    addIsLoading.value = false;
+    customSnackbar(message: "تمت إضافة المهمه بنجاح");
   }
 
   Future<void> updateTaskDescription(String taskId, String description) async {
-    if (!canEditTasks || project == null) return;
+    // if (!canEditTasks || project == null) return;
 
-    final index = tasks.indexWhere((t) => t.id == taskId);
-    if (index == -1) return;
+    // final index = tasks.indexWhere((t) => t.id == taskId);
+    // if (index == -1) return;
 
-    tasks[index] = tasks[index].copyWith(description: description);
+    // tasks[index] = tasks[index].copyWith(description: description);
 
-    await _taskService.updateTask(
-      projectId: project!.id,
-      taskId: taskId,
-      data: {'description': description},
-    );
+    // await _taskService.updateTask(
+    //   projectId: project!.id,
+    //   taskId: taskId,
+    //   data: {'description': description},
+    // );
   }
 
   Future<void> toggleTaskDone(String taskId, bool? value) async {
@@ -281,11 +299,11 @@ class ActiveProjectController extends GetxController {
 
     tasks[index] = tasks[index].copyWith(isDone: value);
 
-    await _taskService.updateTask(
-      projectId: project!.id,
-      taskId: taskId,
-      data: {'isDone': value},
-    );
+    // await _taskService.updateTask(
+    //   projectId: project!.id,
+    //   taskId: taskId,
+    //   data: {'isDone': value},
+    // );
   }
 
   Future<void> deliverProject() async {
@@ -336,18 +354,18 @@ class ActiveProjectController extends GetxController {
     final p = project;
     if (p == null) return;
 
-    projectRx.value = ProjectModel(
-      id: p.id,
-      clientId: p.clientId,
-      title: p.title,
-      description: p.description,
-      category: p.category,
-      skillsRequired: p.skillsRequired,
-      budget: p.budget,
-      durationDays: p.durationDays,
+    projectRx.value = p.copyWith(
+      // id: p.id,
+      // clientId: p.clientId,
+      // title: p.title,
+      // description: p.description,
+      // category: p.category,
+      // skillsRequired: p.skillsRequired,
+      // budget: p.budget,
+      // durationDays: p.durationDays,
       status: status,
-      acceptedOfferId: p.acceptedOfferId,
-      createdAt: p.createdAt,
+      // acceptedOfferId: p.acceptedOfferId,
+      // createdAt: p.createdAt,
     );
 
     if (Get.isRegistered<ClientProjectController>()) {
@@ -385,7 +403,7 @@ class ActiveProjectController extends GetxController {
     );
   }
 
-  void goBack() => NavigationService.back();
+  // void goBack() => NavigationService.back();
 
   @override
   void onClose() {
