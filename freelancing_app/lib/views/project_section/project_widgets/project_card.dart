@@ -14,6 +14,7 @@ class ProjectCard extends StatelessWidget {
     this.tasksDone,
     this.tasksTotal,
     this.footer,
+    this.header,
     this.marginBottom = true,
   });
 
@@ -22,6 +23,7 @@ class ProjectCard extends StatelessWidget {
   final int? tasksDone;
   final int? tasksTotal;
   final Widget? footer;
+  final Widget? header;
   final bool marginBottom;
 
   bool get _showTaskProgress =>
@@ -59,14 +61,20 @@ class ProjectCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      project.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.blacksubheading.copyWith(
-                        fontSize: 18.sp,
-                        color: AppColors.darkPurple,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          project.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.blacksubheading.copyWith(
+                            fontSize: 18.sp,
+                            color: AppColors.darkPurple,
+                          ),
+                        ),
+                        header ?? SizedBox.shrink()
+                      ],
                     ),
                     SizedBox(height: 10.h),
                     _InfoRow(

@@ -1,45 +1,51 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TaskModel {
   final String id;
-  //بدل الاسم
-  // final int orderNumber;
   final String description;
   final bool isDone;
+  final bool isApproved;
+  final Timestamp? createdAt;
 
   TaskModel({
     required this.id,
-    // required this.orderNumber,
-    this.description = '',
+    required this.description,
     this.isDone = false,
+    this.isApproved = false,
+    this.createdAt,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      // 'orderNumber': orderNumber,
       'description': description,
       'isDone': isDone,
+      'isApproved': isApproved,
+      'createdAt': createdAt ?? FieldValue.serverTimestamp(),
     };
   }
 
   factory TaskModel.fromMap(Map<String, dynamic> map, String docId) {
     return TaskModel(
       id: docId,
-      // orderNumber: (map['orderNumber'] as num?)?.toInt() ??
-      //     (map['order_number'] as num?)?.toInt() ??
-      //     0,
       description: map['description'] ?? map['name'] ?? '',
       isDone: map['isDone'] ?? false,
+      isApproved: map['isApproved'] ?? false,
+      createdAt:
+          map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
     );
   }
 
-  TaskModel copyWith({
-    String? description,
-    bool? isDone,
-  }) {
+  TaskModel copyWith(
+      {String? description,
+      bool? isDone,
+      bool? isApproved,
+      Timestamp? createdAt}) {
     return TaskModel(
       id: id,
-      // orderNumber: orderNumber,
       description: description ?? this.description,
       isDone: isDone ?? this.isDone,
+      isApproved: isApproved ?? this.isApproved,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

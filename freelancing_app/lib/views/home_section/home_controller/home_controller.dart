@@ -109,8 +109,7 @@ class HomeController extends GetxController {
   }
 
   void openNotifications() {
-    // مؤقتاً نوجه للـ dashboard حتى يتم إنشاء صفحة الإشعارات
-    // Get.toNamed(AppRoutes.dashboard);
+    Get.toNamed(AppRoutes.notifications);
   }
 
   void openProjectDetails(ProjectModel project) {

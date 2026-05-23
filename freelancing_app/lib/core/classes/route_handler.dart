@@ -34,9 +34,9 @@ class RouteHandler {
     }
 
     //منتحقق من الايميل
-    // if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-    //   return AppRoutes.verifyEmail;
-    // }
+    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+      return AppRoutes.verifyEmail;
+    }
 
     //اذا ما ادمن فمنتحقق من حالة المستخدم
     final docRef = FirebaseFirestore.instance
@@ -73,8 +73,6 @@ class RouteHandler {
           }
         case UserStatus.approved:
           {
-            //هي بدها تعديل للهوم !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // return AppRoutes.approved;
             return AppRoutes.main;
           }
         case UserStatus.pending:

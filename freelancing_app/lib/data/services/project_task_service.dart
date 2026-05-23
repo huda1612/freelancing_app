@@ -6,7 +6,7 @@ import 'package:freelancing_platform/core/constants/data_constsnats/collections_
 import 'package:freelancing_platform/models/project_collections/project_task_progress.dart';
 import 'package:freelancing_platform/models/project_collections/task_model.dart';
 
-// كله بده تعديل 
+// كله بده تعديل
 class ProjectTaskService {
   ProjectTaskService({
     FirebaseFirestore? firebaseFirestore,
@@ -35,37 +35,23 @@ class ProjectTaskService {
   Future<Either<StatusClasses, List<TaskModel>>> getTasks({
     required String projectId,
   }) async {
-    final query = _tasksRef(projectId);
+    final query = _tasksRef(projectId).orderBy('createdAt', descending: false);
     return FirebaseCrud.runGetQuery<TaskModel>(
       query: query,
       fromMap: (data, id) => TaskModel.fromMap(data, id),
     );
   }
 
-  Future<Either<StatusClasses, TaskModel>> addTask({
+//ok
+  Future<StatusClasses> addTask({
     required String projectId,
-    // required int orderNumber,
-    String description = '',
+    required String description,
   }) async {
-    try {
-      final doc = await _tasksRef(projectId).add({
-        // 'orderNumber': orderNumber,
-        'description': description,
-        'isDone': false,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-      return Right(
-        TaskModel(
-          id: doc.id,
-          // orderNumber: orderNumber,
-          description: description,
-        ),
-      );
-    } on FirebaseException catch (e) {
-      return Left(mapFirestoreError(e));
-    } catch (e) {
-      return Left(StatusClasses.customError(e.toString()));
-    }
+    final collectionRef = _tasksRef(projectId);
+    final newTask = TaskModel(id: '', description: description);
+    final response = await FirebaseCrud.createDocument(
+        collectionRef: collectionRef, body: newTask.toMap());
+    return response;
   }
 
   Future<StatusClasses> updateTask({

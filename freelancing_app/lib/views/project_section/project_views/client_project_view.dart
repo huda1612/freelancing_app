@@ -115,7 +115,7 @@ class ClientProjectView extends StatelessWidget {
   Widget _buildProjectsList() {
     return Obx(() {
       final items = controller.projectsForActiveTab();
-      // empty message 
+      // empty message
       if (items.isEmpty) {
         return RefreshIndicator(
           color: AppColors.vividPurple,
@@ -137,7 +137,6 @@ class ClientProjectView extends StatelessWidget {
             },
           ),
         );
-   
       }
 
       // project list
@@ -166,9 +165,9 @@ class ClientProjectView extends StatelessWidget {
                 onApproveCompletion: mode == ClientProjectTileMode.delivered
                     ? () => c.approveProjectCompletion(project)
                     : null,
-                onRepublish: mode == ClientProjectTileMode.withdrawn
-                    ? () => c.republishProject(project)
-                    : null,
+                // onRepublish: mode == ClientProjectTileMode.withdrawn
+                //     ? () => c.republishProject(project)
+                //     : null,
                 onDelete: mode == ClientProjectTileMode.withdrawn
                     ? () => c.confirmDeleteProject(project)
                     : null,

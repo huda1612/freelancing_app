@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
+import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -30,8 +32,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
         appBar: CustomAppBar(
           title: 'المشروع النشط',
           backgroundGradient: AppColors.gradientColor,
-          // leadsingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
-          // onLeadingPressed: controller.goBack,
         ),
         body: Obx(() {
           final project = controller.project;
@@ -81,9 +81,7 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                                 Icons.work_outline_rounded,
                                 color: AppColors.darkPurple,
                               ),
-                              children: [
-                                ..._projectInfoSections(project),
-                              ],
+                              children: _projectInfoSections(project),
                             ),
                           ),
                           SizedBox(height: 8.h),
@@ -252,12 +250,14 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                 child: ProjectSectionTitle('قائمة المهام'),
               ),
               if (controller.canEditTasks)
-                IconButton(
-                  onPressed: controller.addTask,
-                  icon: const Icon(Icons.add_circle,
-                      color: AppColors.vividPurple),
-                  tooltip: 'إضافة مهمة',
-                ),
+                controller.isAddingTask && controller.isFreelancer
+                    ? SizedBox.shrink()
+                    : IconButton(
+                        onPressed: controller.onAddNewTask,
+                        icon: const Icon(Icons.add_circle,
+                            color: AppColors.vividPurple),
+                        tooltip: 'إضافة مهمة',
+                      ),
             ],
           ),
           SizedBox(height: 8.h),
@@ -274,20 +274,57 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
               );
             }
 
-            return Column(
-              children: controller.tasks.map((task) {
-                return ProjectTaskRow(
-                  //temp
-                  orderNumber: 0,
-                  task: task,
-                  controller: controller.taskController(task.id),
-                  canEdit: controller.canEditTasks,
-                  onDescriptionChanged: (v) =>
-                      controller.updateTaskDescription(task.id, v),
-                  onDoneChanged: (v) => controller.toggleTaskDone(task.id, v),
-                );
-              }).toList(),
-            );
+            return controller.addIsLoading.value
+                ? CustomLoading()
+                : Column(children: [
+                    ...List.generate(
+                      controller.tasks.length,
+                      (index) {
+                        final task = controller.tasks[index];
+
+                        return ProjectTaskRow(
+                          orderNumber: index + 1,
+                          task: task,
+                          controller: controller.taskController(task.id),
+                          canEdit: controller.canEditTasks,
+                          onDescriptionChanged: (v) =>
+                              controller.updateTaskDescription(task.id, v),
+                          onDoneChanged: (v) =>
+                              controller.toggleTaskDone(task.id, v),
+                          // isEditing: controller.taskIsEditing(task.id),
+                          isEditing: false,
+                        );
+                      },
+                    ),
+                    if (controller.isAddingTask)
+                      Column(
+                        children: [
+                          TextFormField(
+                            controller: controller.newTaskController.value,
+                            readOnly: !controller.canEditTasks,
+                            onChanged: (value) =>
+                                controller.onChangeNewTask(value),
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(fontSize: 14.sp),
+                            decoration: unifiedDecoration('وصف المهمة الجديدة')
+                                .copyWith(
+                              fillColor: Colors.grey.shade50,
+                            ),
+                          ),
+                          SizedBox(height: AppSpaces.heightSmall),
+                          Row(
+                            children: [
+                              TextButton(
+                                  onPressed: controller.saveNewTask,
+                                  child: Text("حفظ")),
+                              TextButton(
+                                  onPressed: controller.cencelAddingNewTask,
+                                  child: Text("إلغاء")),
+                            ],
+                          )
+                        ],
+                      ),
+                  ]);
           }),
         ],
       ),
