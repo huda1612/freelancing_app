@@ -21,6 +21,7 @@ class ProjectOfferTile extends StatelessWidget {
     this.onReject,
     this.onWithdraw,
     this.onEdit,
+    this.onDelete,
   });
 
   final OfferModel offer;
@@ -35,6 +36,7 @@ class ProjectOfferTile extends StatelessWidget {
   final VoidCallback? onReject;
   final VoidCallback? onWithdraw;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   // static const int _previewMaxChars = 110;
 
@@ -51,6 +53,11 @@ class ProjectOfferTile extends StatelessWidget {
       _isOfferOwner &&
       offer.status == OfferStatus.pending &&
       (onWithdraw != null || onEdit != null);
+
+  bool get _showDeleteButton =>
+      isProjectOwner &&
+      offer.status == OfferStatus.withdrawn &&
+      onDelete != null;
 
   // String _preview(String text) {
   //   final t = text.trim();
@@ -228,6 +235,17 @@ class ProjectOfferTile extends StatelessWidget {
                       onPressed: onEdit,
                       icon: Icon(Icons.edit_rounded, color: AppColors.purple),
                     ),
+                ],
+              ),
+            ] else if (_showDeleteButton) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    tooltip: 'حذف العرض',
+                    onPressed: onDelete,
+                    icon: Icon(Icons.delete_forever, color: AppColors.red),
+                  ),
                 ],
               ),
             ],
