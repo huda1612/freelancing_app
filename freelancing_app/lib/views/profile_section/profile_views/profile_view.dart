@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
@@ -24,6 +25,8 @@ import 'package:freelancing_platform/views/profile_section/profile_widgets/profi
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_review_card.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_skill_chip.dart';
 import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/hire_me_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/hire_me_dialog.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -395,10 +398,79 @@ class ProfileView extends StatelessWidget {
         CustomButton(
           text: 'وظفني',
           textStyle: AppTextStyles.link.copyWith(color: AppColors.white),
-          onTap: () {},
+          onTap: () => _showHireMeDialog(),
           width: 150.w,
         ),
       ],
+    );
+  }
+
+  void _showHireMeDialog() {
+    // التحقق من أن المستخدم الحالي هو عميل
+    if (UserSession.role != UserRole.client) {
+      Get.snackbar(
+        'تنبيه',
+        'هذه الميزة متاحة للعملاء فقط',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    // إنشاء Controller للديالوج
+    final hireMeController = Get.put(
+      HireMeController(freelancerId: controller.userId),
+      tag: 'hire_me_${controller.userId}',
+    );
+
+    Get.dialog(
+      Obx(() {
+        if (hireMeController.pageState.value == StatusClasses.isloading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (hireMeController.pageState.value == StatusClasses.notFound) {
+          return Dialog(
+            child: Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'لا توجد مشاريع',
+                    style: AppTextStyles.subheading.copyWith(
+                      color: AppColors.darkPurple,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'ليس لديك مشاريع جديدة متاحة للتوظيف حالياً',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.darkGrey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20.h),
+                  CustomButton(
+                    text: 'حسناً',
+                    onTap: () => Get.back(),
+                    width: 120.w,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return HireMeDialog(
+          projects: hireMeController.projects,
+          onProjectSelected: (project) {
+            hireMeController.selectProject(project);
+          },
+          onNoProjects: () {
+            hireMeController.showNoProjectsDialog();
+          },
+        );
+      }),
     );
   }
 
