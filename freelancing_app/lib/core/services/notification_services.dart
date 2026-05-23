@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_constant_data.dart';
+import 'package:freelancing_platform/data/services/user_notification_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
@@ -116,10 +120,26 @@ class NotificationServices {
   }
 
   void _navigateFromData(Map<String, dynamic> data) async {
-    //هون انا لازم زبطه للانتقال للصفحات حسب شو البيانات المرسله بالاشعار
-    Future.delayed(Duration(milliseconds: 200), () {
-      RouteHandler.notificationRouteHandler(data);
-    });
+    final String? notificationId = data["notificationId"];
+
+    if (notificationId != null && UserSession.uid != null) {
+      unawaited(_updateIsRead(notificationId));
+    }
+
+    RouteHandler.notificationRouteHandler(data);
+    // // Future.delayed(Duration(milliseconds: 200), () {
+    //   RouteHandler.notificationRouteHandler(data);
+    // // });
+  }
+
+  Future<void> _updateIsRead(String notificationId) async {
+    if (UserSession.uid == null) return;
+
+    final res = await UserNotificationService().updateIsReade(
+      uId: UserSession.uid!,
+      notificationId: notificationId,
+    );
+    debugPrint("READ UPDATE RESULT: ${res.type}");
   }
 
   void _handLocalNotificationClick(String? payload) {

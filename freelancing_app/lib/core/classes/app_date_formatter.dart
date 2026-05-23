@@ -39,6 +39,25 @@ class AppDateFormatter {
     return pretty(ts);
   }
 
+  ///لو اقل من 24 ساعه بطلع (منذ...) اما لو اكتر بيطلع التاريخ
+  static String smartTime(Timestamp? ts) {
+    if (ts == null) return "لا يوجد تاريخ محدد";
+
+    final now = DateTime.now();
+    final d = ts.toDate();
+    final diff = now.difference(d);
+
+    // أقل من 24 ساعة → time ago
+    if (diff.inHours < 24) {
+      if (diff.inSeconds < 60) return "منذ ثوانٍ";
+      if (diff.inMinutes < 60) return "منذ ${diff.inMinutes} دقيقة";
+      return "منذ ${diff.inHours} ساعة";
+    }
+
+    // أكثر من 24 ساعة → تاريخ واضح
+    return pretty(ts);
+  }
+
   // -------- helpers --------
   static String _two(int n) => n.toString().padLeft(2, '0');
 

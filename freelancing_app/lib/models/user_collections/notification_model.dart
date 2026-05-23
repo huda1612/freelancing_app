@@ -5,7 +5,7 @@ class NotificationModel {
   final String title;
   final String body;
   final Map<String, dynamic>? data;
-  final String? projectId;
+  // final String? projectId;
   final bool isRead;
   final Timestamp? createdAt;
 
@@ -14,7 +14,7 @@ class NotificationModel {
     required this.title,
     required this.body,
     this.data,
-    this.projectId,
+    // this.projectId,
     this.isRead = false,
     this.createdAt,
   });
@@ -24,7 +24,7 @@ class NotificationModel {
       'title': title,
       'body': body,
       'data': data,
-      'projectId': projectId,
+      // 'projectId': projectId,
       'isRead': isRead,
       'createdAt': createdAt ?? Timestamp.now(),
     };
@@ -36,7 +36,7 @@ class NotificationModel {
       title: map['title'] ?? '',
       body: map['body'] ?? '',
       data: map['data'] ?? {},
-      projectId: map['projectId'],
+      // projectId: map['projectId'],
       isRead: map['isRead'] ?? false,
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
@@ -57,7 +57,7 @@ class NotificationModel {
       title: title ?? this.title,
       body: body ?? this.body,
       data: data ?? this.data,
-      projectId: projectId ?? this.projectId,
+      // projectId: projectId ?? this.projectId,
       isRead: isRead ?? this.isRead,
       createdAt: createdAt ?? this.createdAt,
     );

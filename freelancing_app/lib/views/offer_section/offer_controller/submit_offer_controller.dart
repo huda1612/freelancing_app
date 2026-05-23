@@ -94,7 +94,7 @@ class SubmitOfferController extends GetxController {
       return;
     }, (user) async {
       final UserSnapshotModel freelancerSnapshot = UserSnapshotModel(
-          fullName: "${user.fname}  ${user.lname}",
+          fullName: "${user.fname} ${user.lname}",
           username: user.username,
           jobTitle: user.jobTitle,
           specialization: user.specialization == null
@@ -148,8 +148,8 @@ class SubmitOfferController extends GetxController {
         customSnackbar(
           message: "تم تقديم العرض بنجاح",
         );
-        final offerSubmitNotification =
-            AppNotification.newOfferSubmit(projectTitle ?? "", projectId!);
+        final offerSubmitNotification = AppNotification.newOfferSubmit(
+            projectTitle ?? "", projectId!, freelancerSnapshot.fullName);
         await NotificationSenderServices.sendNotificationToUser(
             uId: clientId!,
             title: offerSubmitNotification.title,
