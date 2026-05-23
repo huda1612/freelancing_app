@@ -49,7 +49,7 @@ class ProjectOffersController extends GetxController {
       //لو ما مبعوت المشروع بتأكد لو مبعوت الرقم اله ( من الاشعار بينبعت رقم المشروع)
       projectId = NavigationService.routeArguments(
           AppRoutes.projectOffers)?["projectId"];
-      print("!!!!!!!!!!!!! projId : $projectId");
+      // print("!!!!!!!!!!!!! projId : $projectId");
       //لو حتى الاي دي ما مرسل
       if (projectId == null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

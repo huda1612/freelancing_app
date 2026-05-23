@@ -55,10 +55,11 @@ class AppNotification {
 
   ///اشعار ارسال عرض جديد لمشروع
   factory AppNotification.newOfferSubmit(
-      String projectTitle, String projectId) {
+      String projectTitle, String projectId, String? freelancerFullName) {
     return AppNotification(
       title: "لديك عرض جديد",
-      body: "لديك عرض جديد على مشروعك $projectTitle",
+      body:
+          "لديك عرض جديد على مشروعك $projectTitle ${freelancerFullName != null ? "من $freelancerFullName" : ''}",
       data: {"type": AppNotificationTypes.newOffer, "id": projectId},
     );
   }

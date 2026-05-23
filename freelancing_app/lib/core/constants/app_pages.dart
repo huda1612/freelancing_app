@@ -10,9 +10,9 @@ import 'package:freelancing_platform/core/general_controllers.dart/image_upload_
 import 'package:freelancing_platform/core/middleware/admin_middleware.dart';
 import 'package:freelancing_platform/core/middleware/auth_middleware.dart';
 import 'package:freelancing_platform/views/chat_section/chat_views/chat_view.dart';
-import 'package:freelancing_platform/views/home_section/home_controller/notifications_controller.dart';
+import 'package:freelancing_platform/views/notifications_section/notifications_controllers/notifications_controller.dart';
 import 'package:freelancing_platform/views/home_section/home_views/home_view.dart';
-import 'package:freelancing_platform/views/home_section/home_views/notifications_view.dart';
+import 'package:freelancing_platform/views/notifications_section/notifications_views/notifications_view.dart';
 import 'package:freelancing_platform/views/main_section/main_views/main_view.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/freelancer_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
