@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -109,7 +111,7 @@ class HomeController extends GetxController {
   }
 
   void openNotifications() {
-    Get.toNamed(AppRoutes.notifications);
+    NavigationService.toNamed(AppRoutes.notifications);
   }
 
   void openProjectDetails(ProjectModel project) {
