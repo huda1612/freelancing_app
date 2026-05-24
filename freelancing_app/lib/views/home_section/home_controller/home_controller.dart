@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/collections_names.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
@@ -23,10 +27,14 @@ class HomeController extends GetxController {
   String get userRole => UserSession.role ?? '';
   bool get isFreelancer => userRole == UserRole.freelancer;
   bool get isClient => userRole == UserRole.client;
+  final hasUnreadNotifications = false.obs;
+
+  StreamSubscription? _notificationsSub;
 
   @override
   void onInit() {
     super.onInit();
+    _listenToUnreadNotifications();
     fetchHomeData();
   }
 
@@ -46,6 +54,28 @@ class HomeController extends GetxController {
       (user) {
         currentUser.value = user;
         _fetchDataBasedOnRole(user);
+      },
+    );
+  }
+
+  void _listenToUnreadNotifications() {
+    final uid = UserSession.uid;
+    if (uid == null) return;
+
+    _notificationsSub = FirebaseFirestore.instance
+        .collection(CollectionsNames.users)
+        .doc(uid)
+        .collection(CollectionsNames.notifications)
+        .where('isRead', isEqualTo: false)
+        .limit(1)
+        .snapshots()
+        .listen(
+      (snapshot) {
+        hasUnreadNotifications.value = snapshot.docs.isNotEmpty;
+      },
+      onError: (error) {
+        hasUnreadNotifications.value = false;
+        debugPrint("notifications listener error: $error");
       },
     );
   }
@@ -134,5 +164,11 @@ class HomeController extends GetxController {
       return name.isEmpty ? user.username : name;
     }
     return '';
+  }
+
+  @override
+  void onClose() {
+    _notificationsSub?.cancel();
+    super.onClose();
   }
 }

@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
+import 'package:freelancing_platform/core/widgets/custom_refreshable_empty_message.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
@@ -117,26 +118,30 @@ class ClientProjectView extends StatelessWidget {
       final items = controller.projectsForActiveTab();
       // empty message
       if (items.isEmpty) {
-        return RefreshIndicator(
-          color: AppColors.vividPurple,
-          onRefresh: controller.loadProjects,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: customEmptyMessage(
-                    message:
-                        _emptyMessageForTab(controller.activeTabIndex.value),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
+        return CustomRefreshableEmptyMessage(
+            onRefresh: controller.loadProjects,
+            emptyMessage: _emptyMessageForTab(controller.activeTabIndex.value));
+        // return RefreshIndicator(
+        //   color: AppColors.vividPurple,
+        //   onRefresh: controller.loadProjects,
+        //   child:
+        //    LayoutBuilder(
+        //     builder: (context, constraints) {
+        //       return SingleChildScrollView(
+        //         physics: const AlwaysScrollableScrollPhysics(),
+        //         child: ConstrainedBox(
+        //           constraints: BoxConstraints(
+        //             minHeight: constraints.maxHeight,
+        //           ),
+        //           child: customEmptyMessage(
+        //             message:
+        //                 _emptyMessageForTab(controller.activeTabIndex.value),
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // );
       }
 
       // project list

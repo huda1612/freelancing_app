@@ -176,13 +176,14 @@ class ActiveProjectController extends GetxController {
     if (p == null) return;
 
     partnerLoading.value = true;
-    if (p.acceptedFreelancerId == null) {
+    if (p.acceptedFreelancerId == null && isClient) {
       partnerName.value = "unKnown";
       partnerLoading.value = false;
 
       return;
     }
-    partnerUserId.value = isClient ? p.clientId : p.acceptedFreelancerId!;
+    partnerUserId.value = isClient ? p.acceptedFreelancerId! : p.clientId;
+
     final user = await _userService
         .fetchUserData(isClient ? p.clientId : p.acceptedFreelancerId!);
     if (user != null) {
@@ -402,10 +403,15 @@ class ActiveProjectController extends GetxController {
 
   void openPartnerProfile() {
     if (partnerUserId.value.isEmpty) return;
+    print("partner id : ${partnerUserId.value}");
     Get.toNamed(
       AppRoutes.userProfile,
       arguments: {'userId': partnerUserId.value},
     );
+    // Get.toNamed(
+    //   AppRoutes.userProfile,
+    //   arguments: {'userId': freelancerId},
+    // );
   }
 
   // void goBack() => NavigationService.back();

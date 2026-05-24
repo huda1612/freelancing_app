@@ -24,7 +24,25 @@ class HomeView extends StatelessWidget {
       appBar: CustomAppBar(
         title: ' الصفحة الرئيسية ',
         backgroundGradient: AppColors.gradientColor,
-        trailingIcon: const Icon(Icons.notifications_outlined, color: AppColors.white),
+        trailingIcon: Obx(() => Stack(
+              children: [
+                const Icon(Icons.notifications_outlined,
+                    color: AppColors.white),
+                if (controller.hasUnreadNotifications.value)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        color: AppColors.vividPurple,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            )),
         onTrailingPressed: controller.openNotifications,
       ),
       body: Obx(
@@ -96,7 +114,8 @@ class HomeView extends StatelessWidget {
           ),
         ),
         SizedBox(height: AppSpaces.heightMedium),
-        _buildProjectsGrid(controller.suggestedProjects, showAcceptanceRate: true),
+        _buildProjectsGrid(controller.suggestedProjects,
+            showAcceptanceRate: true),
       ],
     );
   }
@@ -118,7 +137,8 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildProjectsGrid(RxList<ProjectModel> projects, {required bool showAcceptanceRate}) {
+  Widget _buildProjectsGrid(RxList<ProjectModel> projects,
+      {required bool showAcceptanceRate}) {
     if (projects.isEmpty) {
       return const Center(
         child: Text(
@@ -136,12 +156,14 @@ class HomeView extends StatelessWidget {
       children: [
         _buildProjectRow(firstRow, showAcceptanceRate),
         if (secondRow.isNotEmpty) SizedBox(height: AppSpaces.heightMedium),
-        if (secondRow.isNotEmpty) _buildProjectRow(secondRow, showAcceptanceRate),
+        if (secondRow.isNotEmpty)
+          _buildProjectRow(secondRow, showAcceptanceRate),
       ],
     );
   }
 
-  Widget _buildProjectRow(List<ProjectModel> rowProjects, bool showAcceptanceRate) {
+  Widget _buildProjectRow(
+      List<ProjectModel> rowProjects, bool showAcceptanceRate) {
     return SizedBox(
       height: 180.h,
       child: ListView.separated(
@@ -197,7 +219,8 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildFreelancersList(RxList<UserModel> freelancers, {required bool showStats}) {
+  Widget _buildFreelancersList(RxList<UserModel> freelancers,
+      {required bool showStats}) {
     if (freelancers.isEmpty) {
       return const Center(
         child: Text(

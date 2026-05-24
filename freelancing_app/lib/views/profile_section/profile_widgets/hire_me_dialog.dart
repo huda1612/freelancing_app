@@ -9,13 +9,13 @@ import 'package:get/get.dart';
 class HireMeDialog extends StatelessWidget {
   final List<ProjectModel> projects;
   final Function(ProjectModel) onProjectSelected;
-  final VoidCallback onNoProjects;
+  // final VoidCallback onNoProjects;
 
   const HireMeDialog({
     super.key,
     required this.projects,
     required this.onProjectSelected,
-    required this.onNoProjects,
+    // required this.onNoProjects,
   });
 
   @override
@@ -51,7 +51,7 @@ class HireMeDialog extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16.h),
-            
+
             // Projects List
             Expanded(
               child: projects.isEmpty
@@ -73,22 +73,22 @@ class HireMeDialog extends StatelessWidget {
                       },
                     ),
             ),
-            
-            SizedBox(height: 16.h),
-            
-            // Cancel Button
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () => Get.back(),
-                child: Text(
-                  'إلغاء',
-                  style: AppTextStyles.button.copyWith(
-                    color: AppColors.darkGrey,
-                  ),
-                ),
-              ),
-            ),
+
+            // SizedBox(height: 16.h),
+
+            // // Cancel Button
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: TextButton(
+            //     onPressed: () => Get.back(),
+            //     child: Text(
+            //       'إلغاء',
+            //       style: AppTextStyles.button.copyWith(
+            //         color: AppColors.darkGrey,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -132,7 +132,7 @@ class _ProjectCard extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              project.description,
+              project.description,     
               style: AppTextStyles.link.copyWith(
                 color: AppColors.darkGrey,
               ),

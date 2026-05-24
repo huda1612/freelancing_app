@@ -14,7 +14,9 @@ import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
+import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
@@ -408,11 +410,7 @@ class ProfileView extends StatelessWidget {
   void _showHireMeDialog() {
     // التحقق من أن المستخدم الحالي هو عميل
     if (UserSession.role != UserRole.client) {
-      Get.snackbar(
-        'تنبيه',
-        'هذه الميزة متاحة للعملاء فقط',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      customSnackbar(message: 'هذه الميزة متاحة للعملاء فقط');
       return;
     }
 
@@ -424,11 +422,14 @@ class ProfileView extends StatelessWidget {
 
     Get.dialog(
       Obx(() {
+        //loading
         if (hireMeController.pageState.value == StatusClasses.isloading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (hireMeController.pageState.value == StatusClasses.notFound) {
+        //case of empty projects list
+        // if (hireMeController.pageState.value == StatusClasses.notFound) {
+        if (hireMeController.projects.isEmpty) {
           return Dialog(
             child: Padding(
               padding: EdgeInsets.all(20.w),
@@ -460,15 +461,24 @@ class ProfileView extends StatelessWidget {
             ),
           );
         }
-
-        return HireMeDialog(
-          projects: hireMeController.projects,
-          onProjectSelected: (project) {
-            hireMeController.selectProject(project);
-          },
-          onNoProjects: () {
-            hireMeController.showNoProjectsDialog();
-          },
+        //case of success loading projects
+        if (hireMeController.pageState.value == StatusClasses.success) {
+          return HireMeDialog(
+            projects: hireMeController.projects,
+            onProjectSelected: (project) {
+              hireMeController.selectProject(project);
+            },
+            // onNoProjects: () {
+            //   hireMeController.showNoProjectsDialog();
+            // },
+          );
+        }
+        //else there is error
+        return CustomErrorWidget(
+          title: hireMeController.pageState.value.type,
+          message:
+              "حدث خطأ اثناء جلب بيانات المشاريع\n${hireMeController.pageState.value.message}",
+          onRetry: hireMeController.loadClientProjects,
         );
       }),
     );

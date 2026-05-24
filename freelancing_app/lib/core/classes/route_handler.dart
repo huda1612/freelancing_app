@@ -134,6 +134,16 @@ class RouteHandler {
           id: 3,
         );
         break;
+      case AppNotificationTypes.hireMe:
+        NavigationService.changeTab(0);
+        NavigationService.toNamed(
+          AppRoutes.projectDetails,
+          arguments: {
+            "projectId": id,
+          },
+          id: 0,
+        );
+        break;
       // case AppNotificationTypes.userRequest:
       //   NavigationService.changeTab(0);
 

@@ -82,6 +82,17 @@ class AppNotification {
     );
   }
 
+  ///اشعار وظفني
+  factory AppNotification.hireMe(
+      {required String projectId, String? projectTitle, String? clientName}) {
+    return AppNotification(
+      title: "طلب توظيف",
+      body:
+          "لقد قام صاحب المشروع ${clientName ?? ''} بارسال طلب توظيف لك على مشروعه ${projectTitle ?? ''}",
+      data: {"type": AppNotificationTypes.hireMe, "id": projectId},
+    );
+  }
+
   /// إشعار دفعة مالية
   // factory AppNotification.paymentReceived({
   //   required String id,

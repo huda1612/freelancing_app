@@ -33,8 +33,7 @@ class ProjectOffersController extends GetxController {
   bool get showTabs => isProjectOwner || isFreelancer;
 
   bool get isFreelancer =>
-      UserSession.uid != null &&
-      UserSession.role == 'freelancer';
+      UserSession.uid != null && UserSession.role == 'freelancer';
 
   bool get isProjectOwner =>
       project != null &&
@@ -77,8 +76,7 @@ class ProjectOffersController extends GetxController {
       pageState.value = err;
     }, (p) async {
       project = p;
-      final res = await _offerService.getProjectOffers(
-          projectId: projectId!, justPendingOffers: false);
+      final res = await _offerService.getProjectOffers(projectId: projectId!);
 
       res.fold(
         (err) {
@@ -96,8 +94,7 @@ class ProjectOffersController extends GetxController {
     pageState.value = StatusClasses.isloading;
 
     //لو دخل عالصفحه وهو ما صاحبها بكفي حمل العروض المعلقه بس ليش لحملهم كلهم
-    final res = await _offerService.getProjectOffers(
-        projectId: projectId!, justPendingOffers: !isProjectOwner);
+    final res = await _offerService.getProjectOffers(projectId: projectId!);
 
     res.fold(
       (err) {
@@ -120,10 +117,9 @@ class ProjectOffersController extends GetxController {
       offers.where((o) => o.status == OfferStatus.withdrawn).toList();
 
   /// للزوار والمستقلين: يعرض فقط العروض الخاصة بالمستقل
-  List<OfferModel> get visitorPendingOffers =>
-      isFreelancer
-          ? offers.where((o) => o.freelancerId == UserSession.uid).toList()
-          : pendingOffers;
+  List<OfferModel> get visitorPendingOffers => isFreelancer
+      ? offers.where((o) => o.freelancerId == UserSession.uid).toList()
+      : pendingOffers;
 
   List<OfferModel> offersForActiveTab() {
     if (!showTabs) {
