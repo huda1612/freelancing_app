@@ -9,6 +9,7 @@ class NotificationCard extends StatelessWidget {
   final String subtitle;
   final String time;
   final bool isRead;
+  final bool isSelected;
 
   const NotificationCard({
     super.key,
@@ -18,6 +19,7 @@ class NotificationCard extends StatelessWidget {
     required this.subtitle,
     required this.time,
     required this.isRead,
+    required this.isSelected,
   });
 
   @override
@@ -27,7 +29,7 @@ class NotificationCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           // color: isRead ? AppColors.veryLightGrey : AppColors.white,
-          color: AppColors.white,
+          color: isSelected ? AppColors.veryLightPurple : AppColors.white ,
 
           borderRadius: BorderRadius.circular(14),
           boxShadow: const [

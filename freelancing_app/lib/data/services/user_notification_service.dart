@@ -76,4 +76,25 @@ class UserNotificationService {
 
     return response;
   }
+
+  Future<StatusClasses> deleteNotificationsBatch({
+    required String uId,
+    required List<String> notificationIds,
+  }) async {
+    if (notificationIds.isEmpty) {
+      return StatusClasses.success;
+    }
+
+    final collection = _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uId)
+        .collection(CollectionsNames.notifications);
+
+    return await FirebaseCrud.runBatch(action: (batch) async {
+      for (final id in notificationIds) {
+        final docRef = collection.doc(id);
+        batch.delete(docRef);
+      }
+    });
+  }
 }
