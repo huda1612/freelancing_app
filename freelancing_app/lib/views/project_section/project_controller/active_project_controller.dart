@@ -86,10 +86,14 @@ class ActiveProjectController extends GetxController {
   }
 
   Future<void> initPage() async {
+    pageState.value = StatusClasses.isloading;
     await _resolveProject();
     if (projectRx.value != null) {
       await _bootstrap();
     } else {
+      if (pageState.value != StatusClasses.isloading) {
+        return;
+      }
       pageState.value = StatusClasses.customError('تعذر تحميل المشروع');
     }
   }
@@ -105,9 +109,10 @@ class ActiveProjectController extends GetxController {
     //بحال كان مرسل رقم المشروع(من الاشعار)
     final nestedProjectId = nestedArgs?['projectId'];
     if (nestedProjectId != null) {
-      final projectRes = await ProjectService().getProject(nestedProjectId!);
+      final projectRes = await _projectService.getProject(nestedProjectId!);
       projectRes.fold((err) async {
         pageState.value = err;
+        // print(pageState.value.message);
       }, (p) async {
         projectRx.value = p;
       });

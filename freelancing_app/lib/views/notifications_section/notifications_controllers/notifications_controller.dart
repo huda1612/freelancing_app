@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:freelancing_platform/core/classes/route_handler.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/user_notification_service.dart';
 import 'package:freelancing_platform/models/user_collections/notification_model.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,9 @@ class NotificationsController extends GetxController {
 
   final isSelectionMode = false.obs;
   final selectedIds = <String>{}.obs;
+  final isDeleting = false.obs;
+
+  // final RxList<String> selectedIds = <String>[].obs;
   @override
   void onInit() {
     super.onInit();
@@ -32,13 +36,6 @@ class NotificationsController extends GetxController {
       notifications.value = list;
       pageState.value = StatusClasses.success;
     });
-  }
-
-  void onLongPress(String? id) {
-    isSelectionMode.value = true;
-    if (id != null) {
-      selectedIds.add(id);
-    }
   }
 
   Future<void> onNotificationClick(int index) async {
@@ -63,17 +60,67 @@ class NotificationsController extends GetxController {
   //     onNotificationClick(id);
   //   }
   // }
+  void onLongPress(String? id) {
+    isSelectionMode.value = true;
+    if (id != null && !selectedIds.contains(id)) {
+      selectedIds.add(id);
+      // selectedIds.refresh();
+    }
+  }
 
-  void toggleSelect(String id) {
+  void clearSelection() {
+    isSelectionMode.value = false;
+    selectedIds.clear();
+  }
+
+  // void selectAll() {
+  //   selectedIds.addAll(notifications
+  //       .where((n) => !selectedIds.contains(n.id))
+  //       .map((n) => n.id ?? ''));
+  // }
+  void selectAll() {
+    selectedIds.addAll(
+      notifications.map((n) => n.id).whereType<String>(),
+    );
+  }
+
+  Future<void> deleteSelected() async {
+    isDeleting.value = true;
+    final ids = selectedIds.toList();
+    final res = await _userNotificationService.deleteNotificationsBatch(
+      uId: UserSession.uid!,
+      notificationIds: ids,
+    );
+
+    if (res == StatusClasses.success) {
+      notifications.removeWhere((n) => ids.contains(n.id));
+      selectedIds.clear();
+      isSelectionMode.value = false;
+      // isDeleting.value = false;
+      customSnackbar(message: "تم الحذف بنجاح");
+    } else {
+      customSnackbar(message: "فشل حذف الإشعارات :${res.message}");
+      // isDeleting.value = false;
+    }
+    isDeleting.value = false;
+  }
+
+  void toggleSelect(String? id) {
+    if (id == null) return;
     if (selectedIds.contains(id)) {
       selectedIds.remove(id);
     } else {
       selectedIds.add(id);
     }
-
+    // selectedIds.refresh();
     if (selectedIds.isEmpty) {
       isSelectionMode.value = false;
     }
+  }
+
+  bool isSelected(String? id) {
+    if (id == null) return false;
+    return isSelectionMode.value && selectedIds.contains(id);
   }
 
   void markAsRead(int index) {
