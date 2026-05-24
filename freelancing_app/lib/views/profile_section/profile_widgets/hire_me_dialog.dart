@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
-import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
-import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:get/get.dart';
 

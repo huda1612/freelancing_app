@@ -192,6 +192,12 @@ class ProjectOffersView extends StatelessWidget {
                     c.isProjectOwner && offer.status == OfferStatus.pending
                         ? () => c.rejectOffer(offer)
                         : null,
+                onDelete:
+                    c.isProjectOwner && offer.status == OfferStatus.withdrawn
+                        ? () {
+                            
+                          }
+                        : null,
                 // onWithdraw:
                 //     c.isOfferOwner(offer) && offer.status == OfferStatus.pending
                 //         ? () => c.withdrawOffer(offer)

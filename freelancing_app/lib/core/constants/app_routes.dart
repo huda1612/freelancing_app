@@ -1,4 +1,3 @@
-import 'package:freelancing_platform/core/classes/app_notifications.dart';
 
 class AppRoutes {
   static const main = '/main';

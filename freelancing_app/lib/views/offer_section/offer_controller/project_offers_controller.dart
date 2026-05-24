@@ -30,7 +30,11 @@ class ProjectOffersController extends GetxController {
 //لازم جرب اذا بيمشي الحال اعمل تعديل عاكتر من عرض بنف الوقت لان هي كانت متغير وانا عملتها مصفوفه
   List<String> actionOfferId = [];
 
-  bool get showTabs => isProjectOwner;
+  bool get showTabs => isProjectOwner || isFreelancer;
+
+  bool get isFreelancer =>
+      UserSession.uid != null &&
+      UserSession.role == 'freelancer';
 
   bool get isProjectOwner =>
       project != null &&
@@ -49,7 +53,7 @@ class ProjectOffersController extends GetxController {
       //لو ما مبعوت المشروع بتأكد لو مبعوت الرقم اله ( من الاشعار بينبعت رقم المشروع)
       projectId = NavigationService.routeArguments(
           AppRoutes.projectOffers)?["projectId"];
-      // print("!!!!!!!!!!!!! projId : $projectId");
+      print("!!!!!!!!!!!!! projId : $projectId");
       //لو حتى الاي دي ما مرسل
       if (projectId == null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -74,7 +78,7 @@ class ProjectOffersController extends GetxController {
     }, (p) async {
       project = p;
       final res = await _offerService.getProjectOffers(
-          projectId: projectId!, justPendingOffers: !isProjectOwner);
+          projectId: projectId!, justPendingOffers: false);
 
       res.fold(
         (err) {
@@ -115,13 +119,40 @@ class ProjectOffersController extends GetxController {
   List<OfferModel> get withdrawnOffers =>
       offers.where((o) => o.status == OfferStatus.withdrawn).toList();
 
-  /// للزوار: يعرض فقط العروض المعلقة.
-  List<OfferModel> get visitorPendingOffers => pendingOffers;
+  /// للزوار والمستقلين: يعرض فقط العروض الخاصة بالمستقل
+  List<OfferModel> get visitorPendingOffers =>
+      isFreelancer
+          ? offers.where((o) => o.freelancerId == UserSession.uid).toList()
+          : pendingOffers;
 
   List<OfferModel> offersForActiveTab() {
     if (!showTabs) {
       return visitorPendingOffers;
     }
+
+    // للمستقل: عرض عروضه فقط
+    if (isFreelancer) {
+      switch (activeTabIndex.value) {
+        case 0:
+          return pendingOffers
+              .where((o) => o.freelancerId == UserSession.uid)
+              .toList();
+        case 1:
+          return rejectedOffers
+              .where((o) => o.freelancerId == UserSession.uid)
+              .toList();
+        case 2:
+          return withdrawnOffers
+              .where((o) => o.freelancerId == UserSession.uid)
+              .toList();
+        default:
+          return pendingOffers
+              .where((o) => o.freelancerId == UserSession.uid)
+              .toList();
+      }
+    }
+
+    // للعميل: عرض جميع العروض
     switch (activeTabIndex.value) {
       case 0:
         return pendingOffers;
