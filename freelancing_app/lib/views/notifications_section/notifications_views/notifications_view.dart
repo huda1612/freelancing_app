@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_notification_types.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
+import 'package:freelancing_platform/core/widgets/custom_refreshable_empty_message.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/views/notifications_section/notifications_controllers/notifications_controller.dart';
 import 'package:freelancing_platform/views/notifications_section/notifications_widgets/notification_card.dart';
@@ -47,44 +48,49 @@ class NotificationsView extends StatelessWidget {
         () => ModalProgressHUD(
           inAsyncCall: controller.isDeleting.value,
           child: RefreshIndicator(
-            onRefresh: controller.loadNotifications,
-            color: AppColors.vividPurple,
-            child: UiStateHandler(
-              status: controller.pageState.value,
-              fetchDataFun: controller.loadNotifications,
-              child: ListView.separated(
-                padding: EdgeInsets.all(AppSpaces.paddingSmall),
-                itemCount: controller.notifications.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: AppSpaces.mediumVerticalSpacing),
-                itemBuilder: (context, index) {
-                  final notification = controller.notifications[index];
-                  final String? type = notification.data?["type"];
-                  final iconAndColor = _mapType(type);
-                  // final isSelectionMode = controller.isSelectionMode.value;
-                  return Obx(() {
-                    final isSelectionMode = controller.isSelectionMode.value;
-                    return GestureDetector(
-                        onLongPress: () =>
-                            controller.onLongPress(notification.id),
-                        onTap: () => isSelectionMode
-                            ? controller.toggleSelect(notification.id)
-                            : controller.onNotificationClick(index),
-                        child: NotificationCard(
-                          icon: iconAndColor.icon,
-                          iconColor: iconAndColor.color,
-                          title: notification.title,
-                          subtitle: notification.body,
-                          time: AppDateFormatter.smartTime(
-                              notification.createdAt),
-                          isRead: notification.isRead,
-                          isSelected: controller.isSelected(notification.id),
-                        ));
-                  });
-                },
-              ),
-            ),
-          ),
+              onRefresh: controller.loadNotifications,
+              color: AppColors.vividPurple,
+              child: UiStateHandler(
+                  status: controller.pageState.value,
+                  fetchDataFun: controller.loadNotifications,
+                  child: controller.notifications.isNotEmpty
+                      ? ListView.separated(
+                          padding: EdgeInsets.all(AppSpaces.paddingSmall),
+                          itemCount: controller.notifications.length,
+                          separatorBuilder: (_, __) => const SizedBox(
+                              height: AppSpaces.mediumVerticalSpacing),
+                          itemBuilder: (context, index) {
+                            final notification =
+                                controller.notifications[index];
+                            final String? type = notification.data?["type"];
+                            final iconAndColor = _mapType(type);
+                            // final isSelectionMode = controller.isSelectionMode.value;
+                            return Obx(() {
+                              final isSelectionMode =
+                                  controller.isSelectionMode.value;
+                              return GestureDetector(
+                                  onLongPress: () =>
+                                      controller.onLongPress(notification.id),
+                                  onTap: () => isSelectionMode
+                                      ? controller.toggleSelect(notification.id)
+                                      : controller.onNotificationClick(index),
+                                  child: NotificationCard(
+                                    icon: iconAndColor.icon,
+                                    iconColor: iconAndColor.color,
+                                    title: notification.title,
+                                    subtitle: notification.body,
+                                    time: AppDateFormatter.smartTime(
+                                        notification.createdAt),
+                                    isRead: notification.isRead,
+                                    isSelected:
+                                        controller.isSelected(notification.id),
+                                  ));
+                            });
+                          },
+                        )
+                      : CustomRefreshableEmptyMessage(
+                          onRefresh: controller.loadNotifications,
+                          emptyMessage: "لا يوجد اشعارات"))),
         ),
       ),
     );
@@ -106,10 +112,15 @@ IconAndColor _mapType(String? type) {
       return IconAndColor(icon: Icons.close, color: AppColors.red);
 
     case AppNotificationTypes.newOffer:
-      return IconAndColor(icon: Icons.work, color: Colors.orange);
-
+      // return IconAndColor(icon: Icons.work, color: AppColors.purple);
+      return IconAndColor(
+          icon: Icons.person_add_alt_1_rounded, color: Colors.indigo);
     case AppNotificationTypes.newMessage:
-      return IconAndColor(icon: Icons.message, color: Colors.purple);
+      return IconAndColor(icon: Icons.message, color: Colors.orange);
+    case AppNotificationTypes.hireMe:
+      return IconAndColor(icon: Icons.work, color: AppColors.vividPurple);
+    // return IconAndColor(
+    //     icon: Icons.person_add_alt_1_rounded, color: Colors.indigo);
     default:
       return IconAndColor(
           icon: Icons.new_releases_rounded, color: Colors.purple);

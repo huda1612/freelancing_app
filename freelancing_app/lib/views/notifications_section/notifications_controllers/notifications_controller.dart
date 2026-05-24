@@ -52,7 +52,6 @@ class NotificationsController extends GetxController {
       await RouteHandler.notificationRouteHandler(noti.data!);
     }
   }
-
   // void onTap(String id) {
   //   if (isSelectionMode.value) {
   //     toggleSelect(id);

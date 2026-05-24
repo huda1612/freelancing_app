@@ -16,11 +16,13 @@ class ProjectService {
 
   final FirebaseFirestore _firebaseFirestore;
 
-  Future<Either<StatusClasses, ProjectModel>> getProject(String projectId) async {
-    final docRef = _firebaseFirestore.collection(CollectionsNames.projects).doc(projectId);
+  Future<Either<StatusClasses, ProjectModel>> getProject(
+      String projectId) async {
+    final docRef =
+        _firebaseFirestore.collection(CollectionsNames.projects).doc(projectId);
     return FirebaseCrud.fetchDocument(
       docRef: docRef,
-      fromMap: (data , id) => ProjectModel.fromMap(data,id),
+      fromMap: (data, id) => ProjectModel.fromMap(data, id),
     );
   }
 
@@ -34,28 +36,29 @@ class ProjectService {
 
   Future<StatusClasses> deleteProject(ProjectModel project) async {
     final transactionRes =
-        await FirebaseCrud.runTransaction(action: (transaction)async{
-          var doc = _firebaseFirestore.collection(CollectionsNames.projects).doc(project.id);
-          transaction.delete(doc);
+        await FirebaseCrud.runTransaction(action: (transaction) async {
+      var doc = _firebaseFirestore
+          .collection(CollectionsNames.projects)
+          .doc(project.id);
+      transaction.delete(doc);
 
-    /// جلب العروض الخاصة بالمشروع
-    final offersQuery = await _firebaseFirestore
-        .collection(CollectionsNames.offers)
-        .where("projectId", isEqualTo: project.id)
-        .get();
+      /// جلب العروض الخاصة بالمشروع
+      final offersQuery = await _firebaseFirestore
+          .collection(CollectionsNames.offers)
+          .where("projectId", isEqualTo: project.id)
+          .get();
 
-    // حذف جميع العروض
-    for (final doc in offersQuery.docs) {
-      _firebaseFirestore.batch().delete(doc.reference);
-    }
+      // حذف جميع العروض
+      for (final doc in offersQuery.docs) {
+        _firebaseFirestore.batch().delete(doc.reference);
+      }
 
-    // تنفيذ كل العمليات دفعة واحدة
-    await _firebaseFirestore.batch().commit();
-
-        });
+      // تنفيذ كل العمليات دفعة واحدة
+      await _firebaseFirestore.batch().commit();
+    });
     return transactionRes;
   }
-  
+
   Future<Either<StatusClasses, List<ProjectModel>>> getOpenProjects() async {
     final query = _firebaseFirestore
         .collection(CollectionsNames.projects)
@@ -67,18 +70,28 @@ class ProjectService {
     );
   }
   //*************************************************** */
-  //اضافات جديدية 
-  
+  //اضافات جديدية
+
   /// كل مشاريع العميل (تُصفّى حسب الحالة في الواجهة).
   //ok
-  Future<Either<StatusClasses, List<ProjectModel>>> getClientProjects({
-    required String clientId,
-  }) async {
-    final query = _firebaseFirestore
-        .collection(CollectionsNames.projects)
-        .where('clientId', isEqualTo: clientId);
+  Future<Either<StatusClasses, List<ProjectModel>>> getClientProjects(
+      {required String clientId, bool justNewProjects = false}) async {
+    Query<Map<String, dynamic>> query;
+    // final query = _firebaseFirestore
+    //     .collection(CollectionsNames.projects)
+    //     .where('clientId', isEqualTo: clientId);
 
-    return FirebaseCrud.runGetQuery<ProjectModel>(
+    if (justNewProjects == true) {
+      query = _firebaseFirestore
+          .collection(CollectionsNames.projects)
+          .where("clientId", isEqualTo: clientId)
+          .where("status", isEqualTo: ProjectStatus.newProject);
+    } else {
+      query = _firebaseFirestore
+          .collection(CollectionsNames.projects)
+          .where('clientId', isEqualTo: clientId);
+    }
+    return await FirebaseCrud.runGetQuery<ProjectModel>(
       query: query,
       fromMap: (data, id) => ProjectModel.fromMap(data, id),
     );
@@ -98,8 +111,7 @@ class ProjectService {
     }
 
     return FirebaseCrud.updateDocument(
-      collectionRef:
-          _firebaseFirestore.collection(CollectionsNames.projects),
+      collectionRef: _firebaseFirestore.collection(CollectionsNames.projects),
       docId: projectId,
       body: body,
     );
@@ -109,15 +121,12 @@ class ProjectService {
     return updateProjectStatus(
       projectId: projectId,
       status: ProjectStatus.newProject,
-      
     );
   }
 
-
-
   //جديدة
-  
-  /// مشاريع المستقل (حيث عُرضه مقبولاً على المشروع).
+
+  /// مشاريع المستقل (حيث عرضه مقبولاً على المشروع).
   Future<Either<StatusClasses, List<ProjectModel>>> getFreelancerProjects({
     required String freelancerId,
   }) async {
@@ -126,19 +135,18 @@ class ProjectService {
     );
 
     if (offersRes.isLeft()) {
-      return Left(offersRes.fold((l) => l, (_) => StatusClasses.customError('')));
+      return Left(
+          offersRes.fold((l) => l, (_) => StatusClasses.customError('')));
     }
 
     final offers = offersRes.getOrElse(() => <OfferModel>[]);
-    final accepted = offers
-        .where((o) => o.status == OfferStatus.accepted)
-        .toList();
+    final accepted =
+        offers.where((o) => o.status == OfferStatus.accepted).toList();
     if (accepted.isEmpty) {
       return Right(<ProjectModel>[]);
     }
 
-    final collection =
-        _firebaseFirestore.collection(CollectionsNames.projects);
+    final collection = _firebaseFirestore.collection(CollectionsNames.projects);
 
     final snapshots = await Future.wait(
       accepted.map((offer) => collection.doc(offer.projectId).get()),
@@ -160,9 +168,3 @@ class ProjectService {
     return Right(List<ProjectModel>.from(projects));
   }
 }
-
-
-
-
-
-

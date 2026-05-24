@@ -5,6 +5,7 @@ class AppNotificationTypes {
   static const String newOffer = "newOffer";
   static const String offerAccepted = "offerAccepted";
   static const String offerRejected = "offerRejected";
+  static const String hireMe = "hireMe";
 
   // static const String profileImagePreset = "profile_image_uploads";
 }
