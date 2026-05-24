@@ -13,6 +13,7 @@ import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
+import 'package:freelancing_platform/views/project_section/project_widgets/project_deadline_widget.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_partner_header.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_section_card.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_task_row.dart';
@@ -56,6 +57,8 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          
+
                           Obx(
                             () => ProjectPartnerHeader(
                               partnerType:
@@ -67,6 +70,11 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                               isLoading: controller.partnerLoading.value,
                               onViewProfile: controller.openPartnerProfile,
                             ),
+                          ),
+                          SizedBox(height: 16.h),
+                          ProjectDeadlineWidget(
+                            totalDays: 10,
+                            acceptedAt: DateTime(2026, 5, 15),
                           ),
                           SizedBox(height: 16.h),
                           //project details
