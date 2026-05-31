@@ -13,13 +13,13 @@ import 'package:freelancing_platform/core/utils/helper_function/check_fcm_token.
 // import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
 // import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
 import 'package:get/get.dart';
-import 'firebase_options.dart'; // ← مهم جداً
+import 'firebase_options.dart'; //  مهم جداً
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // ← أهم سطر للويب
+    options: DefaultFirebaseOptions.currentPlatform, //  أهم سطر للويب
   );
 
   // استدعاء تهيئة البيانات قبل تشغيل التطبيق

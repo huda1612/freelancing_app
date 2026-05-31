@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
-import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
+import 'package:freelancing_platform/core/widgets/custom_refreshable_empty_message.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
@@ -122,31 +122,37 @@ class FreelancerProjectView extends StatelessWidget {
     return Obx(() {
       final items = controller.projectsForActiveTab();
       if (items.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.all(24.w),
-            child: customEmptyMessage(
-              message: _emptyMessageForTab(controller.activeTabIndex.value),
-            ),
-          ),
-        );
+        return CustomRefreshableEmptyMessage(
+            onRefresh: controller.loadProjects,
+            emptyMessage: _emptyMessageForTab(controller.activeTabIndex.value));
       }
 
-      return ListView.builder(
-        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final ProjectModel project = items[index];
-          final mode = FreelancerProjectTile.modeFromStatus(project.status);
+      return RefreshIndicator(
+        onRefresh: controller.loadProjects,
+        child: ListView.builder(
+          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final ProjectModel project = items[index];
+            final mode = FreelancerProjectTile.modeFromStatus(project.status);
 
-          return FreelancerProjectTile(
-            project: project,
-            mode: mode,
-            onTap: mode == FreelancerProjectTileMode.inProgress
-                ? () => controller.openActiveProject(project)
-                : null,
-          );
-        },
+            return FreelancerProjectTile(
+              project: project,
+              mode: mode,
+              tasksDone: project.completedTasksCount,
+              tasksTotal: project.tasksCount,
+              onTap:
+                  //يمكن لو شلتهم كلهم بعدين احسن لان رح يصير خلص كله عالactive عند الفريلانسر !!!
+                  mode == FreelancerProjectTileMode.inProgress ||
+                          mode == FreelancerProjectTileMode.setup ||
+                          mode ==
+                              FreelancerProjectTileMode.waitingTasksApproval ||
+                          mode == FreelancerProjectTileMode.readyToComplete
+                      ? () => controller.openActiveProject(project)
+                      : null,
+            );
+          },
+        ),
       );
     });
   }

@@ -4,14 +4,14 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
-import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/task_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
-import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/models/project_collections/task_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_deadline_widget.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_partner_header.dart';
@@ -57,8 +57,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          
-
                           Obx(
                             () => ProjectPartnerHeader(
                               partnerType:
@@ -71,11 +69,25 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                               onViewProfile: controller.openPartnerProfile,
                             ),
                           ),
-                          SizedBox(height: 16.h),
-                          ProjectDeadlineWidget(
-                            totalDays: 10,
-                            acceptedAt: DateTime(2026, 5, 15),
-                          ),
+
+                          SizedBox(
+                              height: !controller.isSetup &&
+                                      !controller.iswaitingTasksApproval &&
+                                      controller.project!.startAt != null &&
+                                      controller.offer != null
+                                  ? 16.h
+                                  : 0),
+                          !controller.isSetup &&
+                                  !controller.iswaitingTasksApproval &&
+                                  controller.project!.startAt != null &&
+                                  controller.offer != null
+                              ? ProjectDeadlineWidget(
+                                  totalDays: offer!.durationDays,
+                                  acceptedAt:
+                                      controller.project!.startAt!.toDate(),
+                                  // acceptedAt: DateTime(2026, 5, 15),
+                                )
+                              : SizedBox.shrink(),
                           SizedBox(height: 16.h),
                           //project details
                           ProjectSectionCard(
@@ -112,8 +124,9 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                               ),
                             ),
                           _tasksSection(),
-                          SizedBox(height: 16.h),
+                          SizedBox(height: AppSpaces.heightSmall),
                           _actionButtons(),
+                          SizedBox(height: AppSpaces.heightSmall),
                         ],
                       ),
                     ),
@@ -247,93 +260,225 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
   }
 
   Widget _tasksSection() {
-    return ProjectSectionCard(
-      marginBottom: 0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: ProjectSectionTitle('قائمة المهام'),
+    return
+        // ProjectSectionCard(
+        //   marginBottom: 0,
+        //   child:
+        Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: ProjectSectionTitle('قائمة المهام'),
+            ),
+            if (controller.iswaitingTasksApproval)
+              Text(
+                "(في انتظار الموافقة على المهام)",
+                style: AppTextStyles.link.copyWith(color: AppColors.red),
               ),
-              if (controller.canEditTasks)
-                controller.isAddingTask && controller.isFreelancer
-                    ? SizedBox.shrink()
-                    : IconButton(
-                        onPressed: controller.onAddNewTask,
-                        icon: const Icon(Icons.add_circle,
-                            color: AppColors.vividPurple),
-                        tooltip: 'إضافة مهمة',
-                      ),
-            ],
+            if (controller.canAddBasTask)
+              // controller.isAddingTask && controller.isFreelancer
+              // ? SizedBox.shrink()
+              // :
+              IconButton(
+                onPressed: controller.onAddNewTask,
+                icon:
+                    const Icon(Icons.add_circle, color: AppColors.vividPurple),
+                tooltip: 'إضافة مهمة',
+              ),
+            if (controller.canManageExtraTasks)
+              TextButton.icon(
+                  onPressed: controller.onAddExtraTasks,
+                  label: Text(
+                    "طلب مهمة اضافية",
+                    style: AppTextStyles.link,
+                  ))
+          ],
+        ),
+        SizedBox(height: 8.h),
+        Obx(() {
+          if (controller.isSetup &&
+              controller.setupTasks.isEmpty &&
+              controller.canEditTasks) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              child: Text(
+                'اضغط + لإضافة أول مهمة',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            );
+          }
+
+          if ((!controller.isSetup || !controller.canEditTasks) &&
+              controller.tasks.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              child: Text(
+                'لا توجد مهام بعد ${!controller.canEditTasks ? "، بانتظار اضافة المهام" : ""}',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            );
+          }
+
+          return Column(children: [
+            if (!controller.isSetup)
+              ...List.generate(
+                controller.tasks.length,
+                (index) {
+                  final task = controller.tasks[index];
+
+                  return ProjectTaskRow(
+                    orderNumber: index + 1,
+                    task: task,
+                    isLoading: controller.isTaskLoading(task.id),
+                    showEndTaskButton: controller.canEditTasks,
+                    onEndTask: () => controller.onFreelancerEndTask(
+                        taskId: task.id, index: index, isExtra: false),
+                    showApproveButtons:
+                        task.status == TaskStatus.completedByFreelancer &&
+                            controller.isClient,
+                    onApproveTask: () => controller.onClientApproveTask(
+                        taskId: task.id, index: index, isExtra: false),
+                    onRejectTask: () => controller.onClientRejectTask(
+                        taskId: task.id, index: index, isExtra: false),
+                    rejectReasonController: controller.rejectReasonController,
+                    projectStatus: controller.project!.status,
+                  );
+                },
+              )
+            else if (controller.isSetup && controller.isFreelancer)
+              ...List.generate(
+                controller.setupTasks.length,
+                (index) {
+                  final setupTask = controller.setupTasks[index];
+                  return _newTaskRow(setupTask, index);
+                },
+              ),
+            if (controller.isSetup && controller.isClient)
+              Text(
+                "في انتظار اعادة تعيين المهام",
+                style: AppTextStyles.subheading.copyWith(color: AppColors.grey),
+              ),
+            if (controller.extraTasks.isNotEmpty ||
+                controller.extraTasksControllers.isNotEmpty)
+              ..._extraTasksSection()
+          ]);
+        }),
+      ],
+    );
+    // );
+  }
+
+  List<Widget> _extraTasksSection() {
+    return [
+      // Divider(
+      //   thickness: 1,
+      //   color: AppColors.normalGrey,
+      // ),
+      SizedBox(
+        height: AppSpaces.heightSmall,
+      ),
+      Align(
+          alignment: Alignment.topRight,
+          child: ProjectSectionTitle('المهام الإضافية')),
+      SizedBox(
+        height: AppSpaces.heightSmall,
+      ),
+      ...List.generate(controller.extraTasks.length, (index) {
+        TaskModel extraTask = controller.extraTasks[index];
+        return ProjectTaskRow(
+          orderNumber: index + 1,
+          task: extraTask,
+          isLoading: controller.isTaskLoading(extraTask.id),
+          showEndTaskButton: controller.canEditTasks &&
+              extraTask.status != TaskStatus.requested,
+          onEndTask: () => controller.onFreelancerEndTask(
+              taskId: extraTask.id, index: index, isExtra: true),
+          showApproveButtons:
+              extraTask.status == TaskStatus.completedByFreelancer &&
+                  controller.isClient,
+          onApproveTask: () => controller.onClientApproveTask(
+              taskId: extraTask.id, index: index, isExtra: true),
+          onRejectTask: () => controller.onClientRejectTask(
+              taskId: extraTask.id, index: index, isExtra: true),
+          rejectReasonController: controller.rejectReasonController,
+          projectStatus: controller.project!.status,
+          onCencelRequestedTask: () => controller.onCancelOrRejectRequestedTask(
+              taskId: extraTask.id,
+              taskDescription: extraTask.description,
+              isCencel: true),
+          onRejectRequestedTask: () => controller.onCancelOrRejectRequestedTask(
+              taskId: extraTask.id,
+              taskDescription: extraTask.description,
+              isCencel: false),
+          onApproveRequestedTask: () => controller.onApproveRequestedTask(
+            taskId: extraTask.id,
+            taskDescription: extraTask.description,
           ),
-          SizedBox(height: 8.h),
-          Obx(() {
-            if (controller.tasks.isEmpty) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                child: Text(
-                  controller.canEditTasks
-                      ? 'اضغط + لإضافة أول مهمة'
-                      : 'لا توجد مهام بعد',
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-              );
-            }
+        );
+      }),
+      SizedBox(
+        height: AppSpaces.heightSmall,
+      ),
+      ...List.generate(controller.extraTasksControllers.length, (index) {
+        SetupTaskInput extraTasksController =
+            controller.extraTasksControllers[index];
+        return _newTaskRow(extraTasksController, index, isExtra: true);
+      })
+    ];
+  }
 
-            return controller.addIsLoading.value
-                ? CustomLoading()
-                : Column(children: [
-                    ...List.generate(
-                      controller.tasks.length,
-                      (index) {
-                        final task = controller.tasks[index];
-
-                        return ProjectTaskRow(
-                          orderNumber: index + 1,
-                          task: task,
-                          controller: controller.taskController(task.id),
-                          canEdit: controller.canEditTasks,
-                          onDescriptionChanged: (v) =>
-                              controller.updateTaskDescription(task.id, v),
-                          onDoneChanged: (v) =>
-                              controller.toggleTaskDone(task.id, v),
-                          // isEditing: controller.taskIsEditing(task.id),
-                          isEditing: false,
-                        );
-                      },
-                    ),
-                    if (controller.isAddingTask)
-                      Column(
-                        children: [
-                          TextFormField(
-                            controller: controller.newTaskController.value,
-                            readOnly: !controller.canEditTasks,
-                            onChanged: (value) =>
-                                controller.onChangeNewTask(value),
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(fontSize: 14.sp),
-                            decoration: unifiedDecoration('وصف المهمة الجديدة')
-                                .copyWith(
-                              fillColor: Colors.grey.shade50,
-                            ),
-                          ),
-                          SizedBox(height: AppSpaces.heightSmall),
-                          Row(
-                            children: [
-                              TextButton(
-                                  onPressed: controller.saveNewTask,
-                                  child: Text("حفظ")),
-                              TextButton(
-                                  onPressed: controller.cencelAddingNewTask,
-                                  child: Text("إلغاء")),
-                            ],
-                          )
-                        ],
-                      ),
-                  ]);
-          }),
+  Widget _newTaskRow(SetupTaskInput setupTask, int index,
+      {bool isExtra = false}) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 14.h),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: TextFormField(
+              minLines: 1,
+              maxLines: 4,
+              controller: setupTask.descriptionController,
+              decoration: unifiedDecoration("وصف المهمة"),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            flex: 2,
+            child: TextFormField(
+              controller: setupTask.amountController,
+              keyboardType: TextInputType.number,
+              decoration: unifiedDecoration("المبلغ"),
+              onChanged: (_) {
+                controller.setupTasks.refresh();
+              },
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              setupTask.descriptionController.dispose();
+              setupTask.amountController.dispose();
+              !isExtra
+                  ? controller.setupTasks.removeAt(index)
+                  : controller.extraTasksControllers.removeAt(index);
+            },
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              color: Colors.red,
+              size: 22.sp,
+            ),
+          ),
+          if (isExtra)
+            IconButton(
+              onPressed: () => controller.onRequestExtraTask(index),
+              icon: Icon(
+                Icons.check,
+                color: Colors.green,
+                size: 22.sp,
+              ),
+            )
         ],
       ),
     );
@@ -341,8 +486,69 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
 
   Widget _actionButtons() {
     return Obx(() {
+      if (controller.isSetup && controller.isFreelancer) {
+        return Column(
+          children: [
+            Obx(() {
+              return Text(
+                '${controller.tasksTotalAmount}\$ / ${controller.offer?.price ?? 0}\$',
+                style: AppTextStyles.link,
+              );
+            }),
+            CustomButton(
+              text: 'ارسال المهام',
+              onTap: controller.sendTasks,
+              isDisable: !controller.canSendTasks,
+              isLoading: controller.actionLoading.value,
+              gradient: AppColors.gradientColor,
+              prefix: const Icon(Icons.check_circle_outline,
+                  color: AppColors.white),
+            ),
+          ],
+        );
+      }
+      if (controller.iswaitingTasksApproval && controller.isClient) {
+        return Row(
+          children: [
+            Expanded(
+              child: CustomButton(
+                text: 'الموافقة على المهام',
+                onTap: controller.approveProjectTasks,
+                isLoading: controller.actionLoading.value,
+                gradient: AppColors.gradientColor,
+                prefix: const Icon(Icons.check_circle_outline,
+                    color: AppColors.white),
+              ),
+            ),
+            SizedBox(
+              width: 8.w,
+            ),
+            Expanded(
+              child: CustomButton(
+                text: 'رفض المهام',
+                textStyle: AppTextStyles.button.copyWith(color: AppColors.red),
+                onTap: controller.rejectProjectTasks,
+                isLoading: controller.actionLoading.value,
+                // gradient: AppColors.gradientColor,
+                prefix: const Icon(Icons.cancel_outlined, color: AppColors.red),
+                buttonType: ButtonType.outlined,
+              ),
+            ),
+          ],
+        );
+      }
+      // if (controller.iswaitingTasksApproval && controller.isFreelancer) {
+      //   return Align(
+      //     alignment: Alignment.center,
+      //     child: Text(
+      //       "في انتظار موافقة العميل على المهام",
+      //       style:
+      //           AppTextStyles.blacksubheading.copyWith(color: AppColors.grey),
+      //     ),
+      //   );
+      // }
       // final _ = controller.actionLoading.value;
-      if (controller.canDeliverProject) {
+      if (controller.canCompleteProject) {
         return CustomButton(
           text: 'إنهاء المشروع',
           onTap: controller.deliverProject,
@@ -353,25 +559,22 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
         );
       }
 
-      if (controller.canApproveCompletion) {
-        return CustomButton(
-          text: 'الموافقة على إنهاء المشروع',
-          onTap: controller.approveProjectCompletion,
-          isLoading: controller.actionLoading.value,
-          gradient: AppColors.gradientColor,
-        );
-      }
+      // if (controller.canApproveCompletion) {
+      //   return CustomButton(
+      //     text: 'الموافقة على إنهاء المشروع',
+      //     onTap: controller.approveProjectCompletion,
+      //     isLoading: controller.actionLoading.value,
+      //     gradient: AppColors.gradientColor,
+      //   );
+      // }
 
-      final status = controller.project?.status;
-      if (status == ProjectStatus.delivered && controller.isFreelancer) {
-        return Text(
-          'تم التسليم — بانتظار موافقة العميل',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: AppColors.vividPurple,
-            fontWeight: FontWeight.w600,
-            fontSize: 14.sp,
-          ),
+      if (controller.isReadyToComplete && controller.isFreelancer) {
+        return Align(
+          alignment: Alignment.center,
+          child: Text('تم التسليم — بانتظار انهاء المشروع',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.blacksubheading
+                  .copyWith(color: AppColors.grey)),
         );
       }
 

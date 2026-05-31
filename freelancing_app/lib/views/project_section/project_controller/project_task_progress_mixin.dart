@@ -11,7 +11,10 @@ mixin ProjectTaskProgressMixin on GetxController {
 
   Future<void> loadTaskProgressForProjects(List<ProjectModel> projects) async {
     final inProgress = projects
-        .where((p) => p.status == ProjectStatus.inProgress)
+        .where((p) =>
+            p.status == ProjectStatus.inProgress ||
+            p.status == ProjectStatus.waitingTasksApproval ||
+            p.status == ProjectStatus.setup)
         .toList();
 
     if (inProgress.isEmpty) {

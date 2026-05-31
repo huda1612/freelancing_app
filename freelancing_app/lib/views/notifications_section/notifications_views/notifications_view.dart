@@ -107,20 +107,42 @@ IconAndColor _mapType(String? type) {
   switch (type) {
     case AppNotificationTypes.userRequest:
     case AppNotificationTypes.offerAccepted:
+    case AppNotificationTypes.approveTasks:
       return IconAndColor(icon: Icons.check_circle, color: AppColors.green);
+
     case AppNotificationTypes.offerRejected:
-      return IconAndColor(icon: Icons.close, color: AppColors.red);
+    case AppNotificationTypes.rejectTasks:
+      return IconAndColor(icon: Icons.highlight_off, color: AppColors.red);
 
     case AppNotificationTypes.newOffer:
-      // return IconAndColor(icon: Icons.work, color: AppColors.purple);
       return IconAndColor(
           icon: Icons.person_add_alt_1_rounded, color: Colors.indigo);
+
     case AppNotificationTypes.newMessage:
       return IconAndColor(icon: Icons.message, color: Colors.orange);
+
     case AppNotificationTypes.hireMe:
       return IconAndColor(icon: Icons.work, color: AppColors.vividPurple);
-    // return IconAndColor(
-    //     icon: Icons.person_add_alt_1_rounded, color: Colors.indigo);
+    case AppNotificationTypes.sendTasks:
+      return IconAndColor(
+          icon: Icons.edit_document, color: AppColors.lightBlue);
+    case AppNotificationTypes.endTask:
+    case AppNotificationTypes.approveTask:
+      return IconAndColor(icon: Icons.check_box, color: AppColors.green);
+    case AppNotificationTypes.rejectTask:
+      return IconAndColor(
+          icon: Icons.indeterminate_check_box_rounded, color: AppColors.red);
+
+    case AppNotificationTypes.requestExtraTask:
+      return IconAndColor(
+          icon: Icons.plus_one_rounded, color: AppColors.vividPurple);
+    case AppNotificationTypes.cancelRequestExtraTask:
+    case AppNotificationTypes.rejectRequestedExtraTask:
+      return IconAndColor(
+          icon: Icons.exposure_minus_1_rounded, color: AppColors.red);
+
+    case AppNotificationTypes.approveRequestExtraTask:
+      return IconAndColor(icon: Icons.plus_one_rounded, color: AppColors.green);
     default:
       return IconAndColor(
           icon: Icons.new_releases_rounded, color: Colors.purple);

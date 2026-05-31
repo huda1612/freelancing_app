@@ -286,7 +286,7 @@ class OfferService {
 
             /// تحديث المشروع
             transaction.update(projectRef, {
-              'status': ProjectStatus.inProgress,
+              'status': ProjectStatus.setup,
               'acceptedFreelancerId': acceptedFreelancerId,
               'acceptedOfferId': acceptedOfferId,
               'updatedAt': ts,

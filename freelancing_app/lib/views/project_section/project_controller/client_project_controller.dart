@@ -60,6 +60,15 @@ class ClientProjectController extends GetxController {
       ProjectStatus.clientTabStatuses[activeTabIndex.value];
 //ok
   List<ProjectModel> projectsForActiveTab() {
+    if (statusForActiveTab == ProjectStatus.inProgress) {
+      return projects
+          .where((p) =>
+              p.status == ProjectStatus.setup ||
+              p.status == ProjectStatus.waitingTasksApproval ||
+              p.status == ProjectStatus.inProgress ||
+              p.status == ProjectStatus.readyToComplete)
+          .toList();
+    }
     return projects.where((p) => p.status == statusForActiveTab).toList();
   }
 
