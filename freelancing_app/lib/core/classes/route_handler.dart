@@ -144,18 +144,25 @@ class RouteHandler {
           id: 0,
         );
         break;
-      // case AppNotificationTypes.userRequest:
-      //   NavigationService.changeTab(0);
-
-      //   Future.delayed(const Duration(milliseconds: 200), () {
-      //     NavigationService.toNamed(
-      //       AppRoutes.requestDetails,
-      //       arguments: {"requestId": id},
-      //       id: 0,
-      //     );
-      //   });
-
-      //   break;
+      case AppNotificationTypes.sendTasks:
+      case AppNotificationTypes.rejectTasks:
+      case AppNotificationTypes.approveTasks:
+      case AppNotificationTypes.endTask:
+      case AppNotificationTypes.rejectTask:
+      case AppNotificationTypes.approveTask:
+      case AppNotificationTypes.requestExtraTask:
+      case AppNotificationTypes.cancelRequestExtraTask:
+      case AppNotificationTypes.rejectRequestedExtraTask:
+      case AppNotificationTypes.approveRequestExtraTask:
+        NavigationService.changeTab(3);
+        NavigationService.toNamed(
+          AppRoutes.activeProject,
+          arguments: {
+            "projectId": id,
+          },
+          id: 3,
+        );
+        break;
     }
   }
 }

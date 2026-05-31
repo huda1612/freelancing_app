@@ -34,7 +34,7 @@ class ProjectDeadlineWidget extends StatelessWidget {
     if (progress < 0.5) {
       // بداية المشروع
       statusText = "باقي $daysLeft يوم للتسليم";
-      statusColor = AppColors.lightBlue;
+      statusColor = AppColors.lightPurple;
     } else if (progress < 1) {
       // بعد نص المدة
       statusText = "باقي $daysLeft يوم للتسليم";
@@ -60,18 +60,22 @@ class ProjectDeadlineWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "المدة المتبقية",
-            style: TextStyle(
-              color: Colors.white, // مهم جداً
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          // const Text(
+          //   "المدة المتبقية",
+          //   style: TextStyle(
+          //     color: Colors.white, // مهم جداً
+          //     fontSize: 18,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
+          Icon(
+            Icons.timer_outlined,
+            color: AppColors.white,
           ),
-          SizedBox(height: AppSpaces.heightMedium),
+          SizedBox(width: AppSpaces.heightMedium),
           Text(
             statusText,
             style: AppTextStyles.body.copyWith(

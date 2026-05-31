@@ -16,8 +16,11 @@ class ProjectModel {
   final String? acceptedFreelancerId;
   final int? tasksCount;
   final int? completedTasksCount;
-
+  //dates
   final Timestamp? createdAt;
+  final Timestamp? startAt;
+  final Timestamp? allTasksCompletedAt;
+  final Timestamp? endAt;
 
   ProjectModel({
     required this.id,
@@ -34,6 +37,9 @@ class ProjectModel {
     this.tasksCount,
     this.completedTasksCount,
     this.createdAt,
+    this.startAt,
+    this.allTasksCompletedAt,
+    this.endAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -51,6 +57,9 @@ class ProjectModel {
       'tasksCount': tasksCount,
       'completedTasksCount': completedTasksCount,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
+      'startAt': startAt,
+      'allTasksCompletedAt': allTasksCompletedAt,
+      'endAt': endAt,
     };
   }
 
@@ -71,6 +80,9 @@ class ProjectModel {
       completedTasksCount: map['completedTasksCount'],
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
+      startAt: map['startAt'],
+      allTasksCompletedAt: map['allTasksCompletedAt'],
+      endAt: map['endAt'],
     );
   }
   ProjectModel copyWith({
@@ -88,6 +100,9 @@ class ProjectModel {
     int? tasksCount,
     int? completedTasksCount,
     Timestamp? createdAt,
+    Timestamp? startAt,
+    Timestamp? allTasksCompletedAt,
+    Timestamp? endAt,
   }) {
     return ProjectModel(
       id: id ?? this.id,
@@ -104,6 +119,9 @@ class ProjectModel {
       tasksCount: tasksCount ?? this.tasksCount,
       completedTasksCount: completedTasksCount ?? this.completedTasksCount,
       createdAt: createdAt ?? this.createdAt,
+      startAt: startAt ?? this.startAt,
+      allTasksCompletedAt: allTasksCompletedAt ?? this.allTasksCompletedAt,
+      endAt: endAt ?? this.endAt,
     );
   }
 }

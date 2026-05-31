@@ -114,10 +114,10 @@ class ProjectDetailsController extends GetxController {
       'project': project,
       'projectId': project!.id,
     });
-    //لو رجع من الصفحه بعد ما قبل واحد من العروض لازم اعملهيك حتى ما يقدر يحذف المشروع
+    //لو رجع من الصفحه بعد ما قبل واحد من العروض لازم اعمل هيك حتى ما يقدر يحذف المشروع
     if (didSomething == true) {
       // await hasOldOffer();
-      project = project?.copyWith(status: ProjectStatus.inProgress);
+      project = project?.copyWith(status: ProjectStatus.setup);
       update();
     }
   }

@@ -27,7 +27,8 @@ class ProjectCard extends StatelessWidget {
   final bool marginBottom;
 
   bool get _showTaskProgress =>
-      project.status == ProjectStatus.inProgress &&
+      (project.status == ProjectStatus.inProgress ||
+          project.status == ProjectStatus.readyToComplete) &&
       tasksDone != null &&
       tasksTotal != null;
 
@@ -64,13 +65,15 @@ class ProjectCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          project.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.blacksubheading.copyWith(
-                            fontSize: 18.sp,
-                            color: AppColors.darkPurple,
+                        Expanded(
+                          child: Text(
+                            project.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.blacksubheading.copyWith(
+                              fontSize: 18.sp,
+                              color: AppColors.darkPurple,
+                            ),
                           ),
                         ),
                         header ?? SizedBox.shrink()

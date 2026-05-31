@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/data/services/fcm_token_array_service.dart';
 // import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/user_notification_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
@@ -12,12 +13,13 @@ class NotificationSenderServices {
   static String projectId = 'freelance-app-78e07';
   static String servicesData = r'''
 {
- 
+
 }
 ''';
   static Future<StatusClasses> sendNotificationToSelectedToken(
       {required auth.AutoRefreshingAuthClient client, //اضافي
       required String fcmToken,
+      required Set<String> invalidTokens,
       required String title,
       required String body,
       Map<String, dynamic>? data}) async {
@@ -61,6 +63,13 @@ class NotificationSenderServices {
           },
         }),
       );
+
+      if (response.statusCode == 404 && //اضافه
+          response.body.contains('UNREGISTERED')) {
+        invalidTokens.add(fcmToken);
+
+        return StatusClasses.customError('FCM token is unregistered');
+      }
       if (response.statusCode < 200 || response.statusCode >= 300) {
         debugPrint(
             "sending notification error : ${response.statusCode} ${response.body}");
@@ -110,6 +119,9 @@ class NotificationSenderServices {
 
       final client = await _getClient();
       //لحتى ما يتم انشاء كلاينت لكل توكن بعمل واحد بس و برسل لكل الاجهزة بعدين بقفل
+
+      // اضافه (مشان لو في توكنز ما موجوده ورجعت خطأ 404 لان انحذف التطبيق بلا ما يسجل خروج احذفها من الفايرستور )
+      final invalidTokens = <String>{};
       try {
         await Future.wait(tokens.map((token) {
           return sendNotificationToSelectedToken(
@@ -118,19 +130,12 @@ class NotificationSenderServices {
             title: title,
             body: body,
             data: updatedData,
+            invalidTokens: invalidTokens,
           );
         }));
       } finally {
         client.close();
       }
-      // for (final token in tokens) {
-      //   await sendNotificationToSelectedToken(
-      //     fcmToken: token,
-      //     title: title,
-      //     body: body,
-      //     data: updatedData,
-      //   );
-      // }
 
       ///3- store the notification in the uesr's notification collection in firestore
       // final notificationAddRes = await
@@ -146,6 +151,12 @@ class NotificationSenderServices {
         }
       }));
 
+      //4- if there is unregistered tokens in the firestore => remove it
+      if (invalidTokens.isNotEmpty) {
+        await FcmTokenArrayService()
+            .removeArrayOfTokens(uid: uId, tokensArray: invalidTokens.toList());
+        debugPrint('Removed ${invalidTokens.length} invalid FCM tokens');
+      }
       // if (notificationAddRes != StatusClasses.success) {
       //   debugPrint(
       //       "storing notification error : ${notificationAddRes.type} ${notificationAddRes.message}");

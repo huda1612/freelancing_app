@@ -93,6 +93,140 @@ class AppNotification {
     );
   }
 
+  ///اشعار ارسال المهام لمشروع الى عميل
+  factory AppNotification.sendTasks(
+      {required String projectId, String? projectTitle}) {
+    return AppNotification(
+      title: "لقد تم تحديد مهام المشروع",
+      body:
+          "لقد قام القائم على المشروع باعداد المهام على مشروع ${projectTitle ?? ''}",
+      data: {"type": AppNotificationTypes.sendTasks, "id": projectId},
+    );
+  }
+
+  ///اشعار رفض المهام للمشروع
+  factory AppNotification.rejectTasks(
+      {required String projectId, String? projectTitle}) {
+    return AppNotification(
+      title: "لقد تم رفض مهام المشروع",
+      body: "لقد قام صاحب المشروع برفض المهام على مشروع ${projectTitle ?? ''}",
+      data: {"type": AppNotificationTypes.rejectTasks, "id": projectId},
+    );
+  }
+
+  ///اشعار قبول المهام للمشروع
+  factory AppNotification.approveTasks(
+      {required String projectId, String? projectTitle}) {
+    return AppNotification(
+      title: "لقد تم قبول مهام المشروع",
+      body: "لقد قام صاحب المشروع بقبول المهام على مشروع ${projectTitle ?? ''}",
+      data: {"type": AppNotificationTypes.approveTasks, "id": projectId},
+    );
+  }
+
+  ///اشعار انهاء مهمه في مشروع
+  factory AppNotification.endTask(
+      {required String projectId, String? projectTitle, int? taskNumber}) {
+    return AppNotification(
+      title: "لقد تم انهاء مهمة",
+      body:
+          "لقد تم انهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في مشروعك ${projectTitle ?? ''}",
+      data: {"type": AppNotificationTypes.endTask, "id": projectId},
+    );
+  }
+
+  ///اشعار رفض انهاء مهمه في مشروع
+  factory AppNotification.rejectTask(
+      {required String projectId,
+      String? projectTitle,
+      int? taskNumber,
+      String? rejectionReason}) {
+    return AppNotification(
+      title: "لقد تم رفض انهاء مهمة",
+      body:
+          "لقد تم رفض انهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في المشروع ${projectTitle ?? ''} ${rejectionReason != null ? "بسبب : $rejectionReason" : ''}",
+      data: {"type": AppNotificationTypes.rejectTask, "id": projectId},
+    );
+  }
+
+  ///اشعار الموفقة على انهاء مهمه في مشروع
+  factory AppNotification.approveTask({
+    required String projectId,
+    String? projectTitle,
+    int? taskNumber,
+  }) {
+    return AppNotification(
+      title: "لقد تمت الموافقة على انهاء مهمة",
+      body:
+          "لقد تمت الموافقة على انهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في المشروع ${projectTitle ?? ''}",
+      data: {"type": AppNotificationTypes.approveTask, "id": projectId},
+    );
+  }
+
+  ///اشعار طلب مهمة اضافية
+  factory AppNotification.requestExtraTask({
+    required String projectId,
+    String? projectTitle,
+    String? extraTaskDescription,
+  }) {
+    return AppNotification(
+      title: "لديك طلب لمهمة إضافية",
+      body:
+          "لقد تم طلب مهمة اضافية على المشروع ${projectTitle ?? ''} ${extraTaskDescription != null ? "وهي : $extraTaskDescription" : ''}",
+      data: {"type": AppNotificationTypes.requestExtraTask, "id": projectId},
+    );
+  }
+
+  factory AppNotification.cancelRequestExtraTask({
+    required String projectId,
+    String? projectTitle,
+    String? extraTaskDescription,
+  }) {
+    return AppNotification(
+      title: "تم إلغاء طلب المهمة الإضافية",
+      body:
+          "لقد تم إلغاء طلب المهمة الاضافية على المشروع ${projectTitle ?? ''} ${extraTaskDescription != null ? "وهي : $extraTaskDescription" : ''}",
+      data: {
+        "type": AppNotificationTypes.cancelRequestExtraTask,
+        "id": projectId
+      },
+    );
+  }
+
+  ///اشعار رفض مهمة اضافية
+  factory AppNotification.rejectRequestedExtraTask({
+    required String projectId,
+    String? projectTitle,
+    String? extraTaskDescription,
+  }) {
+    return AppNotification(
+      title: "تم رفض طلب المهمة الإضافية",
+      body:
+          "لقد تم رفض طلب المهمة الاضافية على المشروع ${projectTitle ?? ''} ${extraTaskDescription != null ? "وهي : $extraTaskDescription" : ''}",
+      data: {
+        "type": AppNotificationTypes.rejectRequestedExtraTask,
+        "id": projectId
+      },
+    );
+  }
+
+  ///اشعار الموافقة على مهمة اضافية
+  factory AppNotification.approveRequestExtraTask({
+    required String projectId,
+    String? projectTitle,
+    String? extraTaskDescription,
+  }) {
+    return AppNotification(
+      title: "تمت الموافقة على طلب المهمة الإضافية",
+      body:
+          "لقد تمت الموافقة على طلبك لمهمة اضافية على المشروع ${projectTitle ?? ''} ${extraTaskDescription != null ? "وهي : $extraTaskDescription" : ''}",
+      data: {
+        "type": AppNotificationTypes.approveRequestExtraTask,
+        "id": projectId
+      },
+    );
+  }
+
   /// إشعار دفعة مالية
   // factory AppNotification.paymentReceived({
   //   required String id,

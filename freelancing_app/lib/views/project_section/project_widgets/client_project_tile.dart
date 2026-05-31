@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
-import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
-import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_card.dart';
+import 'package:freelancing_platform/views/project_section/project_widgets/status_container.dart';
 
 enum ClientProjectTileMode {
   newProject,
+  setup,
+  waitingTasksApproval,
   inProgress,
-  delivered,
+  readyToComplete,
+  // delivered,
   completed,
   withdrawn,
 }
@@ -45,8 +46,14 @@ class ClientProjectTile extends StatelessWidget {
     return ProjectCard(
       project: project,
       onTap: onTap,
-      tasksDone: mode == ClientProjectTileMode.inProgress ? tasksDone : null,
-      tasksTotal: mode == ClientProjectTileMode.inProgress ? tasksTotal : null,
+      tasksDone: mode == ClientProjectTileMode.inProgress ||
+              mode == ClientProjectTileMode.readyToComplete
+          ? tasksDone
+          : null,
+      tasksTotal: mode == ClientProjectTileMode.inProgress ||
+              mode == ClientProjectTileMode.readyToComplete
+          ? tasksTotal
+          : null,
       footer: _buildFooter(),
       header: _buildHeader(),
     );
@@ -63,24 +70,39 @@ class ClientProjectTile extends StatelessWidget {
                 color: AppColors.red,
               ));
     }
+    if (mode == ClientProjectTileMode.setup ||
+        mode == ClientProjectTileMode.waitingTasksApproval) {
+      return StatusContainer(
+          text: mode == ClientProjectTileMode.setup
+              ? "بانتظار تحديد المهام"
+              : "بانتظار الموافقة على المهام",
+          bgColor: AppColors.red.withOpacity(.1),
+          textColor: AppColors.red);
+    }
+    if (mode == ClientProjectTileMode.readyToComplete) {
+      return StatusContainer(
+          bgColor: AppColors.green.withOpacity(.1),
+          text: "بانتظار انهاء المشروع",
+          textColor: AppColors.green);
+    }
     return null;
   }
 
   Widget? _buildFooter() {
-    if (mode == ClientProjectTileMode.delivered) {
-      return CustomButton(
-        text: 'الموافقة على إنهاء المشروع',
-        height: 44,
-        width: null,
-        isLoading: isBusy,
-        onTap: onApproveCompletion ?? () {},
-        gradient: AppColors.gradientColor,
-        textStyle: AppTextStyles.link.copyWith(
-          color: AppColors.white,
-          fontSize: 13.sp,
-        ),
-      );
-    }
+    // if (mode == ClientProjectTileMode.readyToComplete) {
+    //   return CustomButton(
+    //     text: 'إنهاء المشروع',
+    //     height: 44,
+    //     width: null,
+    //     isLoading: isBusy,
+    //     onTap: onApproveCompletion ?? () {},
+    //     gradient: AppColors.gradientColor,
+    //     textStyle: AppTextStyles.link.copyWith(
+    //       color: AppColors.white,
+    //       fontSize: 13.sp,
+    //     ),
+    //   );
+    // }
 
     // if (mode == ClientProjectTileMode.withdrawn) {
     //   // return isBusy
@@ -115,10 +137,16 @@ class ClientProjectTile extends StatelessWidget {
 
   static ClientProjectTileMode modeFromStatus(String status) {
     switch (status) {
+      case ProjectStatus.setup:
+        return ClientProjectTileMode.setup;
+      case ProjectStatus.waitingTasksApproval:
+        return ClientProjectTileMode.waitingTasksApproval;
       case ProjectStatus.inProgress:
         return ClientProjectTileMode.inProgress;
-      case ProjectStatus.delivered:
-        return ClientProjectTileMode.delivered;
+      // case ProjectStatus.delivered:
+      //   return ClientProjectTileMode.delivered;
+      case ProjectStatus.readyToComplete:
+        return ClientProjectTileMode.readyToComplete;
       case ProjectStatus.completed:
         return ClientProjectTileMode.completed;
       case ProjectStatus.cancelled:

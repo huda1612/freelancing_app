@@ -29,7 +29,7 @@ class NotificationCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           // color: isRead ? AppColors.veryLightGrey : AppColors.white,
-          color: isSelected ? AppColors.veryLightPurple : AppColors.white ,
+          color: isSelected ? AppColors.veryLightPurple : AppColors.white,
 
           borderRadius: BorderRadius.circular(14),
           boxShadow: const [
@@ -69,6 +69,8 @@ class NotificationCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     subtitle,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.grey,
                       height: 1.5,

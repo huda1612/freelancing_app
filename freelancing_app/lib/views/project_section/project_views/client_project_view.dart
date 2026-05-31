@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
-import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_refreshable_empty_message.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -121,27 +120,6 @@ class ClientProjectView extends StatelessWidget {
         return CustomRefreshableEmptyMessage(
             onRefresh: controller.loadProjects,
             emptyMessage: _emptyMessageForTab(controller.activeTabIndex.value));
-        // return RefreshIndicator(
-        //   color: AppColors.vividPurple,
-        //   onRefresh: controller.loadProjects,
-        //   child:
-        //    LayoutBuilder(
-        //     builder: (context, constraints) {
-        //       return SingleChildScrollView(
-        //         physics: const AlwaysScrollableScrollPhysics(),
-        //         child: ConstrainedBox(
-        //           constraints: BoxConstraints(
-        //             minHeight: constraints.maxHeight,
-        //           ),
-        //           child: customEmptyMessage(
-        //             message:
-        //                 _emptyMessageForTab(controller.activeTabIndex.value),
-        //           ),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // );
       }
 
       // project list
@@ -161,15 +139,12 @@ class ClientProjectView extends StatelessWidget {
                 mode: mode,
                 isBusy: c.isBusy(project.id),
                 onTap: () => _onProjectTap(c, project, mode),
-                tasksDone: mode == ClientProjectTileMode.inProgress
-                    ? project.completedTasksCount
-                    : null,
-                tasksTotal: mode == ClientProjectTileMode.inProgress
-                    ? project.tasksCount
-                    : null,
-                onApproveCompletion: mode == ClientProjectTileMode.delivered
-                    ? () => c.approveProjectCompletion(project)
-                    : null,
+                tasksDone: project.completedTasksCount,
+                tasksTotal: project.tasksCount,
+                onApproveCompletion:
+                    mode == ClientProjectTileMode.readyToComplete
+                        ? () => c.approveProjectCompletion(project)
+                        : null,
                 // onRepublish: mode == ClientProjectTileMode.withdrawn
                 //     ? () => c.republishProject(project)
                 //     : null,
@@ -194,10 +169,12 @@ class ClientProjectView extends StatelessWidget {
       case ClientProjectTileMode.completed:
         c.openProjectDetails(project);
         break;
+      case ClientProjectTileMode.setup:
+      case ClientProjectTileMode.waitingTasksApproval:
       case ClientProjectTileMode.inProgress:
         c.openActiveProject(project);
         break;
-      case ClientProjectTileMode.delivered:
+      case ClientProjectTileMode.readyToComplete:
         c.openActiveProject(project);
         break;
       case ClientProjectTileMode.withdrawn:
@@ -211,11 +188,11 @@ class ClientProjectView extends StatelessWidget {
         return 'لا توجد مشاريع جديدة.';
       case 1:
         return 'لا توجد مشاريع قيد التقدم.';
+      // case 2:
+      //   return 'لا توجد مشاريع مستلمة.';
       case 2:
-        return 'لا توجد مشاريع مستلمة.';
-      case 3:
         return 'لا توجد مشاريع مكتملة.';
-      case 4:
+      case 3:
         return 'لا توجد مشاريع مسحوبة.';
       default:
         return 'لا توجد بيانات.';

@@ -32,6 +32,18 @@ class FcmTokenArrayService {
     });
   }
 
+  Future<void> removeArrayOfTokens({
+    required String uid,
+    required List<String> tokensArray,
+  }) async {
+    await _firebaseFirestore
+        .collection(CollectionsNames.users)
+        .doc(uid)
+        .update({
+      'fcmTokens': FieldValue.arrayRemove(tokensArray),
+    });
+  }
+
   Future<void> replaceToken({
     required String uid,
     required String oldToken,

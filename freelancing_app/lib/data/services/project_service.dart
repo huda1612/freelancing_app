@@ -34,6 +34,16 @@ class ProjectService {
     );
   }
 
+  Future<StatusClasses> updateProject(
+      {required String projectId,required Map<String, dynamic> body}) async {
+    final collection = _firebaseFirestore.collection(CollectionsNames.projects);
+    return FirebaseCrud.updateDocument(
+      collectionRef: collection,
+      docId: projectId,
+      body: body,
+    );
+  }
+
   Future<StatusClasses> deleteProject(ProjectModel project) async {
     final transactionRes =
         await FirebaseCrud.runTransaction(action: (transaction) async {
@@ -117,12 +127,12 @@ class ProjectService {
     );
   }
 
-  Future<StatusClasses> republishProject(String projectId) {
-    return updateProjectStatus(
-      projectId: projectId,
-      status: ProjectStatus.newProject,
-    );
-  }
+  // Future<StatusClasses> republishProject(String projectId) {
+  //   return updateProjectStatus(
+  //     projectId: projectId,
+  //     status: ProjectStatus.newProject,
+  //   );
+  // }
 
   //جديدة
 

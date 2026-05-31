@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 
@@ -17,7 +18,7 @@ class ProjectSectionCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: marginBottom),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),

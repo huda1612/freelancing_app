@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:freelancing_platform/core/constants/app_colors.dart';
+import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_card.dart';
+import 'package:freelancing_platform/views/project_section/project_widgets/status_container.dart';
 
 enum FreelancerProjectTileMode {
+  setup,
+  waitingTasksApproval,
   inProgress,
-  delivered,
+  readyToComplete,
+  // delivered,
   completed,
   withdrawn,
 }
@@ -31,18 +37,58 @@ class FreelancerProjectTile extends StatelessWidget {
     return ProjectCard(
       project: project,
       onTap: onTap,
-      tasksDone: mode == FreelancerProjectTileMode.inProgress ? tasksDone : null,
-      tasksTotal:
-          mode == FreelancerProjectTileMode.inProgress ? tasksTotal : null,
+      tasksDone: mode == FreelancerProjectTileMode.inProgress ||
+              mode == FreelancerProjectTileMode.readyToComplete
+          ? tasksDone
+          : null,
+      tasksTotal: mode == FreelancerProjectTileMode.inProgress ||
+              mode == FreelancerProjectTileMode.readyToComplete
+          ? tasksTotal
+          : null,
+      header: _buildHeader(),
+      // header: mode == FreelancerProjectTileMode.setup ||
+      //         mode == FreelancerProjectTileMode.waitingTasksApproval
+      //     ? Text(
+      //         mode == FreelancerProjectTileMode.setup
+      //             ? "بانتظار تحديد المهام"
+      //             : "بانتظار الموافقة على المهام",
+      //         style: AppTextStyles.link.copyWith(color: AppColors.red))
+      //     : null,
     );
+  }
+
+  Widget? _buildHeader() {
+    if (mode == FreelancerProjectTileMode.setup ||
+        mode == FreelancerProjectTileMode.waitingTasksApproval) {
+      return StatusContainer(
+        bgColor: AppColors.red.withOpacity(.1),
+        textColor: AppColors.red,
+        text: mode == FreelancerProjectTileMode.setup
+            ? "بانتظار تحديد المهام"
+            : "بانتظار الموافقة على المهام",
+      );
+    }
+    if (mode == FreelancerProjectTileMode.readyToComplete) {
+      return StatusContainer(
+          bgColor: AppColors.green.withOpacity(.1),
+          text: "بانتظار انهاء المشروع",
+          textColor: AppColors.green);
+    }
+    return null;
   }
 
   static FreelancerProjectTileMode modeFromStatus(String status) {
     switch (status) {
+      case ProjectStatus.setup:
+        return FreelancerProjectTileMode.setup;
+      case ProjectStatus.waitingTasksApproval:
+        return FreelancerProjectTileMode.waitingTasksApproval;
       case ProjectStatus.inProgress:
         return FreelancerProjectTileMode.inProgress;
-      case ProjectStatus.delivered:
-        return FreelancerProjectTileMode.delivered;
+      // case ProjectStatus.delivered:
+      //   return FreelancerProjectTileMode.delivered;
+      case ProjectStatus.readyToComplete:
+        return FreelancerProjectTileMode.readyToComplete;
       case ProjectStatus.completed:
         return FreelancerProjectTileMode.completed;
       case ProjectStatus.cancelled:

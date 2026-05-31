@@ -52,9 +52,16 @@ class FreelancerProjectController extends GetxController {
       ProjectStatus.freelancerTabStatuses[activeTabIndex.value];
 
   List<ProjectModel> projectsForActiveTab() {
-    return projects
-        .where((p) => p.status == statusForActiveTab)
-        .toList();
+    if (statusForActiveTab == ProjectStatus.inProgress) {
+      return projects
+          .where((p) =>
+              p.status == ProjectStatus.setup ||
+              p.status == ProjectStatus.waitingTasksApproval ||
+              p.status == ProjectStatus.inProgress ||
+              p.status == ProjectStatus.readyToComplete)
+          .toList();
+    }
+    return projects.where((p) => p.status == statusForActiveTab).toList();
   }
 
   void setTabIndex(int index) {
