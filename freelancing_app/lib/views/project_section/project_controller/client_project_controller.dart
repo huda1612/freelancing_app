@@ -8,17 +8,12 @@ import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/views/project_section/project_functions/projects_auto_complete.dart';
 import 'package:get/get.dart';
 
 class ClientProjectController extends GetxController {
   final ProjectService _projectService = ProjectService();
   final UserService _userService = UserService();
-
-  // ClientProjectController({
-  //   ProjectService? projectService,
-  //   UserService? userService,
-  // })  : _projectService = projectService ?? ProjectService(),
-  //       _userService = userService ?? UserService();
 
   final pageState = StatusClasses.isloading.obs;
   final activeTabIndex = 0.obs;
@@ -44,13 +39,23 @@ class ClientProjectController extends GetxController {
 
     res.fold(
       (err) => pageState.value = err,
-      (list) {
+      (list) async {
+        //  1- أول شي: شغّل auto complete
+        final updatedProjectIds = await autoCompleteProjects(list);
+
         list.sort((a, b) {
           final aMs = a.createdAt?.millisecondsSinceEpoch ?? 0;
           final bMs = b.createdAt?.millisecondsSinceEpoch ?? 0;
           return bMs.compareTo(aMs);
         });
         projects.assignAll(list);
+
+        if (updatedProjectIds.isNotEmpty) {
+          projects.value = projects.map((p) => updatedProjectIds.contains(p.id)
+              ? p.copyWith(status: ProjectStatus.completed)
+              : p).toList();
+        }
+
         pageState.value = StatusClasses.success;
       },
     );
@@ -130,18 +135,6 @@ class ClientProjectController extends GetxController {
     customSnackbar(message: "تم إكمال المشروع بنجاح");
   }
 
-  // Future<void> republishProject(ProjectModel project) async {
-  //   _startAction(project.id);
-  //   final res = await _projectService.republishProject(project.id);
-  //   _endAction(project.id);
-  //   if (res != StatusClasses.success) {
-  //     customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
-  //     return;
-  //   }
-  //   _updateLocalProjectStatus(project.id, ProjectStatus.newProject);
-  //   customSnackbar(message: "تم إعادة نشر المشروع");
-  // }
-
   void confirmDeleteProject(ProjectModel project) {
     Get.defaultDialog(
       title: "تأكيد الحذف",
@@ -174,19 +167,8 @@ class ClientProjectController extends GetxController {
   void _updateLocalProjectStatus(String projectId, String status) {
     final index = projects.indexWhere((p) => p.id == projectId);
     if (index == -1) return;
-    // final old = projects[index];
     projects[index] = projects[index].copyWith(
-      // id: old.id,
-      // clientId: old.clientId,
-      // title: old.title,
-      // description: old.description,
-      // category: old.category,
-      // skillsRequired: old.skillsRequired,
-      // budget: old.budget,
-      // durationDays: old.durationDays,
       status: status,
-      // acceptedOfferId: old.acceptedOfferId,
-      // createdAt: old.createdAt,
     );
     projects.refresh();
   }

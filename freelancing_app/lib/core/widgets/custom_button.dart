@@ -19,6 +19,7 @@ class CustomButton extends StatelessWidget {
   final ButtonType buttonType;
   final Gradient? gradient;
   final Widget? prefix;
+  final bool noShadow;
   final bool isLoading;
   final bool isDisable;
 
@@ -35,6 +36,7 @@ class CustomButton extends StatelessWidget {
       this.gradient,
       this.buttonType = ButtonType.filled,
       this.prefix,
+      this.noShadow = false,
       this.isLoading = false,
       this.isDisable = false});
 
@@ -69,7 +71,7 @@ class CustomButton extends StatelessWidget {
             border: buttonType == ButtonType.outlined
                 ? Border.all(color: color, width: 1.5.w)
                 : null,
-            boxShadow: effectiveDisable
+            boxShadow: effectiveDisable || noShadow
                 ? []
                 : [
                     BoxShadow(

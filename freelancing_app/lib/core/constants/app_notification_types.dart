@@ -15,4 +15,8 @@ class AppNotificationTypes {
   static const String cancelRequestExtraTask = "cancelRequestExtraTask";
   static const String rejectRequestedExtraTask = "rejectRequestedExtraTask";
   static const String approveRequestExtraTask = "approveRequestExtraTask";
+  static const String completeProject = "completeProject";
+  static const String cancelProject = "cancelProject";
+    static const String newRating = "newRating";
+
 }

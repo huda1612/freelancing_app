@@ -4,7 +4,9 @@ import 'package:freelancing_platform/core/constants/app_spaces.dart';
 
 class CustomBottomSheetContainer extends StatelessWidget {
   final List<Widget> children;
-  const CustomBottomSheetContainer({super.key, required this.children});
+  final double? padding;
+  const CustomBottomSheetContainer(
+      {super.key, required this.children, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +19,18 @@ class CustomBottomSheetContainer extends StatelessWidget {
               topRight: Radius.circular(AppSpaces.radiusLarge)),
         ),
         child: Padding(
-          padding: EdgeInsets.all(AppSpaces.paddingLarge),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            // SizedBox(
-            //   height: AppSpaces.heightLarge,
-            // ),
-            ...children,
-            // SizedBox(
-            //   height: AppSpaces.heightLarge,
-            // ),
-          ]),
+          padding: EdgeInsets.all(padding ?? AppSpaces.paddingLarge),
+          child: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              // SizedBox(
+              //   height: AppSpaces.heightLarge,
+              // ),
+              ...children,
+              // SizedBox(
+              //   height: AppSpaces.heightLarge,
+              // ),
+            ]),
+          ),
         ));
   }
 }

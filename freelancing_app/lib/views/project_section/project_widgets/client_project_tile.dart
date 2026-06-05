@@ -76,8 +76,8 @@ class ClientProjectTile extends StatelessWidget {
           text: mode == ClientProjectTileMode.setup
               ? "بانتظار تحديد المهام"
               : "بانتظار الموافقة على المهام",
-          bgColor: AppColors.red.withOpacity(.1),
-          textColor: AppColors.red);
+          bgColor: Colors.orange.withOpacity(.1),
+          textColor: Colors.orange);
     }
     if (mode == ClientProjectTileMode.readyToComplete) {
       return StatusContainer(

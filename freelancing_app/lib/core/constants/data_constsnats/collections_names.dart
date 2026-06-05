@@ -6,11 +6,11 @@ class CollectionsNames {
   //user sub collections
   static const String workSamples = "work_samples";
   static const String certificate = "certificates";
-  static const String reviews = "reviews";
+  static const String ratings = "ratings";
   static const String suggestions = "suggestions";
   static const String activities = "activities";
   static const String projects = "projects";
-    static const String projectTasks = "tasks";
+  static const String projectTasks = "tasks";
   static const String offers = "offers";
   static const String notifications = "notifications";
 

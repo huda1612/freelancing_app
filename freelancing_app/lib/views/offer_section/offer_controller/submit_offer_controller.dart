@@ -100,7 +100,7 @@ class SubmitOfferController extends GetxController {
           specialization: user.specialization == null
               ? "لا يوجد تخصص محدد"
               : user.specialization!.name,
-          rating: user.rating,
+          rating: user.overallRating,
           completedProjects: user.completedProjects);
       if (isEditMode) {
         final res2 = await OfferService().updateOffer(

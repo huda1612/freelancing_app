@@ -166,19 +166,19 @@ class ClientProjectView extends StatelessWidget {
   ) {
     switch (mode) {
       case ClientProjectTileMode.newProject:
-      case ClientProjectTileMode.completed:
         c.openProjectDetails(project);
         break;
       case ClientProjectTileMode.setup:
       case ClientProjectTileMode.waitingTasksApproval:
       case ClientProjectTileMode.inProgress:
-        c.openActiveProject(project);
-        break;
       case ClientProjectTileMode.readyToComplete:
+      case ClientProjectTileMode.completed:
+      case ClientProjectTileMode.withdrawn:
         c.openActiveProject(project);
         break;
-      case ClientProjectTileMode.withdrawn:
-        break;
+
+      // case ClientProjectTileMode.withdrawn:
+      //   break;
     }
   }
 
@@ -193,7 +193,7 @@ class ClientProjectView extends StatelessWidget {
       case 2:
         return 'لا توجد مشاريع مكتملة.';
       case 3:
-        return 'لا توجد مشاريع مسحوبة.';
+        return 'لا توجد مشاريع غير مكتملة.';
       default:
         return 'لا توجد بيانات.';
     }

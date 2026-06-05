@@ -58,7 +58,8 @@ class FreelancerOffersView extends StatelessWidget {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: List.generate(OfferStatus.freelancerTabLabels.length, (i) {
+            children:
+                List.generate(OfferStatus.freelancerTabLabels.length, (i) {
               return Padding(
                 padding: EdgeInsets.only(left: i == 0 ? 0 : 6.w),
                 child: _tabButton(

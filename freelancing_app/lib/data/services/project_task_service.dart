@@ -16,7 +16,7 @@ class ProjectTaskService {
 
   final FirebaseFirestore _firebaseFirestore;
 
-  CollectionReference<Map<String, dynamic>> _tasksRef(String projectId) {
+  CollectionReference<Map<String, dynamic>> tasksRef(String projectId) {
     return _firebaseFirestore
         .collection(CollectionsNames.projects)
         .doc(projectId)
@@ -37,7 +37,7 @@ class ProjectTaskService {
 
   Future<StatusClasses> sendSetupTasks(
       {required String projectId, required List<TaskModel> setupTasks}) async {
-    final collectionRef = _tasksRef(projectId);
+    final collectionRef = tasksRef(projectId);
 
     final projectRef =
         _firebaseFirestore.collection(CollectionsNames.projects).doc(projectId);
@@ -69,7 +69,7 @@ class ProjectTaskService {
   Future<Either<StatusClasses, List<TaskModel>>> getTasks({
     required String projectId,
   }) async {
-    final query = _tasksRef(projectId).orderBy('createdAt', descending: false);
+    final query = tasksRef(projectId).orderBy('createdAt', descending: false);
     return FirebaseCrud.runGetQuery<TaskModel>(
       query: query,
       fromMap: (data, id) => TaskModel.fromMap(data, id),
@@ -84,7 +84,7 @@ class ProjectTaskService {
     bool isExtra = false,
     String? requestedBy,
   }) async {
-    final collectionRef = _tasksRef(projectId);
+    final collectionRef = tasksRef(projectId);
     final newTask = TaskModel(
         id: '',
         description: description,
@@ -103,7 +103,7 @@ class ProjectTaskService {
     required Map<String, dynamic> data,
   }) async {
     return FirebaseCrud.updateDocument(
-      collectionRef: _tasksRef(projectId),
+      collectionRef: tasksRef(projectId),
       docId: taskId,
       body: data,
     );
@@ -114,7 +114,7 @@ class ProjectTaskService {
     required String taskId,
   }) async {
     return FirebaseCrud.deleteDocument(
-      collectionRef: _tasksRef(projectId),
+      collectionRef: tasksRef(projectId),
       docId: taskId,
     );
   }

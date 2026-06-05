@@ -143,6 +143,13 @@ IconAndColor _mapType(String? type) {
 
     case AppNotificationTypes.approveRequestExtraTask:
       return IconAndColor(icon: Icons.plus_one_rounded, color: AppColors.green);
+
+    case AppNotificationTypes.completeProject:
+      return IconAndColor(icon: Icons.verified, color: AppColors.green);
+    case AppNotificationTypes.cancelProject:
+      return IconAndColor(icon: Icons.cancel, color: AppColors.red);
+    case AppNotificationTypes.newRating:
+      return IconAndColor(icon: Icons.star, color: Colors.orange);
     default:
       return IconAndColor(
           icon: Icons.new_releases_rounded, color: Colors.purple);

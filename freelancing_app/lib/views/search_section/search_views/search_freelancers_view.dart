@@ -53,15 +53,17 @@ class SearchFreelancersView extends StatelessWidget {
                       children: result
                           .map(
                             (user) => UserProfileSearchCard(
-                              title: '${user.fname} ${user.lname}'.trim().isEmpty
-                                  ? user.username
-                                  : '${user.fname} ${user.lname}'.trim(),
-                              subtitle: user.specialization?.name.isNotEmpty == true
-                                  ? user.specialization?.name
-                                  : (user.jobTitle.isNotEmpty
-                                      ? user.jobTitle
-                                      : 'اختصاص غير محدد'),
-                              rating: user.rating,
+                              title:
+                                  '${user.fname} ${user.lname}'.trim().isEmpty
+                                      ? user.username
+                                      : '${user.fname} ${user.lname}'.trim(),
+                              subtitle:
+                                  user.specialization?.name.isNotEmpty == true
+                                      ? user.specialization?.name
+                                      : (user.jobTitle.isNotEmpty
+                                          ? user.jobTitle
+                                          : 'اختصاص غير محدد'),
+                              rating: user.overallRating,
                               onTap: () => controller.openProfile(user),
                             ),
                           )

@@ -22,6 +22,7 @@ import 'package:freelancing_platform/views/offer_section/offer_view/project_offe
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/dashboard_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/user_ratings_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/dashboard_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/personal_info_view.dart';
@@ -41,6 +42,7 @@ import 'package:freelancing_platform/views/auth_section/auth_views/register_view
 import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verify_email_view.dart';
 import 'package:freelancing_platform/views/onboarding_section/onboarding_view/onboarding_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/profile_view.dart';
+import 'package:freelancing_platform/views/profile_section/profile_views/user_ratings_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/work_details_view.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/browse_projects_controller.dart';
@@ -272,6 +274,14 @@ class AppPages {
         page: () => WorkDetailsView(),
         binding: BindingsBuilder(() {
           Get.lazyPut(() => WorkDetailsController());
+        }),
+        middlewares: [AuthMiddleware()]),
+
+    GetPage(
+        name: AppRoutes.userRatings,
+        page: () => UserRatingsView(),
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => UserRatingsController());
         }),
         middlewares: [AuthMiddleware()]),
 

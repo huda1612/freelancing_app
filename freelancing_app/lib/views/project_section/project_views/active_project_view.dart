@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:freelancing_platform/core/classes/app_date_formatter.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_input_styles.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/task_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
+import 'package:freelancing_platform/core/widgets/custom_bottom_sheet_container.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
+import 'package:freelancing_platform/core/widgets/custom_rating_widget.dart';
+import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -16,8 +20,10 @@ import 'package:freelancing_platform/views/project_section/project_controller/ac
 import 'package:freelancing_platform/views/project_section/project_widgets/project_deadline_widget.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_partner_header.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_section_card.dart';
+import 'package:freelancing_platform/views/project_section/project_widgets/project_summary_section.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_task_row.dart';
 import 'package:get/get.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 const Color _softPurple = Color(0xffA99CFF);
 
@@ -26,12 +32,47 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
 
   @override
   Widget build(BuildContext context) {
+    final tasksSectionKey = GlobalKey();
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: CustomAppBar(
-          title: 'المشروع النشط',
+          title: 'المشروع',
+          trailingIcon: controller.isClient
+              ? Obx(() {
+                  return // الثلاث نقاط
+                      controller.canCencelProject.value &&
+                              !controller.cancelIsLoading.value
+                          ? PopupMenuButton(
+                              color: Colors.grey.shade100,
+                              icon: const Icon(Icons.more_vert,
+                                  color: AppColors.white),
+                              position: PopupMenuPosition.under,
+                              onSelected: (value) {
+                                if (value == "cancel") {
+                                  Get.bottomSheet(
+                                    _cancelReasonBottomSheet(),
+                                  );
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: "cancel",
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.delete,
+                                          color: Colors.red, size: 18),
+                                      SizedBox(width: 8),
+                                      Text("إلغاء المشروع"),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SizedBox.shrink();
+                })
+              : null,
           backgroundGradient: AppColors.gradientColor,
         ),
         body: Obx(() {
@@ -44,93 +85,188 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
           //   );
           // }
 
-          return UiStateHandler(
-            status: controller.pageState.value,
-            fetchDataFun: controller.initPage,
-            child: project == null
-                ? CustomErrorWidget(message: 'تعذر تحميل البيانات')
-                : RefreshIndicator(
-                    onRefresh: controller.loadTasks,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(AppSpaces.paddingMedium),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Obx(
-                            () => ProjectPartnerHeader(
-                              partnerType:
-                                  controller.isClient ? "Freelancer" : "Client",
-                              displayName:
-                                  controller.partnerName.value.isNotEmpty
-                                      ? controller.partnerName.value
-                                      : 'unknown',
-                              isLoading: controller.partnerLoading.value,
-                              onViewProfile: controller.openPartnerProfile,
-                            ),
-                          ),
+          return ModalProgressHUD(
+            inAsyncCall: controller.cancelIsLoading.value,
+            child: UiStateHandler(
+              status: controller.pageState.value,
+              fetchDataFun: controller.initPage,
+              child: project == null
+                  ? CustomErrorWidget(message: 'تعذر تحميل البيانات')
+                  : RefreshIndicator(
+                      onRefresh: controller.loadTasks,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(AppSpaces.paddingMedium),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (controller.pendingTasksForApprovalCount > 0 &&
+                                controller.isClient)
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: _pendingTaskApprovalBanner(
+                                    pendingTasksCount:
+                                        controller.pendingTasksForApprovalCount,
+                                    onTap: () {
+                                      final context =
+                                          tasksSectionKey.currentContext;
 
-                          SizedBox(
-                              height: !controller.isSetup &&
-                                      !controller.iswaitingTasksApproval &&
+                                      if (context != null) {
+                                        Scrollable.ensureVisible(
+                                          context,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      }
+                                    }),
+                              ),
+
+                            //project summary
+                            ProjectSummarySection(
+                              status: controller.project!.status,
+                              cancelReason: controller.project!.cancelReason,
+                              progress: controller.progress,
+                              tasksCount: controller.tasks.length,
+                              completedTasksCount:
+                                  controller.completedTasksCount,
+                              extraTasksCount: controller.extraTasksCount,
+                              completedExtraTasksCount:
+                                  controller.completedExtraTasksCount,
+                              totalAmount: controller.totalAmount,
+                              paidAmount: controller.paidAmount,
+                              deadlineWidget: (controller.isInProgress ||
+                                          controller.isReadyToComplete) &&
                                       controller.project!.startAt != null &&
                                       controller.offer != null
-                                  ? 16.h
-                                  : 0),
-                          !controller.isSetup &&
-                                  !controller.iswaitingTasksApproval &&
-                                  controller.project!.startAt != null &&
-                                  controller.offer != null
-                              ? ProjectDeadlineWidget(
-                                  totalDays: offer!.durationDays,
-                                  acceptedAt:
-                                      controller.project!.startAt!.toDate(),
-                                  // acceptedAt: DateTime(2026, 5, 15),
-                                )
-                              : SizedBox.shrink(),
-                          SizedBox(height: 16.h),
-                          //project details
-                          ProjectSectionCard(
-                            child: ExpansionTile(
-                              title: Text(
-                                "تفاصيل المشروع",
-                                style: AppTextStyles.subheading
-                                    .copyWith(color: AppColors.darkPurple),
+                                  ? ProjectDeadlineWidget(
+                                      totalDays: offer!.durationDays,
+                                      acceptedAt:
+                                          controller.project!.startAt!.toDate(),
+                                    )
+                                  : SizedBox.shrink(),
+                              showRating: controller.isComplete ||
+                                  (controller.isCanceled &&
+                                      controller.isMainTasksAbove75Percent),
+                              isRated: controller.isRated,
+                              ratingIsLoading: controller.ratingIsLoading.value,
+                              onRatingTap: () async {
+                                if (controller.isRated &&
+                                    controller.myRating.value == null) {
+                                  await controller.onViewRate();
+                                }
+                                Get.bottomSheet(CustomBottomSheetContainer(
+                                    padding: 0,
+                                    children: [
+                                      CustomRatingWidget(
+                                          ratingModel: !controller.isRated
+                                              ? null
+                                              : controller.myRating.value,
+                                          formattedDate: controller.myRating
+                                                      .value?.createdAt !=
+                                                  null
+                                              ? AppDateFormatter.smartTime(
+                                                  controller.myRating.value
+                                                      ?.createdAt)
+                                              : null,
+                                          projectName:
+                                              controller.project!.title,
+                                          projectStatus:
+                                              controller.project!.status,
+                                          category:
+                                              controller.project!.category.name,
+                                          onRatingSubmit:
+                                              controller.onRatingSubmit,
+                                          isLoading:
+                                              controller.ratingIsLoading.value)
+                                    ]));
+                              },
+                              partnerMiniProfile: ProjectPartnerHeader(
+                                partnerType: controller.isClient
+                                    ? "Freelancer"
+                                    : "Client",
+                                displayName:
+                                    controller.partnerName.value.isNotEmpty
+                                        ? controller.partnerName.value
+                                        : 'unknown',
+                                isLoading: controller.partnerLoading.value,
+                                onViewProfile: controller.openPartnerProfile,
                               ),
-                              leading: Icon(
-                                Icons.work_outline_rounded,
-                                color: AppColors.darkPurple,
-                              ),
-                              children: _projectInfoSections(project),
                             ),
-                          ),
-                          SizedBox(height: 8.h),
-                          //offer details
-                          if (controller.offer != null)
+
+                            //project details
                             ProjectSectionCard(
                               child: ExpansionTile(
+                                shape: const Border(), //  يشيل الخط العلوي
+                                collapsedShape:
+                                    const Border(), //  يشيل الخط السفلي
                                 title: Text(
-                                  "تفاصيل العرض",
+                                  "تفاصيل المشروع",
                                   style: AppTextStyles.subheading
                                       .copyWith(color: AppColors.darkPurple),
                                 ),
                                 leading: Icon(
-                                  Icons.description_outlined,
+                                  Icons.work_outline_rounded,
                                   color: AppColors.darkPurple,
                                 ),
-                                children: [
-                                  ..._offertInfoSections(offer!),
-                                ],
+                                children: _projectInfoSections(project),
                               ),
                             ),
-                          _tasksSection(),
-                          SizedBox(height: AppSpaces.heightSmall),
-                          _actionButtons(),
-                          SizedBox(height: AppSpaces.heightSmall),
-                        ],
+                            SizedBox(height: 8.h),
+                            //offer details
+                            if (controller.offer != null)
+                              ProjectSectionCard(
+                                child: ExpansionTile(
+                                  shape: const Border(),
+                                  collapsedShape: const Border(),
+                                  title: Text(
+                                    "تفاصيل العرض",
+                                    style: AppTextStyles.subheading
+                                        .copyWith(color: AppColors.darkPurple),
+                                  ),
+                                  leading: Icon(
+                                    Icons.description_outlined,
+                                    color: AppColors.darkPurple,
+                                  ),
+                                  children: [
+                                    ..._offertInfoSections(offer!),
+                                  ],
+                                ),
+                              ),
+                            Container(
+                                key: tasksSectionKey, child: _tasksSection()),
+                            SizedBox(height: AppSpaces.heightSmall),
+                            if (controller.isReadyToComplete &&
+                                controller.autoCompleteRemainingTime != null &&
+                                controller.isClient)
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "تنبيه : سيتم انهاء المشروع تلقائيا خلال ${controller.autoCompleteRemainingTime}",
+                                  style: AppTextStyles.link
+                                      .copyWith(color: AppColors.red),
+                                ),
+                              ),
+                            _actionButtons(),
+                            if (controller.isReadyToComplete &&
+                                // controller.autoCompleteRemainingTime != null &&
+                                controller.isFreelancer) ...[
+                              SizedBox(height: AppSpaces.heightSmall),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "ملاحظة : سيتم انهاء المشروع تلقائيا خلال ${controller.autoCompleteRemainingTime}",
+                                  style: AppTextStyles.link.copyWith(
+                                      color: AppColors.grey, fontSize: 14.sp),
+                                ),
+                              ),
+                            ],
+                            SizedBox(height: AppSpaces.heightSmall),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+            ),
           );
         }),
       ),
@@ -260,13 +396,10 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
   }
 
   Widget _tasksSection() {
-    return
-        // ProjectSectionCard(
-        //   marginBottom: 0,
-        //   child:
-        Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        //task section header
         Row(
           children: [
             const Expanded(
@@ -278,9 +411,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                 style: AppTextStyles.link.copyWith(color: AppColors.red),
               ),
             if (controller.canAddBasTask)
-              // controller.isAddingTask && controller.isFreelancer
-              // ? SizedBox.shrink()
-              // :
               IconButton(
                 onPressed: controller.onAddNewTask,
                 icon:
@@ -297,10 +427,14 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
           ],
         ),
         SizedBox(height: 8.h),
+        //task section tasks
         Obx(() {
+          // empty masseges
           if (controller.isSetup &&
-              controller.setupTasks.isEmpty &&
-              controller.canEditTasks) {
+                  controller.setupTasks.isEmpty &&
+                  controller.canAddBasTask
+              // controller.canEditTasks
+              ) {
             return Padding(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               child: Text(
@@ -310,17 +444,30 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
             );
           }
 
-          if ((!controller.isSetup || !controller.canEditTasks) &&
+          if (controller.isSetup &&
+              !controller.canEditTasks &&
               controller.tasks.isEmpty) {
             return Padding(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               child: Text(
-                'لا توجد مهام بعد ${!controller.canEditTasks ? "، بانتظار اضافة المهام" : ""}',
+                'لا توجد مهام بعد ، بانتظار اضافة المهام',
                 style: TextStyle(color: Colors.grey.shade600),
               ),
             );
           }
 
+          //اذا ولا وحده من اللي فوق وكمان مافي اي تاسك
+          if (controller.tasks.isEmpty && controller.extraTasks.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              child: Text(
+                "لا يوجد مهام ، لم يتم تحديدها",
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            );
+          }
+
+          //tasks
           return Column(children: [
             if (!controller.isSetup)
               ...List.generate(
@@ -548,25 +695,27 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
       //   );
       // }
       // final _ = controller.actionLoading.value;
+
       if (controller.canCompleteProject) {
         return CustomButton(
           text: 'إنهاء المشروع',
-          onTap: controller.deliverProject,
+          onTap: () {
+            Get.defaultDialog(
+              title: "انهاء المشروع",
+              content: Text("هل انت متأكد من انهاء المشروع ؟ "),
+              textConfirm: "إنهاء",
+              textCancel: "إلغاء",
+              onConfirm: controller.completeProject,
+              onCancel: () => Get.back(),
+            );
+          },
+          //  controller.completeProject,
           isLoading: controller.actionLoading.value,
           gradient: AppColors.gradientColor,
           prefix:
               const Icon(Icons.check_circle_outline, color: AppColors.white),
         );
       }
-
-      // if (controller.canApproveCompletion) {
-      //   return CustomButton(
-      //     text: 'الموافقة على إنهاء المشروع',
-      //     onTap: controller.approveProjectCompletion,
-      //     isLoading: controller.actionLoading.value,
-      //     gradient: AppColors.gradientColor,
-      //   );
-      // }
 
       if (controller.isReadyToComplete && controller.isFreelancer) {
         return Align(
@@ -581,4 +730,99 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
       return const SizedBox.shrink();
     });
   }
+
+  Widget _cancelReasonBottomSheet() {
+    return CustomBottomSheetContainer(
+      children: [
+        Text(" إلغاء المشروع", style: AppTextStyles.heading),
+        SizedBox(
+          height: AppSpaces.heightSmall,
+        ),
+        Text(
+          "انت على وشك إلغاء المشروع قبل اكتماله، الرجاء ادخال سبب الإلغاء :",
+          style: AppTextStyles.body.copyWith(color: AppColors.black),
+        ),
+        SizedBox(
+          height: AppSpaces.heightMedium,
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: Text(
+            "السبب (اختياري)",
+            style:
+                AppTextStyles.inputLabel.copyWith(color: AppColors.lightPurple),
+          ),
+        ),
+        CustomTextField(
+          controller: controller.projectCancelReasonController,
+        ),
+        SizedBox(
+          height: AppSpaces.heightMedium,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomButton(
+              width: 100.w,
+              text: "إلغاء المشروع",
+              onTap: controller.cancelProject,
+              color: AppColors.red,
+            ),
+            SizedBox(
+              width: AppSpaces.heightMedium2,
+            ),
+            CustomButton(
+              textStyle: AppTextStyles.button.copyWith(color: AppColors.purple),
+              color: AppColors.white,
+              width: 100.w,
+              text: "تراجع",
+              onTap: () => Get.back(),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+}
+
+Widget _pendingTaskApprovalBanner(
+    {required int pendingTasksCount, required VoidCallback? onTap}) {
+  return InkWell(
+    onTap: onTap,
+    child: Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(AppSpaces.paddingSmall),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.orange.withOpacity(0.4),
+        ),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.pending_actions_rounded,
+            color: Colors.orange,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              pendingTasksCount == 1
+                  ? 'يوجد مهمة بانتظار موافقتك على إنهائها'
+                  : 'يوجد $pendingTasksCount مهام بانتظار موافقتك على إنهائها',
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const Icon(
+            Icons.keyboard_arrow_down_outlined,
+            size: 16,
+            color: Colors.orange,
+          ),
+        ],
+      ),
+    ),
+  );
 }
