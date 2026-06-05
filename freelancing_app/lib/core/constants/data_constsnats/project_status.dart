@@ -5,15 +5,27 @@ class ProjectStatus {
   static const String inProgress = "inProgress";
   static const String readyToComplete = "readyToComplete";
   static const String cancelled = "cancelled";
-  // static const String delivered = "delivered";
   static const String completed = "completed";
+
+  // static const Map<String, String> statusAr = {
+  //   newProject: 'جديد',
+  //   setup: 'إعداد المشروع',
+  //   waitingTasksApproval: 'بانتظار اعتماد المهام',
+  //   inProgress: 'قيد التقدم',
+  //   readyToComplete: 'جاهز للإغلاق',
+  //   cancelled: 'ملغي',
+  //   completed: 'مكتمل',
+  // };
+
+  // static String getStatusLabel(String status) {
+  //   return statusAr[status] ?? 'غير معروف';
+  // }
 
   //اضافات جديدة
   /// تسميات التبويبات في صفحة مشاريعي (للعميل).
   static const List<String> clientTabStatuses = [
     newProject,
     inProgress,
-    // delivered,
     completed,
     cancelled,
   ];
@@ -21,24 +33,21 @@ class ProjectStatus {
   static const List<String> clientTabLabels = [
     'جديدة',
     'قيد التقدم',
-    // 'مستلمة',
     'مكتملة',
-    'مسحوبة',
+    'غير مكتملة',
   ];
 
   //اضافات جديدة
   /// تسميات التبويبات في صفحة مشاريعي (للمستقل).
   static const List<String> freelancerTabStatuses = [
     inProgress,
-    // delivered,
     completed,
     cancelled,
   ];
 
   static const List<String> freelancerTabLabels = [
     'قيد التقدم',
-    // 'تم التسليم',
     'مكتملة',
-    'مسحوبة',
+    'غير مكتملة',
   ];
 }

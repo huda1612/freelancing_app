@@ -16,6 +16,10 @@ class ProjectModel {
   final String? acceptedFreelancerId;
   final int? tasksCount;
   final int? completedTasksCount;
+  final String? cancelReason;
+  //rated
+  final bool clientRated;
+  final bool freelancerRated;
   //dates
   final Timestamp? createdAt;
   final Timestamp? startAt;
@@ -36,6 +40,9 @@ class ProjectModel {
     this.acceptedFreelancerId,
     this.tasksCount,
     this.completedTasksCount,
+    this.cancelReason,
+    this.clientRated = false,
+    this.freelancerRated = false,
     this.createdAt,
     this.startAt,
     this.allTasksCompletedAt,
@@ -56,10 +63,13 @@ class ProjectModel {
       'acceptedFreelancerId': acceptedFreelancerId,
       'tasksCount': tasksCount,
       'completedTasksCount': completedTasksCount,
+      'cancelReason': cancelReason,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'startAt': startAt,
       'allTasksCompletedAt': allTasksCompletedAt,
       'endAt': endAt,
+      'clientRated': clientRated,
+      'freelancerRated': freelancerRated,
     };
   }
 
@@ -78,11 +88,14 @@ class ProjectModel {
       acceptedFreelancerId: map['acceptedFreelancerId'],
       tasksCount: map['tasksCount'],
       completedTasksCount: map['completedTasksCount'],
+      cancelReason: map['cancelReason'],
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
       startAt: map['startAt'],
       allTasksCompletedAt: map['allTasksCompletedAt'],
       endAt: map['endAt'],
+      clientRated: map['clientRated'] ?? false,
+      freelancerRated: map['freelancerRated'] ?? false,
     );
   }
   ProjectModel copyWith({
@@ -99,10 +112,13 @@ class ProjectModel {
     String? acceptedFreelancerId,
     int? tasksCount,
     int? completedTasksCount,
+    String? cancelReason,
     Timestamp? createdAt,
     Timestamp? startAt,
     Timestamp? allTasksCompletedAt,
     Timestamp? endAt,
+    bool? clientRated,
+    bool? freelancerRated,
   }) {
     return ProjectModel(
       id: id ?? this.id,
@@ -118,10 +134,13 @@ class ProjectModel {
       acceptedFreelancerId: acceptedFreelancerId ?? this.acceptedFreelancerId,
       tasksCount: tasksCount ?? this.tasksCount,
       completedTasksCount: completedTasksCount ?? this.completedTasksCount,
+      cancelReason: cancelReason ?? this.cancelReason,
       createdAt: createdAt ?? this.createdAt,
       startAt: startAt ?? this.startAt,
       allTasksCompletedAt: allTasksCompletedAt ?? this.allTasksCompletedAt,
       endAt: endAt ?? this.endAt,
+      clientRated: clientRated ?? this.clientRated,
+      freelancerRated: freelancerRated ?? this.freelancerRated,
     );
   }
 }

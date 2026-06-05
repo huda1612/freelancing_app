@@ -128,7 +128,7 @@ class AppNotification {
   factory AppNotification.endTask(
       {required String projectId, String? projectTitle, int? taskNumber}) {
     return AppNotification(
-      title: "لقد تم انهاء مهمة",
+      title: "تم انهاء مهمة",
       body:
           "لقد تم انهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في مشروعك ${projectTitle ?? ''}",
       data: {"type": AppNotificationTypes.endTask, "id": projectId},
@@ -224,6 +224,41 @@ class AppNotification {
         "type": AppNotificationTypes.approveRequestExtraTask,
         "id": projectId
       },
+    );
+  }
+
+  factory AppNotification.completeProject({
+    required String projectId,
+    String? projectTitle,
+  }) {
+    return AppNotification(
+      title: "تم انهاء المشروع",
+      body: "لقد قام صاحب المشروع ${projectTitle ?? ''} بانهاءه",
+      data: {"type": AppNotificationTypes.completeProject, "id": projectId},
+    );
+  }
+
+  factory AppNotification.cancelProject(
+      {required String projectId, String? projectTitle, String? cancelReason}) {
+    return AppNotification(
+      title: "تم إلغاء المشروع",
+      body:
+          "لقد قام صاحب المشروع ${projectTitle ?? ''} بإلغاءه ${cancelReason != null ? "بسبب : $cancelReason" : ''}",
+      data: {"type": AppNotificationTypes.cancelProject, "id": projectId},
+    );
+  }
+
+  factory AppNotification.newRating({
+    required String projectId,
+    String? projectTitle,
+    required bool isClient,
+  }) {
+    return AppNotification(
+      title: "تقييم جديد",
+      body:
+          "لديك تقييم جديد في مشروع ${projectTitle != null ? '"$projectTitle"' : ''}.\n لا تنسى تقييم الطرف الآخر !",
+      // body:"لقد قام ${isClient ? "الفريلانسر" : "صاحب المشروع"} بتقييمك على مشروع ${projectTitle !=null ? '"$projectTitle"' : ''}\nيمكنك ا",
+      data: {"type": AppNotificationTypes.newRating, "id": projectId},
     );
   }
 

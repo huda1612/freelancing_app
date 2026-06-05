@@ -12,7 +12,6 @@ import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.d
 import 'package:freelancing_platform/core/general_controllers.dart/image_upload_controller.dart';
 import 'package:freelancing_platform/core/services/image_service.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
-import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
@@ -24,11 +23,11 @@ import 'package:freelancing_platform/views/profile_section/profile_controllers/p
 import 'package:freelancing_platform/views/profile_section/profile_widgets/card_container.dart';
 import 'package:freelancing_platform/core/widgets/profile_certificate_tile.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_drawer.dart';
-import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_review_card.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/profile_skill_chip.dart';
 import 'package:freelancing_platform/core/widgets/profile_work_card.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/hire_me_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_widgets/hire_me_dialog.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/user_rating_avg.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -206,15 +205,7 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
               ),
-              // Positioned(
-              //   top: MediaQuery.of(Get.context!).padding.top + 17,
-              //   left: MediaQuery.of(Get.context!).padding.top + 0,
-              //   child: _statRow(
-              //     // icon: Icons.stars_rounded,
-              //     label: 'النقاط',
-              //     value: '${controller.pointsCount}',
-              //   ),
-              // )
+             
               Positioned(
                 top: MediaQuery.of(Get.context!).padding.top + 14,
                 left: 14.w,
@@ -246,12 +237,7 @@ class ProfileView extends StatelessWidget {
                         color: AppColors.darkPurple,
                         size: 20,
                       ),
-                      // Text(
-                      //   'نقطة',
-                      //   style: AppTextStyles.link.copyWith(
-                      //     color: AppColors.darkGrey,
-                      //   ),
-                      // ),
+              
                     ],
                   ),
                 ),
@@ -278,7 +264,6 @@ class ProfileView extends StatelessWidget {
                           : null,
                       child: CircleAvatar(
                         backgroundColor: AppColors.owhite,
-                        // child: ClipOval(
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -556,24 +541,47 @@ class ProfileView extends StatelessWidget {
             SizedBox(height: 14.h),
 
             //reviews
-            _titleText('التقييمات'),
-            SizedBox(
-              height: 116.h,
-              child: controller.reviews.isNotEmpty
-                  ? ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: controller.reviews.take(5).length,
-                      separatorBuilder: (_, __) => SizedBox(width: 10.w),
-                      itemBuilder: (context, index) {
-                        final review = controller.reviews[index];
-                        return ProfileReviewCard(
-                          rating: review.rating,
-                          title: review.comment,
-                        );
-                      },
-                    )
-                  : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _titleText('التقييم'),
+                TextButton(
+                  onPressed: controller.onRatingView,
+                  child: Text(
+                    "عرض التقييمات",
+                    style: AppTextStyles.link,
+                  ),
+                )
+              ],
             ),
+            UserRatingAvg(
+              average: controller.user.value != null
+                  ? controller.user.value!.overallRating
+                  : 0.0,
+              starsCount: controller.starsCount,
+              titles: controller.starTitles,
+              total: controller.user.value != null
+                  ? controller.user.value!.ratingsCount
+                  : 0,
+            ),
+            // SizedBox(
+            //   height: 116.h,
+            //   child: controller.ratings.isNotEmpty
+            //       ? ListView.separated(
+            //           scrollDirection: Axis.horizontal,
+            //           itemCount: controller.ratings.take(5).length,
+            //           separatorBuilder: (_, __) => SizedBox(width: 10.w),
+            //           itemBuilder: (context, index) {
+            //             final rating = controller.ratings[index];
+            //             return ProfileReviewCard(
+            //               rating: rating.averageRating,
+            //               // title: rating.comment,
+            //               title: '',
+            //             );
+            //           },
+            //         )
+            //       : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
+            // ),
 
             controller.isFreelancer
                 ? Column(

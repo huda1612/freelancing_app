@@ -1,4 +1,3 @@
-
 class AppRoutes {
   static const main = '/main';
 
@@ -44,6 +43,7 @@ class AppRoutes {
 
   static const personalInfo = '/personal_info';
   static const workDetails = '/work_details';
+  static const userRatings = '/user_ratings';
   static const dashboard = '/dashboard';
 
   //search route
@@ -66,8 +66,7 @@ class AppRoutes {
   //offers routes
   static const submitOffer = '/submit_offer';
   static const projectOffers = '/project_offers';
-    static const freelancerOffers = '/freelancer_offers';
-
+  static const freelancerOffers = '/freelancer_offers';
 
   //settings routes
 }

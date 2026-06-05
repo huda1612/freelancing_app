@@ -5,6 +5,7 @@ import 'package:freelancing_platform/core/constants/data_constsnats/project_stat
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/views/project_section/project_functions/projects_auto_complete.dart';
 import 'package:get/get.dart';
 
 class FreelancerProjectController extends GetxController {
@@ -35,14 +36,23 @@ class FreelancerProjectController extends GetxController {
 
     res.fold(
       (err) => pageState.value = err,
-      (list) {
-        final sorted = List<ProjectModel>.from(list);
-        sorted.sort((a, b) {
+      (list) async {
+        //  1- أول شي: شغّل auto complete
+        final updatedProjectIds = await autoCompleteProjects(list);
+
+        list.sort((a, b) {
           final aMs = a.createdAt?.millisecondsSinceEpoch ?? 0;
           final bMs = b.createdAt?.millisecondsSinceEpoch ?? 0;
           return bMs.compareTo(aMs);
         });
-        projects.assignAll(sorted);
+        projects.assignAll(list);
+        if (updatedProjectIds.isNotEmpty) {
+          projects.value = projects
+              .map((p) => updatedProjectIds.contains(p.id)
+                  ? p.copyWith(status: ProjectStatus.completed)
+                  : p)
+              .toList();
+        }
         pageState.value = StatusClasses.success;
       },
     );

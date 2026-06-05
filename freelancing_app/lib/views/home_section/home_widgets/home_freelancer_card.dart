@@ -74,7 +74,7 @@ class HomeFreelancerCard extends StatelessWidget {
                       const Icon(Icons.star, color: Colors.amber, size: 16),
                       SizedBox(width: 4.w),
                       Text(
-                        freelancer.rating.toStringAsFixed(1),
+                        freelancer.overallRating.toStringAsFixed(1),
                         style: AppTextStyles.link.copyWith(
                           color: AppColors.darkGrey,
                           fontSize: 14.sp,

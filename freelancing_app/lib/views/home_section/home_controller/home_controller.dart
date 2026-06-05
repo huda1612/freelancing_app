@@ -123,14 +123,14 @@ class HomeController extends GetxController {
       (error) => pageState.value = error,
       (freelancers) {
         final featured = freelancers
-            .where((f) => f.rating > 0 && f.completedProjects > 0)
+            .where((f) => f.overallRating > 0 && f.completedProjects > 0)
             .toList()
-          ..sort((a, b) => b.rating.compareTo(a.rating));
+          ..sort((a, b) => b.overallRating.compareTo(a.overallRating));
         featuredFreelancers.assignAll(featured.take(10).toList());
 
         // جلب الفريلانسرز الجدد (بدون تقييم أو مشاريع)
         final newUsers = freelancers
-            .where((f) => f.rating == 0 && f.completedProjects == 0)
+            .where((f) => f.overallRating == 0 && f.completedProjects == 0)
             .toList();
         newFreelancers.assignAll(newUsers.take(10).toList());
 

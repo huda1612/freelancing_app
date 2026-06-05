@@ -55,7 +55,7 @@ class SearchClientsView extends StatelessWidget {
                               title: '${user.fname} ${user.lname}'.trim().isEmpty
                                   ? user.username
                                   : '${user.fname} ${user.lname}'.trim(),
-                              rating: user.rating,
+                              rating: user.overallRating,
                               onTap: () => controller.openProfile(user),
                             ),
                           )

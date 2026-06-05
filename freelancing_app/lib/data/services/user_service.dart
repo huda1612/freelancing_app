@@ -87,7 +87,7 @@ class UserService {
     const subCollections = [
       CollectionsNames.workSamples,
       CollectionsNames.certificate,
-      CollectionsNames.reviews,
+      CollectionsNames.ratings,
       CollectionsNames.suggestions,
       CollectionsNames.activities,
     ];

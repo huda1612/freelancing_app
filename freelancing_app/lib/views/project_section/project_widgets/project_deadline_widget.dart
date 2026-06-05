@@ -34,56 +34,51 @@ class ProjectDeadlineWidget extends StatelessWidget {
     if (progress < 0.5) {
       // بداية المشروع
       statusText = "باقي $daysLeft يوم للتسليم";
-      statusColor = AppColors.lightPurple;
+      // statusColor = AppColors.lightPurple;
+      statusColor = AppColors.purple;
     } else if (progress < 1) {
       // بعد نص المدة
       statusText = "باقي $daysLeft يوم للتسليم";
-      statusColor = const Color(0xFFFFD88A); // أصفر باهت
+      statusColor = const Color.fromARGB(255, 253, 176, 23);
     } else {
       // انتهت المدة
       final lateDays = passedDays - totalDays;
       statusText = "المشروع متأخر بـ $lateDays يوم";
-      statusColor = AppColors.lightRed;
+      statusColor = AppColors.red;
     }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: statusColor,
-        borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return
+        // Container(
+        //   width: double.infinity,
+        // padding: const EdgeInsets.all(16),
+        // decoration: BoxDecoration(
+        //   color: statusColor,
+        //   borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
+        //   boxShadow: [
+        //     BoxShadow(
+        //       color: Colors.black.withOpacity(0.06),
+        //       blurRadius: 10,
+        //       offset: const Offset(0, 4),
+        //     ),
+        //   ],
+        // ),
+        // child:
+        Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.timer_outlined,
+          color: statusColor,
+        ),
+        SizedBox(width: AppSpaces.heightSmall),
+        Text(
+          statusText,
+          style: AppTextStyles.body.copyWith(
+            color: statusColor, // مهم جداً
           ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // const Text(
-          //   "المدة المتبقية",
-          //   style: TextStyle(
-          //     color: Colors.white, // مهم جداً
-          //     fontSize: 18,
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // ),
-          Icon(
-            Icons.timer_outlined,
-            color: AppColors.white,
-          ),
-          SizedBox(width: AppSpaces.heightMedium),
-          Text(
-            statusText,
-            style: AppTextStyles.body.copyWith(
-              color: Colors.white, // مهم جداً
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
+      // ),
     );
   }
 }

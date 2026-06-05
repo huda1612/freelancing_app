@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/classes/app_notifications.dart';
+import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
@@ -16,10 +16,12 @@ import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/project_task_service.dart';
+import 'package:freelancing_platform/data/services/rating_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/models/project_collections/task_model.dart';
+import 'package:freelancing_platform/models/user_collections/rating_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/freelance_project_controller.dart';
 import 'package:get/get.dart';
@@ -31,7 +33,7 @@ class ActiveProjectController extends GetxController {
   final OfferService _offerService = OfferService();
   final UserService _userService = UserService();
 
-//data
+  //data
   final Rx<ProjectModel?> projectRx = Rx<ProjectModel?>(null);
   final Rx<OfferModel?> offerRx = Rx<OfferModel?>(null);
 
@@ -45,17 +47,21 @@ class ActiveProjectController extends GetxController {
   final pageState = StatusClasses.isloading.obs;
   final partnerLoading = false.obs;
   final actionLoading = false.obs;
-  /////بدها حذف !!!!!!!!!!!!
-  // final addIsLoading = false.obs;
+  final ratingIsLoading = false.obs;
+  final cancelIsLoading = false.obs;
+
   final loadingTaskIds = <String>{}.obs;
+  final requestExtraTaskLoading = false.obs;
 
   //controllers
-  // final Map<String, TextEditingController> _taskControllers = {};
-  // final newTaskController = Rx<TextEditingController?>(null);
+
   final setupTasks = <SetupTaskInput>[].obs;
   final extraTasksControllers = <SetupTaskInput>[].obs;
 
   final TextEditingController rejectReasonController = TextEditingController();
+  final TextEditingController projectCancelReasonController =
+      TextEditingController();
+
   double get tasksTotalAmount {
     double total = 0;
 
@@ -82,6 +88,10 @@ class ActiveProjectController extends GetxController {
       project != null &&
       (project!.status == ProjectStatus.completed ||
           project!.status == ProjectStatus.cancelled);
+  bool get isComplete =>
+      project != null && project!.status == ProjectStatus.completed;
+  bool get isCanceled =>
+      project != null && project!.status == ProjectStatus.completed;
 
   bool get canSendTasks {
     if (offer == null) return false;
@@ -103,11 +113,14 @@ class ActiveProjectController extends GetxController {
       isFreelancer && (isInProgress || isSetup) && !_isReadOnlyViewer;
   bool get canAddBasTask => isFreelancer && isSetup && !_isReadOnlyViewer;
 
+  // bool get canManageExtraTasks =>
+  //     (isFreelancer || isClient) &&
+  //     (isInProgress || isReadyToComplete) &&
+  //     !_isReadOnlyViewer;
   bool get canManageExtraTasks =>
-      (isFreelancer || isClient) &&
-      (isInProgress || isReadyToComplete) &&
+      ((isInProgress && (isClient || isFreelancer)) ||
+          (isReadyToComplete && isClient)) &&
       !_isReadOnlyViewer;
-
   bool get _isReadOnlyViewer {
     final status = project?.status;
     return status == ProjectStatus.completed ||
@@ -125,14 +138,109 @@ class ActiveProjectController extends GetxController {
       isReadyToComplete &&
       allTasksDone &&
       !(actionLoading.value) &&
-      loadingTaskIds.isEmpty;
-  //  &&!(addIsLoading.value);
-  // bool get canApproveCompletion =>
-  //     isClient &&
-  //     project?.status == ProjectStatus.readyToComplete &&
-  //     !(actionLoading.value);
-  // &&!(addIsLoading.value);
+      loadingTaskIds.isEmpty &&
+      !requestExtraTaskLoading.value;
 
+  // int? get autoCompleteDuration {
+  //   if (project?.allTasksCompletedAt == null) return null;
+  //   final now = DateTime.now();
+  //   // الأيام التي مرّت من قبول العرض
+  //   final passedDays =
+  //       now.difference(project!.allTasksCompletedAt!.toDate()).inDays;
+
+  //   // الأيام المتبقية
+  //   return 3 - passedDays;
+  // }
+  String? get autoCompleteRemainingTime {
+    if (project?.allTasksCompletedAt == null) return null;
+
+    final completedAt = project!.allTasksCompletedAt!.toDate();
+    final deadline = completedAt.add(const Duration(days: 3));
+
+    final remaining = deadline.difference(DateTime.now());
+
+    if (remaining.isNegative) return "0 يوم";
+
+    final days = remaining.inDays;
+    final hours = remaining.inHours % 24;
+
+    return "$days يوم و $hours ساعة";
+  }
+
+  double get paidAmount {
+    double total = 0;
+
+    // المهام الأساسية
+    for (final t in tasks) {
+      if (t.status == TaskStatus.approved) {
+        total += t.amount;
+      }
+    }
+
+    // المهام الإضافية
+    for (final t in extraTasks) {
+      if (t.status == TaskStatus.approved) {
+        total += t.amount;
+      }
+    }
+
+    return total;
+  }
+
+  double get totalAmount {
+    final base = offer?.price ?? 0;
+
+    final extra = extraTasks
+        .where((t) => t.status != TaskStatus.requested)
+        .fold(0.0, (summ, t) => summ + t.amount);
+
+    return base + extra;
+  }
+
+  bool get isRated => project != null && isClient
+      ? project!.clientRated
+      : project!.freelancerRated;
+  int get extraTasksCount =>
+      extraTasks.where((t) => t.status != TaskStatus.requested).length;
+
+  int get completedTasksCount =>
+      tasks.where((t) => t.status == TaskStatus.approved).length;
+  int get completedExtraTasksCount =>
+      extraTasks.where((t) => t.status == TaskStatus.approved).length;
+
+  double get progress =>
+      (completedTasksCount + completedExtraTasksCount) /
+      ((tasks.length + extraTasksCount) == 0
+          ? 1
+          : (tasks.length + extraTasksCount));
+  int get pendingTasksForApprovalCount =>
+      tasks.where((t) => t.status == TaskStatus.completedByFreelancer).length +
+      extraTasks
+          .where((t) => t.status == TaskStatus.completedByFreelancer)
+          .length;
+  Rx<bool> get canCencelProject {
+    Rx<bool> r = false.obs;
+    r.value = isClient &&
+        (isSetup || iswaitingTasksApproval || isInProgress) &&
+        !(actionLoading.value) &&
+        loadingTaskIds.isEmpty;
+    return r;
+  }
+
+  double get _mainTasksCompletionRatio {
+    if (tasks.isEmpty) return 0;
+
+    final doneCount =
+        tasks.where((t) => t.status == TaskStatus.approved).length;
+
+    return doneCount / tasks.length;
+  }
+
+  bool get isMainTasksAbove75Percent {
+    return _mainTasksCompletionRatio >= 0.75;
+  }
+
+  final Rx<RatingModel?> myRating = Rx<RatingModel?>(null);
   //******************************************page initalize******************************************************* */
   @override
   void onInit() async {
@@ -143,6 +251,8 @@ class ActiveProjectController extends GetxController {
   Future<void> initPage() async {
     pageState.value = StatusClasses.isloading;
     await _resolveProject();
+    print(project!.toMap());
+
     if (projectRx.value != null) {
       await _bootstrap();
     } else {
@@ -201,7 +311,7 @@ class ActiveProjectController extends GetxController {
       loadTasks(),
     ]);
     await _loadPartnerInfo();
-    await _syncProjectStatusWithTasks();
+    // await _syncProjectStatusWithTasks();
 
     if (pageState.value != StatusClasses.isloading) {
       return;
@@ -241,7 +351,7 @@ class ActiveProjectController extends GetxController {
     partnerUserId.value = isClient ? p.acceptedFreelancerId! : p.clientId;
 
     final user = await _userService
-        .fetchUserData(isClient ? p.clientId : p.acceptedFreelancerId!);
+        .fetchUserData(isClient ? p.acceptedFreelancerId! : p.clientId);
     if (user != null) {
       partnerName.value = '${user.fname.trim()} ${user.lname.trim()}'.trim();
       if (partnerName.value.isEmpty) {
@@ -281,7 +391,7 @@ class ActiveProjectController extends GetxController {
         }
       },
     );
-    // await _syncProjectStatusWithTasks();
+    await _syncProjectStatusWithTasks();
   }
 
   //******************************************project setup status operations********************************************* */
@@ -566,13 +676,23 @@ class ActiveProjectController extends GetxController {
       customSnackbar(message: "لا يمكنك الموافقه على المهمة");
       return;
     }
-    //1- تغيير حالة المهمة بالسيرفر
     _startAction(taskId);
-    final res = await _taskService.updateTask(
-      projectId: project!.id,
-      taskId: taskId,
-      data: {'status': TaskStatus.approved, 'rejectionReason': null},
-    );
+    final res = await FirebaseCrud.runTransaction(action: (transaction) async {
+      final taskRef = _taskService.tasksRef(project!.id).doc(taskId);
+      final projectRef = _projectService.projectsCollectionRef.doc(project!.id);
+
+      final snap = await transaction.get(projectRef);
+      final value = snap['completedTasksCount'] ?? 0;
+
+      //1- تغيير حالة المهمة بالسيرفر
+      transaction.update(
+          taskRef, {'status': TaskStatus.approved, 'rejectionReason': null});
+      //2- زيادة عدد المهام المكتمله بالمشروع
+      transaction.update(projectRef, {
+        "completedTasksCount": value + 1,
+      });
+    });
+
     if (res != StatusClasses.success) {
       customSnackbar(message: "خطأ : ${res.message ?? res.type}");
       _endAction(taskId);
@@ -580,7 +700,7 @@ class ActiveProjectController extends GetxController {
     }
     _endAction(taskId);
 
-    //2- تغيير حالة المهمة محليا
+    //3- تغيير حالة المهمة محليا
     if (!isExtra) {
       tasks[index] = tasks[index]
           .copyWith(status: TaskStatus.approved, rejectionReason: null);
@@ -589,7 +709,31 @@ class ActiveProjectController extends GetxController {
           .copyWith(status: TaskStatus.approved, rejectionReason: null);
     }
 
-    ///3- هون لازم تتم عملية الدفع !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    final newCount = (project!.completedTasksCount ?? 0) + 1;
+    projectRx.value = project!.copyWith(completedTasksCount: newCount);
+
+    if (Get.isRegistered<ClientProjectController>()) {
+      final fc = Get.find<ClientProjectController>();
+      final idx = fc.projects.indexWhere((x) => x.id == project!.id);
+      if (idx != -1) {
+        fc.projects[idx] = fc.projects[idx].copyWith(
+          completedTasksCount: newCount,
+        );
+        fc.projects.refresh();
+      }
+    }
+    if (Get.isRegistered<FreelancerProjectController>()) {
+      final fc = Get.find<FreelancerProjectController>();
+      final idx = fc.projects.indexWhere((x) => x.id == project!.id);
+      if (idx != -1) {
+        fc.projects[idx] = fc.projects[idx].copyWith(
+          completedTasksCount: newCount,
+        );
+        fc.projects.refresh();
+      }
+    }
+
+    ///4- هون لازم تتم عملية الدفع !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     customSnackbar(message: "تمت الموافقة على انهاء المهمة");
 
@@ -597,34 +741,12 @@ class ActiveProjectController extends GetxController {
         projectId: project!.id,
         projectTitle: project?.title,
         taskNumber: index + 1);
+    //5 -تحقق من انتهاءالمشروع
 
-    await Future.wait([
-      //4 -تحقق من انتهاءالمشروع
-      _checkAndChangeToReadyToComplete(),
-      //5- زيادة عدد المهام المكتمله بالمشروع
-      _projectService.updateProject(
-          projectId: project!.id,
-          body: {"completedTasksCount": FieldValue.increment(1)}),
-    ]);
+    await _checkAndChangeToReadyToComplete();
+
     //6- ارسال الاشعار الى الشريك ان تمت الموافقة عالمهمة
     unawaited(_sendNotificationToPartner(notification));
-    //2- زيادة عدد المهام المكتمله بالمشروع
-    // await _projectService.updateProject(
-    //     projectId: project!.id,
-    //     body: {"completedTasksCount": FieldValue.increment(1)});
-
-    //4- ارسال الاشعار الى الشريك ان تمت الموافقة عالمهمة
-    // if (partnerUserId.value.isEmpty) {
-    //   customSnackbar(message: "لا يوجد مستقل لايمكن ارسال الاشعار");
-    //   return;
-    // }
-
-    // final notification = AppNotification.approveTask(
-    //     projectId: project!.id,
-    //     projectTitle: project?.title,
-    //     taskNumber: index + 1);
-
-    // await _sendNotificationToPartner(notification);
   }
 
   //******************************************Extra tasks in progress operations********************************************* */
@@ -656,6 +778,8 @@ class ActiveProjectController extends GetxController {
       customSnackbar(message: "يجب ادخال تفاصيل المهمة أولا");
       return;
     }
+    requestExtraTaskLoading.value = true;
+
     extraTasksControllers[index].descriptionController.dispose();
     extraTasksControllers[index].amountController.dispose();
     extraTasksControllers.removeAt(index);
@@ -671,16 +795,20 @@ class ActiveProjectController extends GetxController {
     );
     if (res != StatusClasses.success) {
       customSnackbar(message: "خطأ : ${res.message ?? res.type}");
+      requestExtraTaskLoading.value = false;
+
       return;
     }
-    await _checkAndReturnProjectToInProgress();
-    loadTasks();
+
     final notification = AppNotification.requestExtraTask(
       projectId: project!.id,
       projectTitle: project?.title,
       extraTaskDescription: description,
     );
     unawaited(_sendNotificationToPartner(notification));
+    // await _checkAndReturnProjectToInProgress(); //هي اصلا عم تستدعى بتحميل التاسكات
+    await loadTasks();
+    requestExtraTaskLoading.value = false;
   }
 
   ///تابع الغاء او رفض المهمة الاضافية
@@ -749,16 +877,25 @@ class ActiveProjectController extends GetxController {
       return;
     }
 
-    //تغيير حالة المهمه الاضافيه
-    final res = await _taskService.updateTask(
-      projectId: project!.id,
-      taskId: taskId,
-      data: {
-        'status': TaskStatus.pending,
-      },
-    );
+    final res = await FirebaseCrud.runTransaction(action: (transaction) async {
+      final projectRef = _projectService.projectsCollectionRef.doc(project!.id);
+      final taskRef = _taskService.tasksRef(project!.id).doc(taskId);
+
+      final snap = await transaction.get(projectRef);
+      final value = snap['tasksCount'] ?? 0;
+
+      //تغيير حالة المهمه الاضافيه
+      transaction.update(taskRef, {'status': TaskStatus.pending});
+      //اضافه مهمه على عدد المهام الكلي للمشروع
+
+      transaction.update(projectRef, {
+        "tasksCount": value + 1,
+      });
+    });
+
     if (res != StatusClasses.success) {
       customSnackbar(message: "خطأ : ${res.message ?? res.type}");
+      debugPrint("خطأ : ${res.message ?? res.type}");
       _endAction(taskId);
       return;
     }
@@ -769,11 +906,29 @@ class ActiveProjectController extends GetxController {
     //تغيير حالة المهمه الاضافيه محليا
     final index = extraTasks.indexWhere((t) => t.id == taskId);
     extraTasks[index] = extraTasks[index].copyWith(status: TaskStatus.pending);
-
-    //اضافه مهمه على عدد المهام الكلي للمشروع
-    await _projectService.updateProject(
-        projectId: project!.id, body: {"tasksCount": FieldValue.increment(1)});
-
+    //تغيير عدد المهام الكلي محليا
+    final newCount = (project!.tasksCount ?? 0) + 1;
+    projectRx.value = project!.copyWith(tasksCount: newCount);
+    if (Get.isRegistered<ClientProjectController>()) {
+      final fc = Get.find<ClientProjectController>();
+      final idx = fc.projects.indexWhere((x) => x.id == project!.id);
+      if (idx != -1) {
+        fc.projects[idx] = fc.projects[idx].copyWith(
+          tasksCount: newCount,
+        );
+        fc.projects.refresh();
+      }
+    }
+    if (Get.isRegistered<FreelancerProjectController>()) {
+      final fc = Get.find<FreelancerProjectController>();
+      final idx = fc.projects.indexWhere((x) => x.id == project!.id);
+      if (idx != -1) {
+        fc.projects[idx] = fc.projects[idx].copyWith(
+          tasksCount: newCount,
+        );
+        fc.projects.refresh();
+      }
+    }
     //ارسال الاشعار
     final notification = AppNotification.approveRequestExtraTask(
       projectId: project!.id,
@@ -787,7 +942,7 @@ class ActiveProjectController extends GetxController {
   //******************************************end project functions********************************************* */
   Future<void> _checkAndChangeToReadyToComplete() async {
     if (!allTasksDone || project == null) return;
-    if (project!.status == ProjectStatus.readyToComplete) return;
+    if (project!.status != ProjectStatus.inProgress) return;
 
     await _projectService.updateProject(projectId: project!.id, body: {
       "status": ProjectStatus.readyToComplete,
@@ -813,50 +968,214 @@ class ActiveProjectController extends GetxController {
 
     _updateLocalProjectStatus(ProjectStatus.inProgress);
   }
-  //******************************************idk yet********************************************* */
 
-  Future<void> deliverProject() async {
-    // if (!canDeliverProject || project == null) return;
+  Future<void> completeProject() async {
+    if (!canCompleteProject || project == null) return;
+    //اغلاق الدايلوغ
+    Get.back();
+    actionLoading.value = true;
+    //1- تحديث بيانات المشروع (تغيير الحاله و موعد الانهاء)
+    final res = await _projectService.updateProject(
+      projectId: project!.id,
+      body: {
+        "status": ProjectStatus.completed,
+        "endAt": FieldValue.serverTimestamp(),
+      },
+    );
 
-    // actionLoading.value = true;
-    // final res = await _projectService.updateProjectStatus(
-    //   projectId: project!.id,
-    //   status: ProjectStatus.delivered,
-    // );
-    // actionLoading.value = false;
+    if (res != StatusClasses.success) {
+      customSnackbar(
+          message: 'تعذر انهاء المشروع : ${res.message ?? res.type}');
+      actionLoading.value = false;
 
-    // if (res != StatusClasses.success) {
-    //   customSnackbar(message: 'تعذر تسليم المشروع');
-    //   return;
-    // }
+      return;
+    }
 
-    // _updateLocalProjectStatus(ProjectStatus.delivered);
-    // customSnackbar(message: 'تم تسليم المشروع — بانتظار موافقة العميل');
+    //2- تغيير حالة المشروع محليا
+    projectRx.value = project!.copyWith(
+      status: ProjectStatus.completed,
+      endAt: Timestamp.now(),
+    );
+    _updateLocalProjectStatus(ProjectStatus.completed);
+    actionLoading.value = false;
+
+    //ممكن طلعه من الصفحه كلها اصلا
+
+    //3- تحديث عدد المشاريع المكتمله عند المستخدمين ال2
+    unawaited(_increseCompletedProjects());
+    customSnackbar(message: 'تم انهاء المشروع بنجاح');
+
+    loadingTaskIds.clear();
+    extraTasksControllers.clear();
+    setupTasks.clear();
+
+    final notification = AppNotification.completeProject(
+        projectId: project!.id, projectTitle: project!.title);
+    unawaited(_sendNotificationToPartner(notification));
   }
 
-  Future<void> approveProjectCompletion() async {
-    // if (!canApproveCompletion || project == null) return;
+  Future<void> _increseCompletedProjects() async {
+    await _userService.updateUserData2(
+      {
+        "completed_projects": FieldValue.increment(1),
+      },
+      project!.clientId,
+    );
+    if (project!.acceptedFreelancerId != null) {
+      await _userService.updateUserData2(
+        {
+          "completed_projects": FieldValue.increment(1),
+        },
+        project!.acceptedFreelancerId!,
+      );
+    }
+  }
 
-    // actionLoading.value = true;
-    // final res = await _projectService.updateProjectStatus(
-    //   projectId: project!.id,
-    //   status: ProjectStatus.completed,
-    // );
+  Future<void> onRatingSubmit(
+    double professionalism,
+    double communication,
+    double punctuality,
+    double quality,
+    double workAgain,
+    String? comment,
+  ) async {
+    if (UserSession.uid == null || project == null) return;
+    if ((professionalism + communication + punctuality + quality + workAgain) ==
+        0) {
+      customSnackbar(message: "يرجى ادخال التقييم اولا");
+      return;
+    }
+    if (partnerUserId.value.isEmpty) {
+      customSnackbar(message: "لا يوجد شريك لتقييمه");
+      return;
+    }
+    Get.back();
+    ratingIsLoading.value = true;
+    final reating = RatingModel(
+        id: '',
+        fromUserId: UserSession.uid!,
+        projectId: project!.id,
+        professionalism: professionalism,
+        communication: communication,
+        punctuality: punctuality,
+        quality: quality,
+        workAgain: workAgain,
+        category: project!.category.name,
+        comment: comment?.trim(),
+        projectName: project!.title,
+        projectStatus: project!.status);
+    //1- submit the rating to server
+    final res = await RatingService().submitRatingTransaction(
+        userId: partnerUserId.value,
+        rating: reating,
+        isClientSubmitting: isClient);
+    if (res != StatusClasses.success) {
+      customSnackbar(message: "خطأ : ${res.message ?? res.type}");
+      ratingIsLoading.value = false;
+    } else {
+      //2- update local rating data
+      projectRx.value = projectRx.value!.copyWith(
+        clientRated: isClient ? true : project!.clientRated,
+        freelancerRated: !isClient ? true : project!.freelancerRated,
+      );
+      ratingIsLoading.value = false;
+      customSnackbar(message: "تم التقييم بنجاح");
 
-    // if (res != StatusClasses.success) {
-    //   actionLoading.value = false;
-    //   customSnackbar(message: 'تعذر إكمال المشروع');
-    //   return;
-    // }
+      if (Get.isRegistered<ClientProjectController>()) {
+        final fc = Get.find<ClientProjectController>();
+        final idx = fc.projects.indexWhere((x) => x.id == project!.id);
+        if (idx != -1) {
+          fc.projects[idx] = fc.projects[idx].copyWith(
+            clientRated: isClient ? true : project!.clientRated,
+            freelancerRated: !isClient ? true : project!.freelancerRated,
+          );
+          fc.projects.refresh();
+        }
+      }
+      if (Get.isRegistered<FreelancerProjectController>()) {
+        final fc = Get.find<FreelancerProjectController>();
+        final idx = fc.projects.indexWhere((x) => x.id == project!.id);
+        if (idx != -1) {
+          fc.projects[idx] = fc.projects[idx].copyWith(
+            clientRated: isClient ? true : project!.clientRated,
+            freelancerRated: !isClient ? true : project!.freelancerRated,
+          );
+          fc.projects.refresh();
+        }
+      }
+      final notification = AppNotification.newRating(
+          projectId: project!.id,
+          isClient: isClient,
+          projectTitle: project!.title);
+      unawaited(_sendNotificationToPartner(notification));
+    }
+  }
 
-    // await _userService.updateUserData2(
-    //   {'completed_projects': FieldValue.increment(1)},
-    //   UserSession.uid!,
-    // );
+  Future<void> onViewRate() async {
+    if (project == null || !isRated) return;
+    if (myRating.value != null) return;
+    ratingIsLoading.value = true;
+    final res = await RatingService().getUserProjectRatings(
+        uId: partnerUserId.value, projectId: project!.id);
+    res.fold((e) {
+      customSnackbar(message: "خطأ : ${e.message ?? e.type}");
+      Get.back();
+    }, (rating) {
+      myRating.value = rating.isNotEmpty ? rating.first : null;
+      if (myRating.value == null) {
+        customSnackbar(message: "لا يوجد تقييم لهذا المشروع");
+      }
+      // print(rating.first.toMap());
+    });
+    ratingIsLoading.value = false;
+  }
 
-    // actionLoading.value = false;
-    // _updateLocalProjectStatus(ProjectStatus.completed);
-    // customSnackbar(message: 'تم إكمال المشروع بنجاح');
+  Future<void> cancelProject() async {
+    if (!canCencelProject.value || project == null) return;
+    //اغلاق الدايلوغ
+    Get.back();
+    cancelIsLoading.value = true;
+    final cancelReason = projectCancelReasonController.text.trim();
+    //1- تحديث بيانات المشروع (تغيير الحاله و موعد الالغاء)
+    final res = await _projectService.updateProject(
+      projectId: project!.id,
+      body: {
+        "status": ProjectStatus.cancelled,
+        "endAt": FieldValue.serverTimestamp(),
+        "cancelReason": cancelReason.isNotEmpty ? cancelReason : null
+      },
+    );
+
+    if (res != StatusClasses.success) {
+      customSnackbar(
+          message: 'تعذر إلغاء المشروع : ${res.message ?? res.type}');
+      cancelIsLoading.value = false;
+
+      return;
+    }
+
+    //2- تغيير حالة المشروع محليا
+    projectRx.value = project!.copyWith(
+        status: ProjectStatus.cancelled,
+        endAt: Timestamp.now(),
+        cancelReason: cancelReason);
+
+    _updateLocalProjectStatus(ProjectStatus.cancelled);
+    cancelIsLoading.value = false;
+
+    // //3- تحديث عدد المشاريع المكتمله عند المستخدمين ال2
+    // unawaited(_increseCompletedProjects());
+    customSnackbar(message: 'تم إلغاء المشروع بنجاح');
+
+    loadingTaskIds.clear();
+    extraTasksControllers.clear();
+    setupTasks.clear();
+
+    final notification = AppNotification.cancelProject(
+        projectId: project!.id,
+        projectTitle: project!.title,
+        cancelReason: cancelReason.isEmpty ? null : cancelReason);
+    unawaited(_sendNotificationToPartner(notification));
   }
 
   //******************************************helper functions********************************************* */
@@ -929,6 +1248,23 @@ class ActiveProjectController extends GetxController {
       await _checkAndReturnProjectToInProgress();
     }
   }
+
+  // Future<void> onSelectOption(String? value) async {
+  //   if (value == "cancel") {
+  //     Get.bottomSheet(
+  //       CustomBottomSheetContainer(children: [
+
+  //       ])
+  //       // title: "الغاء المشروع",
+  //       // content: Text("هل انت متأكد من إلغاء المشروع ؟"),
+  //       // textConfirm: "الغاء المشروع",
+  //       // textCancel: "تراجع",
+  //       // onConfirm: cancelProject,
+  //       // onCancel: () => Get.back(),
+  //     );
+  //   }
+  // }
+
 //******************************************old functions********************************************* */
   // bool taskIsEditing(String taskId) => _taskControllers.containsKey(taskId);
 
@@ -949,93 +1285,6 @@ class ActiveProjectController extends GetxController {
   //       ctrl.text = task.description;
   //     }
   //   }
-  // }
-
-//delet please
-  // TextEditingController taskController(String taskId) {
-  //   return _taskControllers.putIfAbsent(
-  //     taskId,
-  //     () => TextEditingController(),
-  //   );
-  // }
-
-  //ok
-  // Future<void> onAddNewTask() async {
-  //   if (!canEditTasks || project == null) return;
-  //   if (isAddingTask) return;
-  //   newTaskController.value = TextEditingController(text: "");
-  //   print("!!!!!!!!!!!!!!!!!!! $isAddingTask");
-  // }
-
-//ok
-  // Future<void> cencelAddingNewTask() async {
-  //   newTaskController.value = null;
-  // }
-
-//ok
-  // void onChangeNewTask(String value) {
-  //   newTaskController.value!.text = value;
-  // }
-
-//ok
-  // Future<void> saveNewTask() async {
-  //   if (!canEditTasks || project == null) return;
-
-  //   final newTask = newTaskController.value?.text;
-  //   if (newTask == null || newTask.trim().isEmpty) {
-  //     customSnackbar(message: "لا يمكن اضافة مهمة فارغة");
-  //     return;
-  //   }
-  //   addIsLoading.value = true;
-  //   final addResponse = await _taskService.addTask(
-  //       projectId: project!.id, description: newTask);
-  //   if (addResponse != StatusClasses.success) {
-  //     customSnackbar(
-  //         message: "حدث خطأ :${addResponse.type} / ${addResponse.message}");
-  //     addIsLoading.value = false;
-  //     return;
-  //   }
-  //   await loadTasks();
-  //   // if(pageState.value != StatusClasses.success) return;
-  //   newTaskController.value = null;
-  //   addIsLoading.value = false;
-  //   customSnackbar(message: "تمت إضافة المهمه بنجاح");
-  // }
-
-  // Future<void> updateTaskDescription(String taskId, String description) async {
-  // if (!canEditTasks || project == null) return;
-
-  // final index = tasks.indexWhere((t) => t.id == taskId);
-  //    if (index == -1) return;
-
-  //   tasks[index] = tasks[index].copyWith(description: description);
-
-  //   await _taskService.updateTask(
-  //      projectId: project!.id,
-  //     taskId: taskId,
-  //     data: {'description': description},
-  //   );
-  // }
-
-  // Future<void> toggleTaskDone(String taskId, bool? value) async {
-  //   if (!canEditTasks) {
-  //     customSnackbar(message: "لا يمكنك التعديل على حالة المهام");
-  //     return;
-  //   }
-  //   if (project == null || value == null) return;
-  //   final index = tasks.indexWhere((t) => t.id == taskId);
-  //   if (index == -1) return;
-  //   if (tasks[index].status == TaskStatus.approved) return;
-  //   tasks[index] = tasks[index].copyWith(
-  //       status: value ? TaskStatus.completedByFreelancer : TaskStatus.pending);
-
-  //   await _taskService.updateTask(
-  //     projectId: project!.id,
-  //     taskId: taskId,
-  //     data: {
-  //       'status': value ? TaskStatus.completedByFreelancer : TaskStatus.pending
-  //     },
-  //   );
   // }
 
   @override

@@ -1,7 +1,96 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:freelancing_platform/core/constants/app_colors.dart';
+// import 'package:freelancing_platform/core/constants/app_spaces.dart';
+// import 'package:freelancing_platform/core/widgets/custom_loading.dart';
+
+// class ProjectPartnerHeader extends StatelessWidget {
+//   const ProjectPartnerHeader({
+//     super.key,
+//     required this.displayName,
+//     required this.partnerType,
+//     required this.onViewProfile,
+//     this.isLoading = false,
+//   });
+
+//   final String displayName;
+//   final String partnerType;
+
+//   final VoidCallback onViewProfile;
+//   final bool isLoading;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//       onTap: isLoading ? null : onViewProfile,
+//       borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
+//       child: Container(
+//         width: double.infinity,
+//         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black.withOpacity(0.06),
+//               blurRadius: 10,
+//               offset: const Offset(0, 4),
+//             ),
+//           ],
+//         ),
+//         child: isLoading
+//             ? CustomLoading()
+//             : Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Text(
+//                         displayName,
+//                         style: TextStyle(
+//                           fontSize: 18.sp,
+//                           fontWeight: FontWeight.bold,
+//                           color: AppColors.darkPurple,
+//                         ),
+//                       ),
+//                       Container(
+//                         padding: EdgeInsets.symmetric(
+//                           horizontal: 12.w,
+//                           vertical: 5.h,
+//                         ),
+//                         decoration: BoxDecoration(
+//                           color: AppColors.lightPurple.withOpacity(0.15),
+//                           borderRadius: BorderRadius.circular(10),
+//                         ),
+//                         child: Text(
+//                           partnerType,
+//                           style: TextStyle(
+//                             color: AppColors.vividPurple,
+//                             fontSize: 11.sp,
+//                             fontWeight: FontWeight.w700,
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                   SizedBox(height: 4.h),
+//                   Text(
+//                     'عرض البروفايل',
+//                     style: TextStyle(
+//                       fontSize: 12.sp,
+//                       color: Colors.grey.shade600,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//       ),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
-import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 
 class ProjectPartnerHeader extends StatelessWidget {
@@ -15,7 +104,6 @@ class ProjectPartnerHeader extends StatelessWidget {
 
   final String displayName;
   final String partnerType;
-
   final VoidCallback onViewProfile;
   final bool isLoading;
 
@@ -23,63 +111,87 @@ class ProjectPartnerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: isLoading ? null : onViewProfile,
-      borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
+      borderRadius: BorderRadius.circular(14.r),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSpaces.radiusLarge),
+          borderRadius: BorderRadius.circular(14.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: isLoading
-            ? CustomLoading()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ? const CustomLoading()
+            : Row(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        displayName,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.darkPurple,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 5.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightPurple.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          partnerType,
+                  // Icon avatar
+                  Container(
+                    width: 36.w,
+                    height: 36.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.lightPurple.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person_outline,
+                      color: AppColors.darkPurple,
+                      size: 18.sp,
+                    ),
+                  ),
+
+                  SizedBox(width: 10.w),
+
+                  //  Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          displayName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: AppColors.vividPurple,
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.darkPurple,
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 2.h),
+                        Text(
+                          "اضغط لعرض البروفايل",
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    'عرض البروفايل',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey.shade600,
+
+                  // 🏷 type badge
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightPurple.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      partnerType,
+                      style: TextStyle(
+                        color: AppColors.vividPurple,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],

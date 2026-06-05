@@ -59,7 +59,7 @@ class DashboardController extends GetxController with ProjectTaskProgressMixin {
   Future<void> _loadUserStats() async {
     final user = await _userService.fetchUserData(UserSession.uid!);
     if (user != null) {
-      rating.value = user.rating;
+      rating.value = user.overallRating;
       completedProjects.value = user.completedProjects;
       totalPoints.value = user.points;
     }

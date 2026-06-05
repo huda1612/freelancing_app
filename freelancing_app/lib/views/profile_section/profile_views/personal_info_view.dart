@@ -12,8 +12,8 @@ import 'package:freelancing_platform/core/widgets/custom_error_widget.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/core/widgets/custom_text_field.dart';
 import 'package:freelancing_platform/core/widgets/location_field.dart';
-import 'package:freelancing_platform/core/widgets/gender_field.dart';
-import 'package:freelancing_platform/core/widgets/birth_date_field.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/gender_field.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/birth_date_field.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/personal_info_controller.dart';
 import 'package:get/get.dart';
 

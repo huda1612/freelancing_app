@@ -141,15 +141,7 @@ class FreelancerProjectView extends StatelessWidget {
               mode: mode,
               tasksDone: project.completedTasksCount,
               tasksTotal: project.tasksCount,
-              onTap:
-                  //يمكن لو شلتهم كلهم بعدين احسن لان رح يصير خلص كله عالactive عند الفريلانسر !!!
-                  mode == FreelancerProjectTileMode.inProgress ||
-                          mode == FreelancerProjectTileMode.setup ||
-                          mode ==
-                              FreelancerProjectTileMode.waitingTasksApproval ||
-                          mode == FreelancerProjectTileMode.readyToComplete
-                      ? () => controller.openActiveProject(project)
-                      : null,
+              onTap: () => controller.openActiveProject(project),
             );
           },
         ),
@@ -166,7 +158,7 @@ class FreelancerProjectView extends StatelessWidget {
       case 2:
         return 'لا توجد مشاريع مكتملة.';
       case 3:
-        return 'لا توجد مشاريع مسحوبة.';
+        return 'لا توجد مشاريع غير مكتملة.';
       default:
         return 'لا توجد بيانات.';
     }

@@ -16,10 +16,19 @@ class ProjectService {
 
   final FirebaseFirestore _firebaseFirestore;
 
+  // DocumentReference<Map<String, dynamic>> projectRef(String projectId) {
+  //   return _firebaseFirestore
+  //       .collection(CollectionsNames.projects)
+  //       .doc(projectId);
+  // }
+
+  CollectionReference<Map<String, dynamic>> get projectsCollectionRef {
+    return _firebaseFirestore.collection(CollectionsNames.projects);
+  }
+
   Future<Either<StatusClasses, ProjectModel>> getProject(
       String projectId) async {
-    final docRef =
-        _firebaseFirestore.collection(CollectionsNames.projects).doc(projectId);
+    final docRef = projectsCollectionRef.doc(projectId);
     return FirebaseCrud.fetchDocument(
       docRef: docRef,
       fromMap: (data, id) => ProjectModel.fromMap(data, id),
@@ -27,7 +36,7 @@ class ProjectService {
   }
 
   Future<StatusClasses> addProject(ProjectModel project) async {
-    final collection = _firebaseFirestore.collection(CollectionsNames.projects);
+    final collection = projectsCollectionRef;
     return FirebaseCrud.createDocument(
       collectionRef: collection,
       body: project.toMap(),
@@ -35,8 +44,8 @@ class ProjectService {
   }
 
   Future<StatusClasses> updateProject(
-      {required String projectId,required Map<String, dynamic> body}) async {
-    final collection = _firebaseFirestore.collection(CollectionsNames.projects);
+      {required String projectId, required Map<String, dynamic> body}) async {
+    final collection = projectsCollectionRef;
     return FirebaseCrud.updateDocument(
       collectionRef: collection,
       docId: projectId,
@@ -70,9 +79,8 @@ class ProjectService {
   }
 
   Future<Either<StatusClasses, List<ProjectModel>>> getOpenProjects() async {
-    final query = _firebaseFirestore
-        .collection(CollectionsNames.projects)
-        .where('status', isEqualTo: ProjectStatus.newProject);
+    final query = projectsCollectionRef.where('status',
+        isEqualTo: ProjectStatus.newProject);
 
     return FirebaseCrud.runGetQuery<ProjectModel>(
       query: query,
@@ -92,14 +100,11 @@ class ProjectService {
     //     .where('clientId', isEqualTo: clientId);
 
     if (justNewProjects == true) {
-      query = _firebaseFirestore
-          .collection(CollectionsNames.projects)
+      query = projectsCollectionRef
           .where("clientId", isEqualTo: clientId)
           .where("status", isEqualTo: ProjectStatus.newProject);
     } else {
-      query = _firebaseFirestore
-          .collection(CollectionsNames.projects)
-          .where('clientId', isEqualTo: clientId);
+      query = projectsCollectionRef.where('clientId', isEqualTo: clientId);
     }
     return await FirebaseCrud.runGetQuery<ProjectModel>(
       query: query,
@@ -121,7 +126,7 @@ class ProjectService {
     }
 
     return FirebaseCrud.updateDocument(
-      collectionRef: _firebaseFirestore.collection(CollectionsNames.projects),
+      collectionRef: projectsCollectionRef,
       docId: projectId,
       body: body,
     );

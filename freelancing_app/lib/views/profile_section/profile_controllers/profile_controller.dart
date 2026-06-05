@@ -19,9 +19,8 @@ import 'package:freelancing_platform/data/services/certificate_service.dart';
 import 'package:freelancing_platform/data/services/fcm_token_array_service.dart';
 import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/data/services/work_sample_service.dart';
-import 'package:freelancing_platform/models/skill_collections/specialization_model.dart';
 import 'package:freelancing_platform/models/user_collections/certificate_model.dart';
-import 'package:freelancing_platform/models/user_collections/review_model.dart';
+import 'package:freelancing_platform/models/user_collections/rating_model.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
 import 'package:freelancing_platform/models/user_collections/worksamples_model.dart';
 import 'package:get/get.dart';
@@ -57,7 +56,7 @@ class ProfileController extends GetxController {
   final user = Rxn<UserModel>();
   final String userId;
   final profileImage = ''.obs;
-  final reviews = <ReviewModel>[].obs;
+  final ratings = <RatingModel>[].obs;
   final certificates = <CertificateModel>[].obs;
   final works = <WorksampleModel>[].obs;
   final TextEditingController bioController = TextEditingController();
@@ -67,6 +66,22 @@ class ProfileController extends GetxController {
   //notifications variables
   final notificationsEnabled = true.obs;
   final notificationsPermissioned = true.obs;
+  List<double>? get starsCount => user.value != null
+      ? [
+          user.value!.professionalismSum,
+          user.value!.communicationSum,
+          user.value!.punctualitySum,
+          user.value!.qualitySum,
+          user.value!.workAgainSum
+        ]
+      : null;
+  List<String> get starTitles => [
+        "الاحترافية بالتعامل",
+        "التواصل و المتابعة",
+        "الالتزام بالوقت",
+        "جودة العمل",
+        "التعامل مرة أخرى",
+      ];
 
   @override
   void onInit() {
@@ -153,12 +168,6 @@ class ProfileController extends GetxController {
     return raw;
   }
 
-  // String get roleLabel {
-  //   final raw = user.value?.role.trim() ?? '';
-  //   if (raw.isEmpty) return 'Freelancer';
-  //   return raw;
-  // }
-
   String get specializationLabel {
     final raw = user.value?.specialization?.name.trim() ?? '';
     if (raw.isEmpty) return 'لا يوجد اختصاص محدد';
@@ -233,25 +242,6 @@ class ProfileController extends GetxController {
       _setFallbackData();
     }
   }
-
-  //بده تغيير بس نعمل التقييم !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // Future<StatusClasses> _loadReviews(String uid) async {
-  //   // ReviweService _reviweService = ReviweService();
-  //   final query = await _firestore
-  //       .collection(CollectionsNames.users)
-  //       .doc(uid)
-  //       .collection('reviews')
-  //       .orderBy('createdAt', descending: true)
-  //       .limit(10)
-  //       .get();
-
-  //   final list = query.docs
-  //       .map((doc) => ReviewModel.fromMap(doc.data(), doc.id))
-  //       .toList();
-  //   if (list.isNotEmpty) {
-  //     reviews.assignAll(list);
-  //   }
-  // }
 
   Future<StatusClasses> _loadCertificates(String uid) async {
     loadCertificates.value = true;
@@ -547,67 +537,75 @@ class ProfileController extends GetxController {
     activeTabIndex.value = index;
   }
 
+  void onRatingView() {
+    Get.toNamed(AppRoutes.userRatings, arguments: {
+      'userId': user.value?.uid,
+      "fullName": fullName,
+      "ratingAvg": user.value?.overallRating
+    });
+  }
+
   //هاد بلاه احسن بس خليته احتياط
   void _setFallbackData() {
-    user.value = UserModel(
-      uid: 'local-user',
-      fname: 'User',
-      lname: 'Name',
-      username: 'username',
-      email: 'user@email.com',
-      role: 'Freelancer',
-      specialization: SpecializationSnapshot(slug: 'a', name: 'برمجه'),
-      bio:
-          'مصمم ومطور مهتم ببناء حلول رقمية تجمع بين الشكل الجميل والأداء العملي، مع خبرة في تنفيذ مشاريع للشركات الناشئة والمتاجر الإلكترونية.',
-      skills: const [
-        'UI Design',
-        'Flutter',
-        'Branding',
-        'Copywriting',
-        'Web Development',
-        'Motion Design',
-      ],
-      rating: 4.8,
-      completedProjects: 120,
-    );
+    // user.value = UserModel(
+    //   uid: 'local-user',
+    //   fname: 'User',
+    //   lname: 'Name',
+    //   username: 'username',
+    //   email: 'user@email.com',
+    //   role: 'Freelancer',
+    //   specialization: SpecializationSnapshot(slug: 'a', name: 'برمجه'),
+    //   bio:
+    //       'مصمم ومطور مهتم ببناء حلول رقمية تجمع بين الشكل الجميل والأداء العملي، مع خبرة في تنفيذ مشاريع للشركات الناشئة والمتاجر الإلكترونية.',
+    //   skills: const [
+    //     'UI Design',
+    //     'Flutter',
+    //     'Branding',
+    //     'Copywriting',
+    //     'Web Development',
+    //     'Motion Design',
+    //   ],
+    //   overallRating: 4.8,
+    //   completedProjects: 120,
+    // );
 
-    reviews.assignAll([
-      ReviewModel(
-        id: 'r1',
-        fromUserId: 'u1',
-        projectId: 'p1',
-        rating: 5.0,
-        comment: 'عمل ممتاز وملتزم جداً بالمواعيد.',
-      ),
-      ReviewModel(
-        id: 'r2',
-        fromUserId: 'u2',
-        projectId: 'p2',
-        rating: 4.5,
-        comment: 'كتب محتوى قوي واحترافي للمشروع.',
-      ),
-      ReviewModel(
-        id: 'r3',
-        fromUserId: 'u3',
-        projectId: 'p3',
-        rating: 4.8,
-        comment: 'تواصل سريع ونتيجة نهائية جميلة.',
-      ),
-      ReviewModel(
-        id: 'r4',
-        fromUserId: 'u4',
-        projectId: 'p4',
-        rating: 4.7,
-        comment: 'تجربة ممتازة ومرونة كبيرة بالتعديلات.',
-      ),
-      ReviewModel(
-        id: 'r5',
-        fromUserId: 'u5',
-        projectId: 'p5',
-        rating: 5.0,
-        comment: 'احترافية عالية بالتعامل والتنفيذ.',
-      ),
-    ]);
+    // ratings.assignAll([
+    //   RatingModel(
+    //     id: 'r1',
+    //     fromUserId: 'u1',
+    //     projectId: 'p1',
+    //     rating: 5.0,
+    //     comment: 'عمل ممتاز وملتزم جداً بالمواعيد.',
+    //   ),
+    //   RatingModel(
+    //     id: 'r2',
+    //     fromUserId: 'u2',
+    //     projectId: 'p2',
+    //     rating: 4.5,
+    //     comment: 'كتب محتوى قوي واحترافي للمشروع.',
+    //   ),
+    //   RatingModel(
+    //     id: 'r3',
+    //     fromUserId: 'u3',
+    //     projectId: 'p3',
+    //     rating: 4.8,
+    //     comment: 'تواصل سريع ونتيجة نهائية جميلة.',
+    //   ),
+    //   RatingModel(
+    //     id: 'r4',
+    //     fromUserId: 'u4',
+    //     projectId: 'p4',
+    //     rating: 4.7,
+    //     comment: 'تجربة ممتازة ومرونة كبيرة بالتعديلات.',
+    //   ),
+    //   RatingModel(
+    //     id: 'r5',
+    //     fromUserId: 'u5',
+    //     projectId: 'p5',
+    //     rating: 5.0,
+    //     comment: 'احترافية عالية بالتعامل والتنفيذ.',
+    //   ),
+    // ]);
 
     certificates.assignAll([
       CertificateModel(

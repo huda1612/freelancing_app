@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
@@ -12,8 +13,8 @@ import 'package:freelancing_platform/core/constants/data_constsnats/user_status.
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/get_navigation.dart';
+import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
+import 'package:get/get.dart';
 
 class RouteHandler {
   //اول ما يدخل او بعد تسجيل الدخول او بعد انشاء الحساب
@@ -154,6 +155,12 @@ class RouteHandler {
       case AppNotificationTypes.cancelRequestExtraTask:
       case AppNotificationTypes.rejectRequestedExtraTask:
       case AppNotificationTypes.approveRequestExtraTask:
+      case AppNotificationTypes.completeProject:
+      case AppNotificationTypes.cancelProject:
+      case AppNotificationTypes.newRating:
+        if (Get.isRegistered<ActiveProjectController>()) {
+          unawaited(Get.find<ActiveProjectController>().loadTasks());
+        }
         NavigationService.changeTab(3);
         NavigationService.toNamed(
           AppRoutes.activeProject,

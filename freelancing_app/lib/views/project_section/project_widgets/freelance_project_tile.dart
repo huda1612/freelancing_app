@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
-import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/project_card.dart';
@@ -61,8 +60,8 @@ class FreelancerProjectTile extends StatelessWidget {
     if (mode == FreelancerProjectTileMode.setup ||
         mode == FreelancerProjectTileMode.waitingTasksApproval) {
       return StatusContainer(
-        bgColor: AppColors.red.withOpacity(.1),
-        textColor: AppColors.red,
+        bgColor: Colors.orange.withOpacity(.1),
+        textColor: Colors.orange,
         text: mode == FreelancerProjectTileMode.setup
             ? "بانتظار تحديد المهام"
             : "بانتظار الموافقة على المهام",

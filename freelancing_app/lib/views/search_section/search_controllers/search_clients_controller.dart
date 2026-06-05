@@ -56,7 +56,7 @@ class SearchClientsController extends GetxController {
       pageState.value = error;
     }, (results) {
       final filtered = results.where((u) => u.uid != uid).toList()
-        ..sort((a, b) => b.rating.compareTo(a.rating));
+        ..sort((a, b) => b.overallRating.compareTo(a.overallRating));
       users.assignAll(filtered);
       pageState.value = StatusClasses.success;
     });
