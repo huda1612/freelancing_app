@@ -22,13 +22,7 @@ class CustomBottomSheetContainer extends StatelessWidget {
           padding: EdgeInsets.all(padding ?? AppSpaces.paddingLarge),
           child: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              // SizedBox(
-              //   height: AppSpaces.heightLarge,
-              // ),
               ...children,
-              // SizedBox(
-              //   height: AppSpaces.heightLarge,
-              // ),
             ]),
           ),
         ));

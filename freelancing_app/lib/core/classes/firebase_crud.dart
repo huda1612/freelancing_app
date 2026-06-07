@@ -23,6 +23,11 @@ class FirebaseCrud {
       //لو البيانات كانت من الكاش ومافي بيانات يعني فاضيه فيعني مافي نت
       //هي مشان ما نلغي دعم الاوف لاين ويقدر يجيب بيانات من الكاش وبنفس الوقت لو مافي شي بالكاش نطلعله ان مافي نت
       if (snapshot.metadata.isFromCache && snapshot.docs.isEmpty) {
+        final snapshot = await query.get();
+
+        print("fromCache = ${snapshot.metadata.isFromCache}");
+        print("docsCount = ${snapshot.docs.length}");
+        // print("hiiii");
         return Left(StatusClasses.offlineError);
       }
 

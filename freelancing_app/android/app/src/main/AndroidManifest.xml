@@ -1,4 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries> <!--هي لازم ضيفها لاقدر افتح المتصفح من التطبيق-->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
     <application
         android:label="freelancing_app"
         android:name="${applicationName}"
@@ -24,6 +34,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="true" /> <!--new-->
+            <intent-filter> <!--new--><!--من اجل فتح التطبيق باستخدام رابط-->
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- <data android:scheme="freelancity" />freelancity://deeplinks/someUrl -->
+                <data android:scheme="freelancity" android:host="deeplinks" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

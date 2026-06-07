@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:freelancing_platform/core/bindings/initial_binding.dart';
 import 'package:freelancing_platform/core/classes/app_initializer.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,10 +9,6 @@ import 'package:freelancing_platform/core/constants/app_pages.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/services/notification_services.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_fcm_token.dart';
-// import 'package:freelancing_platform/views/project_section/project_views/project_details_view.dart';
-// import 'package:freelancing_platform/views/admin_section/admin_requests/admin_requests_view/adimn_request_detail_view.dart';
-// import 'package:freelancing_platform/views/auth_section/auth_views/verification_view/verification_view.dart';
-// import 'package:freelancing_platform/views/user_request_section/freelancer_request/freelancer_request_views/freelancer_account_info_view.dart';
 import 'package:get/get.dart';
 import 'firebase_options.dart'; //  مهم جداً
 
@@ -25,6 +22,10 @@ void main() async {
   // استدعاء تهيئة البيانات قبل تشغيل التطبيق
   await AppInitializer.init();
 
+  // set the publishable key for Stripe
+  Stripe.publishableKey =
+      "pk_test_51TfFzwJXDELQTpeAlceJvM2d6PUoE9riusuMpWuYB6O2HWH7RG3ls4gszx1rLrWIEIaho4Mn9PVtfOyp8HX2OJPF00J6vLDEv4";
+  await Stripe.instance.applySettings();
   runApp(const MyApp());
 
   //الغاء تهيئة الاشعارات لو المستخدم لغالها من داخل التطبيق
@@ -60,11 +61,9 @@ class MyApp extends StatelessWidget {
 
           // initialRoute: AppRoutes.projectDetails,
           // initialRoute: AppRoutes.createProject,
-          // initialRoute: AppRoutes.main,
 
           // initialRoute: AppRoutes.rejected,
           // initialRoute: AppRoutes.approved
-          // initialRoute: AppRoutes.freelancerWorkAndCertificates,
           // initialRoute: AppRoutes.login,
 
           getPages: AppPages.pages,
