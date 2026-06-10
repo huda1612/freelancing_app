@@ -93,6 +93,16 @@ class SubmitOfferController extends GetxController {
       update();
       return;
     }, (user) async {
+      //منع ارسال العرض بحال لم يتم اعداد حساب الدفع
+      if (user.stripeOnboardingCompleted != true) {
+        customSnackbar(
+          message: "يجب إكمال إعداد حساب الدفع أولاً من صفحة الإعدادات",
+        );
+        submitLoading = false;
+        update();
+        return;
+      }
+
       final UserSnapshotModel freelancerSnapshot = UserSnapshotModel(
           fullName: "${user.fname} ${user.lname}",
           username: user.username,
@@ -102,6 +112,7 @@ class SubmitOfferController extends GetxController {
               : user.specialization!.name,
           rating: user.overallRating,
           completedProjects: user.completedProjects);
+
       if (isEditMode) {
         final res2 = await OfferService().updateOffer(
           offerId: offerToEdit!.id,

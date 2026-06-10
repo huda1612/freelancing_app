@@ -7,16 +7,8 @@ class InitialBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<NavigationController>(() => NavigationController(),
         fenix: true);
-  Get.put(NotificationServices(), permanent: true);
-  }
-    // Get.put(FirebaseAuth.instance);
-    // Get.put(FirebaseFirestore.instance);
+    Get.put(NotificationServices(), permanent: true);
 
-    // Get.put(
-    //   FirebaseCrud(
-    //     Get.find<FirebaseFirestore>(),
-    //     // Get.find<FirebaseAuth>(),
-    //   ),
-    // );
+    // Get.put(DeepLinkService(), permanent: true);
   }
-
+}

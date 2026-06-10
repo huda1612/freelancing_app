@@ -4,12 +4,15 @@ import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
+import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/views/auth_section/auth_controller/sign_out_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/stripe_connect_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_widgets/payment_account_create_bottom_sheet.dart';
 import 'package:get/get.dart';
 
 class ProfileDrawer extends StatelessWidget {
-  const ProfileDrawer({
+  ProfileDrawer({
     super.key,
     required this.controller,
     required this.singoutController,
@@ -17,6 +20,7 @@ class ProfileDrawer extends StatelessWidget {
 
   final ProfileController controller;
   final SignOutController singoutController;
+  final stripeController = Get.find<StripeConnectController>();
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +82,43 @@ class ProfileDrawer extends StatelessWidget {
                   onTap: () {
                     NavigationService.toNamed(AppRoutes.freelancerOffers);
                   }),
+            if (controller.isFreelancer) ...[
+              Obx(() {
+                return !stripeController.openSheetIsLoading.value
+                    ? _drawerTile(
+                        icon: Icons.account_balance_wallet_outlined,
+                        title: 'إعدادات الدفع',
+                        subTitle: controller.user.value?.stripeAccountId == null
+                            ? Text(
+                                "يرجى تفعيل الحساب اولا !",
+                                style: AppTextStyles.link
+                                    .copyWith(color: AppColors.red),
+                              )
+                            : controller.user.value
+                                        ?.stripeOnboardingCompleted ==
+                                    false
+                                ? Text(
+                                    "يرجى إكمال إعداد الحساب !",
+                                    style: AppTextStyles.link
+                                        .copyWith(color: AppColors.red),
+                                  )
+                                : null,
+                        onTap: controller.user.value?.stripeAccountId == null
+                            ? () => Get.bottomSheet(Obx(() {
+                                  return PaymentAccountCreateBottomSheet(
+                                    onSetupPressed: stripeController
+                                        .createAccountAndOpenLink,
+                                    isLoading: stripeController.isLoading.value,
+                                  );
+                                }))
+                            : () =>
+                                stripeController.onOpenStripeAccountSettings(
+                                    controller
+                                        .user.value?.stripeOnboardingCompleted,
+                                    controller.user.value!.stripeAccountId!))
+                    : CustomLoading();
+              })
+            ],
             const Spacer(),
             Obx(
               () => Column(
@@ -125,13 +166,13 @@ class ProfileDrawer extends StatelessWidget {
     );
   }
 
-  Widget _drawerTile({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    Color iconColor = AppColors.vividPurple,
-    Color textColor = AppColors.black,
-  }) {
+  Widget _drawerTile(
+      {required IconData icon,
+      required String title,
+      required VoidCallback onTap,
+      Color iconColor = AppColors.vividPurple,
+      Color textColor = AppColors.black,
+      Widget? subTitle}) {
     return ListTile(
       leading: Icon(
         icon,
@@ -143,6 +184,7 @@ class ProfileDrawer extends StatelessWidget {
           color: textColor,
         ),
       ),
+      subtitle: subTitle,
       // shape: RoundedRectangleBorder(
       //   borderRadius: BorderRadius.circular(14.r),
       // ),

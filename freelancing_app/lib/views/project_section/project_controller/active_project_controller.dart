@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:freelancing_platform/core/classes/app_notifications.dart';
 import 'package:freelancing_platform/core/classes/firebase_crud.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
@@ -11,6 +12,7 @@ import 'package:freelancing_platform/core/constants/data_constsnats/task_status.
 import 'package:freelancing_platform/core/constants/data_constsnats/user_roles.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/services/notification_sender_services.dart';
+import 'package:freelancing_platform/core/services/stripe_backend_services.dart';
 import 'package:freelancing_platform/core/utils/helper_function/normalize_numbers.dart';
 import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/offer_service.dart';
@@ -25,6 +27,7 @@ import 'package:freelancing_platform/models/user_collections/rating_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/freelance_project_controller.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ActiveProjectController extends GetxController {
   //services
@@ -42,6 +45,8 @@ class ActiveProjectController extends GetxController {
 
   final partnerName = ''.obs;
   final partnerUserId = ''.obs;
+  String? freelancerAccountId;
+  bool freelancerAccountCompleted = false;
 
   //state
   final pageState = StatusClasses.isloading.obs;
@@ -356,6 +361,10 @@ class ActiveProjectController extends GetxController {
       partnerName.value = '${user.fname.trim()} ${user.lname.trim()}'.trim();
       if (partnerName.value.isEmpty) {
         partnerName.value = user.username;
+      }
+      if (isClient) {
+        freelancerAccountId = user.stripeAccountId;
+        freelancerAccountCompleted = user.stripeOnboardingCompleted ?? false;
       }
     }
 
@@ -676,7 +685,61 @@ class ActiveProjectController extends GetxController {
       customSnackbar(message: "لا يمكنك الموافقه على المهمة");
       return;
     }
+    if (freelancerAccountId == null || freelancerAccountCompleted == false) {
+      customSnackbar(
+          message: "لم يكمل الفريلانسر اعداد الحساب ، لا يمكن الدفع");
+      return;
+    }
     _startAction(taskId);
+
+    ///4- هون لازم تتم عملية الدفع
+
+    // final paymentRes = await StripeServices.createPaymentIntent(
+    //   !isExtra ? tasks[index].amount : extraTasks[index].amount,
+    //   freelancerAccountId!,
+    // );
+
+    // if (paymentRes.isLeft()) {
+    //   final err = paymentRes.fold((l) => l, (_) => null);
+    //   customSnackbar(
+    //     message: "فشل إنشاء الدفع: ${err?.message ?? err?.type}",
+    //   );
+    //   _endAction(taskId);
+    //   return;
+    // }
+
+    // final data = paymentRes.getOrElse(() => {});
+    // final clientSecret = data["clientSecret"];
+
+    // try {
+    //   await Stripe.instance.initPaymentSheet(
+    //     paymentSheetParameters: SetupPaymentSheetParameters(
+    //       paymentIntentClientSecret: clientSecret,
+    //       merchantDisplayName: "Freelancity",
+    //     ),
+    //   );
+
+    //   await Stripe.instance.presentPaymentSheet();
+    // } catch (e, s) {
+    //   print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    //   print(e);
+
+    //   print("ERROR = $e");
+    //   print("STACK = $s");
+
+    //   customSnackbar(message: "تم إلغاء أو فشل الدفع");
+    //   _endAction(taskId);
+    //   return;
+    // }
+
+    final paymentDone =
+        await _makePayment(index: index, isExtra: isExtra, taskId: taskId);
+    if (paymentDone == false) {
+      _endAction(taskId);
+      return;
+    }
+
+    //تغيير حالة المهمه
     final res = await FirebaseCrud.runTransaction(action: (transaction) async {
       final taskRef = _taskService.tasksRef(project!.id).doc(taskId);
       final projectRef = _projectService.projectsCollectionRef.doc(project!.id);
@@ -684,10 +747,10 @@ class ActiveProjectController extends GetxController {
       final snap = await transaction.get(projectRef);
       final value = snap['completedTasksCount'] ?? 0;
 
-      //1- تغيير حالة المهمة بالسيرفر
+      //   //1- تغيير حالة المهمة بالسيرفر
       transaction.update(
           taskRef, {'status': TaskStatus.approved, 'rejectionReason': null});
-      //2- زيادة عدد المهام المكتمله بالمشروع
+      //   //2- زيادة عدد المهام المكتمله بالمشروع
       transaction.update(projectRef, {
         "completedTasksCount": value + 1,
       });
@@ -700,7 +763,7 @@ class ActiveProjectController extends GetxController {
     }
     _endAction(taskId);
 
-    //3- تغيير حالة المهمة محليا
+    // //3- تغيير حالة المهمة محليا
     if (!isExtra) {
       tasks[index] = tasks[index]
           .copyWith(status: TaskStatus.approved, rejectionReason: null);
@@ -732,8 +795,7 @@ class ActiveProjectController extends GetxController {
         fc.projects.refresh();
       }
     }
-
-    ///4- هون لازم تتم عملية الدفع !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //
 
     customSnackbar(message: "تمت الموافقة على انهاء المهمة");
 
@@ -747,6 +809,83 @@ class ActiveProjectController extends GetxController {
 
     //6- ارسال الاشعار الى الشريك ان تمت الموافقة عالمهمة
     unawaited(_sendNotificationToPartner(notification));
+  }
+
+  Future<void> openCheckout(String url) async {
+    final uri = Uri.parse(url);
+
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception("Could not launch checkout");
+    }
+  }
+
+  Future<bool> _makePayment(
+      {required String taskId,
+      required int index,
+      required bool isExtra}) async {
+    // final checkoutRes = await StripeServices.createCheckoutSession(
+    //   !isExtra ? tasks[index].amount.round() : extraTasks[index].amount.round(),
+    //   freelancerAccountId!,
+    //   taskId,
+    // );
+
+    // if (checkoutRes.isLeft()) {
+    //   final err = checkoutRes.fold((l) => l, (_) => null);
+    //   print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    //   print(err?.message ?? err?.type);
+    //   customSnackbar(
+    //     message: "فشل إنشاء رابط الدفع: ${err?.message ?? err?.type}",
+    //   );
+
+    //   _endAction(taskId);
+    //   return false;
+    // }
+    // final url = checkoutRes.getOrElse(() => "");
+    // print("CHECKOUT URL = $url");
+    // await openCheckout(url);
+    // return true;
+
+    final paymentRes = await StripeServices.createPaymentIntent(
+      !isExtra ? tasks[index].amount : extraTasks[index].amount,
+      freelancerAccountId!,
+    );
+
+    if (paymentRes.isLeft()) {
+      final err = paymentRes.fold((l) => l, (_) => null);
+      customSnackbar(
+        message: "فشل إنشاء الدفع: ${err?.message ?? err?.type}",
+      );
+      // _endAction(taskId);
+      return false;
+    }
+
+    final data = paymentRes.getOrElse(() => {});
+    final clientSecret = data["clientSecret"];
+
+    try {
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: "Freelancity",
+        ),
+      );
+
+      await Stripe.instance.presentPaymentSheet();
+    } catch (e, s) {
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      print(e);
+
+      print("ERROR = $e");
+      print("STACK = $s");
+
+      customSnackbar(message: "تم إلغاء أو فشل الدفع");
+      // _endAction(taskId);
+      return false;
+    }
+    return true;
   }
 
   //******************************************Extra tasks in progress operations********************************************* */

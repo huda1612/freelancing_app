@@ -22,6 +22,7 @@ import 'package:freelancing_platform/views/offer_section/offer_view/project_offe
 import 'package:freelancing_platform/views/offer_section/offer_view/submit_offer_view.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/dashboard_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/profile_controller.dart';
+import 'package:freelancing_platform/views/profile_section/profile_controllers/stripe_connect_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/user_ratings_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_controllers/work_details_controller.dart';
 import 'package:freelancing_platform/views/profile_section/profile_views/dashboard_view.dart';
@@ -242,6 +243,7 @@ class AppPages {
           tag: UserSession.uid!,
         );
         Get.lazyPut(() => ImageUploadController());
+        Get.lazyPut(() => StripeConnectController());
       }),
       middlewares: [AuthMiddleware()],
     ),

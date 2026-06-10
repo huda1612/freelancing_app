@@ -23,11 +23,13 @@ class UserModel {
   final int points;
   final Timestamp? createdAt;
   final List<String>? fcmTokens;
+  final String? stripeAccountId;
+  final bool? stripeOnboardingCompleted;
 
   //بحال كان عميل بس
   final String? clientType;
 
-  // ⭐ Ratings aggregation
+  //  Ratings aggregation
   final int ratingsCount;
 
   final double professionalismSum;
@@ -57,6 +59,8 @@ class UserModel {
     this.points = 0,
     this.createdAt,
     this.fcmTokens = const [],
+    this.stripeAccountId,
+    this.stripeOnboardingCompleted,
     //بحال كان عميل بس
     this.clientType,
 
@@ -81,27 +85,6 @@ class UserModel {
     return totalSum / (ratingsCount * 5);
   }
 
-  // double get overallRating {
-  //   print("ratingsCount: ${ratingsCount}");
-  //   print("prof: ${professionalismSum}");
-  //   print("comm: ${communicationSum}");
-  //   print("pun: ${punctualitySum}");
-  //   print("qual: ${qualitySum}");
-  //   print("work: ${workAgainSum}");
-  //   if (ratingsCount == 0) return 0.0;
-  //   final professionalismAvg = professionalismSum / ratingsCount;
-  //   final communicationAvg = communicationSum / ratingsCount;
-  //   final punctualityAvg = punctualitySum / ratingsCount;
-  //   final qualityAvg = qualitySum / ratingsCount;
-  //   final workAgainAvg = workAgainSum / ratingsCount;
-  //   return (professionalismAvg +
-  //           communicationAvg +
-  //           punctualityAvg +
-  //           qualityAvg +
-  //           workAgainAvg) /
-  //       5;
-  // }
-
   // 🔹 تحويل من Object إلى Map (للتخزين)
   Map<String, dynamic> toMap() {
     return {
@@ -125,7 +108,8 @@ class UserModel {
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'clientType': clientType,
       'fcmTokens': fcmTokens,
-
+      'stripeAccountId': stripeAccountId,
+      'stripeOnboardingCompleted': stripeOnboardingCompleted,
       // ⭐ ratings
       'ratingsCount': ratingsCount,
       'professionalismSum': professionalismSum,
@@ -177,6 +161,8 @@ class UserModel {
               ?.map((e) => e.toString())
               .toList() ??
           [],
+      stripeAccountId: map['stripeAccountId'],
+      stripeOnboardingCompleted: map['stripeOnboardingCompleted'],
 
       // ⭐ ratings
       ratingsCount: map['ratingsCount'] ?? 0,
@@ -210,7 +196,8 @@ class UserModel {
     Timestamp? createdAt,
     String? clientType,
     List<String>? fcmTokens,
-
+    String? stripeAccountId,
+    bool? stripeOnboardingCompleted,
     // ⭐ ratings
     int? ratingsCount,
     double? professionalismSum,
@@ -241,6 +228,9 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       clientType: clientType ?? this.clientType,
       fcmTokens: fcmTokens ?? this.fcmTokens,
+      stripeAccountId: stripeAccountId ?? this.stripeAccountId,
+      stripeOnboardingCompleted:
+          stripeOnboardingCompleted ?? this.stripeOnboardingCompleted,
 
       // ⭐ ratings
       ratingsCount: ratingsCount ?? this.ratingsCount,
