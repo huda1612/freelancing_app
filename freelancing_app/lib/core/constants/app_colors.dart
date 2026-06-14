@@ -2,14 +2,14 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static LinearGradient gradientColor= LinearGradient(
-          colors: [
-            AppColors.softPurple,
-            AppColors.softBlue,
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        );
+  static LinearGradient gradientColor = LinearGradient(
+    colors: [
+      AppColors.softPurple,
+      AppColors.softBlue,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
   // بنفسجي
   static const Color purple = Color(0xFF6C63FF); // بنفسجي رئيسي
   static const Color lightPurple = Color(0xFFB3A9FF); // بنفسجي فاتح
@@ -51,8 +51,8 @@ class AppColors {
   static const Color owhite = Color.fromARGB(170, 255, 255, 255); // أبيض نقي
   static const Color veryLightGrey = Color(0xFFF5F5F5); // رمادي شبه أبيض
   static const Color grey = Color(0xFFE0E0E0); // رمادي شبه أبيض
-  static const Color disableButton =  Color.fromARGB(255, 198, 198, 198);
-  static const Color normalGrey =  Color.fromARGB(255, 168, 168, 168); // رمادي  
+  static const Color disableButton = Color.fromARGB(255, 198, 198, 198);
+  static const Color normalGrey = Color.fromARGB(255, 168, 168, 168); // رمادي
 
   //اخضر
   static const Color lightGreen = Color.fromARGB(255, 214, 245, 192);
@@ -62,9 +62,6 @@ class AppColors {
   static const Color red = Color.fromARGB(255, 235, 59, 59); // احمر قوي
   static const Color lightRed = Color.fromARGB(255, 255, 193, 193); // احمر فاتح
 }
-
-
-
 
 // import 'package:flutter/material.dart';
 
@@ -84,4 +81,3 @@ class AppColors {
 
 // static const Color coralOrange = Color.fromARGB(255, 250, 163, 82);
 // }
-

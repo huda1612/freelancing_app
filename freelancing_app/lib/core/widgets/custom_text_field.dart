@@ -20,24 +20,32 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final String? prefixText;
   final TextStyle? prefixStyle;
-  const CustomTextField(
-      {super.key,
-      this.initialValue,
-      this.hintText,
-      this.controller,
-      this.obscureText = false,
-      this.prefixIcon,
-      this.prefixText,
-      this.prefixStyle,
-      this.suffixIcon,
-      this.keyboardType,
-      this.validator,
-      this.width = 380,
-      // this.height = 48,
-      this.onChanged,
-      this.fillColor,
-      this.borderRadius,
-      this.textInputAction});
+  final bool readOnly;
+  final bool enabled;
+  final bool? filled;
+
+  const CustomTextField({
+    super.key,
+    this.initialValue,
+    this.hintText,
+    this.controller,
+    this.obscureText = false,
+    this.prefixIcon,
+    this.prefixText,
+    this.prefixStyle,
+    this.suffixIcon,
+    this.keyboardType,
+    this.validator,
+    this.width = 380,
+    // this.height = 48,
+    this.onChanged,
+    this.fillColor,
+    this.borderRadius,
+    this.textInputAction,
+    this.readOnly = false,
+    this.enabled = true,
+    this.filled,
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -81,6 +89,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         obscureText: _obscure,
         keyboardType: widget.keyboardType,
         validator: widget.validator,
+        readOnly: widget.readOnly,
+        enabled: widget.enabled,
         onChanged: widget.onChanged,
         maxLines: isMultiline ? null : 1,
         minLines: isMultiline ? 3 : 1,
@@ -91,14 +101,31 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         textDirection: TextDirection.rtl,
         decoration: unifiedDecoration(widget.hintText ?? "").copyWith(
-            suffixIcon: suffixIcon,
-            prefixIcon: widget.prefixIcon,
-            prefixText: widget.prefixText,
-            prefixStyle: widget.prefixStyle ??
-                TextStyle(
-                    fontSize: 15.sp,
-                    color: AppColors.vividPurple,
-                    fontWeight: FontWeight.w700)),
+          suffixIcon: suffixIcon,
+          prefixIcon: widget.prefixIcon,
+          prefixText: widget.prefixText,
+          prefixStyle: widget.prefixStyle ??
+              TextStyle(
+                  fontSize: 15.sp,
+                  color: AppColors.vividPurple,
+                  fontWeight: FontWeight.w700),
+          filled: widget.filled,
+          fillColor: widget.fillColor,
+          enabledBorder: widget.readOnly
+              ? OutlineInputBorder(
+                  borderRadius:
+                      widget.borderRadius ?? BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: Colors.transparent),
+                )
+              : null,
+          focusedBorder: widget.readOnly
+              ? OutlineInputBorder(
+                  borderRadius:
+                      widget.borderRadius ?? BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: Colors.transparent),
+                )
+              : null,
+        ),
         textInputAction: widget.textInputAction,
       ),
     );

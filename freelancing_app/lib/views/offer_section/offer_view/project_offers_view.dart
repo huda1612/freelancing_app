@@ -4,8 +4,9 @@ import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
 import 'package:freelancing_platform/core/widgets/custom_app_bar.dart';
-import 'package:freelancing_platform/core/widgets/custom_empty_data_text.dart';
+import 'package:freelancing_platform/core/widgets/custom_refreshable_empty_message.dart';
 import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
+import 'package:freelancing_platform/core/widgets/list_tab_bar.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/views/offer_section/offer_controller/project_offers_controller.dart';
 import 'package:freelancing_platform/views/offer_section/offer_widgets/project_offer_tile.dart';
@@ -43,7 +44,8 @@ class ProjectOffersView extends StatelessWidget {
               fetchDataFun: controller.loadOffers,
               child: Column(
                 children: [
-                  if (controller.showTabs) _tabsBar(),
+                  // if (controller.showAllTabs)
+                  _tabsBar(),
                   Expanded(child: _buildOffersList(context)),
                 ],
               ),
@@ -71,68 +73,34 @@ class ProjectOffersView extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: _tabButton(
+              child: ListTabButton(
                 label: 'معلقة',
                 selected: controller.activeTabIndex.value == 0,
                 onTap: () => controller.setTabIndex(0),
+                longerLine: true,
               ),
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: _tabButton(
+              child: ListTabButton(
                 label: 'مرفوضة',
                 selected: controller.activeTabIndex.value == 1,
                 onTap: () => controller.setTabIndex(1),
+                longerLine: true,
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _tabButton(
-                label: 'مسحوبة',
-                selected: controller.activeTabIndex.value == 2,
-                onTap: () => controller.setTabIndex(2),
+            if (controller.showAllTabs) ...[
+              const SizedBox(width: 8),
+              Expanded(
+                child: ListTabButton(
+                  label: 'مسحوبة',
+                  selected: controller.activeTabIndex.value == 2,
+                  onTap: () => controller.setTabIndex(2),
+                  longerLine: true,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _tabButton({
-    required String label,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      // borderRadius: BorderRadius.circular(8),
-      onTap: onTap,
-      child: Container(
-        // duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: const BoxDecoration(color: Colors.transparent),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
-                color: selected ? AppColors.vividPurple : AppColors.grey,
-              ),
-            ),
-            const SizedBox(height: 7),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              height: 2.5,
-              width: selected ? 56 : 0,
-              decoration: BoxDecoration(
-                color: AppColors.vividPurple,
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
+              RichText(text: TextSpan(children: []))
+            ]
           ],
         ),
       ),
@@ -142,33 +110,16 @@ class ProjectOffersView extends StatelessWidget {
   Widget _buildOffersList(BuildContext context) {
     return Obx(() {
       final items = controller.offersForActiveTab();
+
       if (items.isEmpty) {
-        return RefreshIndicator(
-          color: AppColors.vividPurple,
+        return CustomRefreshableEmptyMessage(
+          emptyMessage: controller.showAllTabs
+              ? _emptyMessageForTab(
+                  controller.activeTabIndex.value,
+                )
+              : 'لا توجد عروض معلقة على هذا المشروع.',
           onRefresh: controller.loadOffers,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Center(
-                    child: customEmptyMessage(
-                      message: controller.showTabs
-                          ? _emptyMessageForTab(
-                              controller.activeTabIndex.value,
-                            )
-                          : 'لا توجد عروض معلقة على هذا المشروع.',
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
         );
-    
       }
 
       return RefreshIndicator(
@@ -194,18 +145,8 @@ class ProjectOffersView extends StatelessWidget {
                         : null,
                 onDelete:
                     c.isProjectOwner && offer.status == OfferStatus.withdrawn
-                        ? () {
-                            
-                          }
+                        ? () {}
                         : null,
-                // onWithdraw:
-                //     c.isOfferOwner(offer) && offer.status == OfferStatus.pending
-                //         ? () => c.withdrawOffer(offer)
-                //         : null,
-                // onEdit:
-                //     c.isOfferOwner(offer) && offer.status == OfferStatus.pending
-                //         ? () => c.editOffer(offer)
-                //         : null,
               ),
             );
           },

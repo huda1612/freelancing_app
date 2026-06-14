@@ -11,6 +11,7 @@ import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
+import 'package:freelancing_platform/views/offer_section/offer_controller/freelancer_offers_controller.dart';
 import 'package:get/get.dart';
 
 class ProjectDetailsController extends GetxController {
@@ -58,7 +59,7 @@ class ProjectDetailsController extends GetxController {
     } else {
       pageState = StatusClasses.success;
     }
-    if (UserSession.role == UserRole.freelancer) {
+    if (UserSession.role == UserRole.freelancer && project != null) {
       hasOldOffer();
     }
   }
@@ -74,10 +75,10 @@ class ProjectDetailsController extends GetxController {
     );
     return profectRes.fold((err) {
       customSnackbar(message: "${err.type} / ${err.message}");
-      pageState = StatusClasses.customError("${err.type} / ${err.message}");
+      pageState = err;
       update();
     }, (p) {
-      print("Prrrrrrrrrooooject $p");
+      print("Prrrrrrrrrooooject ${p.id}");
       project = p;
       pageState = StatusClasses.success;
       update();
@@ -133,18 +134,15 @@ class ProjectDetailsController extends GetxController {
     });
     if (didSomething == true) {
       await hasOldOffer();
+      await _updateFreelancerOffersPage();
     }
   }
 
-  // void onOfferEdit() async {
-  //   Get.toNamed(AppRoutes.submitOffer, arguments: {
-  //     "projectBudget": project!.budget,
-  //     "projectDurationDays": project!.durationDays,
-  //     "projectId": project!.id,
-  //     "clientId": project!.clientId,
-  //     "offer" :
-  //   });
-  // }
+  Future<void> _updateFreelancerOffersPage() async {
+    if (Get.isRegistered<FreelancerOffersController>()) {
+      await Get.find<FreelancerOffersController>().loadOffers();
+    }
+  }
 
   void onDeleteProject() {
     Get.defaultDialog(
@@ -165,7 +163,7 @@ class ProjectDetailsController extends GetxController {
   Future<void> deleteProject() async {
     loadingDelete = true;
     update();
-    final response = await ProjectService().deleteProject(project!);
+    final response = await ProjectService().deleteNewProject(project!);
     if (response != StatusClasses.success) {
       customSnackbar(message: "خطأ :  ${response.type} / ${response.message}");
       loadingDelete = false;
@@ -196,42 +194,9 @@ class ProjectDetailsController extends GetxController {
       return;
     }
     customSnackbar(message: "تم سحب العرض");
-// await hasOldOffer();
+    // await hasOldOffer();
     hasOffer.value = false;
     oldOffer = null;
+    await _updateFreelancerOffersPage();
   }
-
-  //تحديث المشروع
-  // void updateProject({
-  //   required String newTitle,
-  //   required String newDescription,
-  //   required String newBudget,
-  //   required String newDuration,
-  //   required String newSpecialization,
-  //   required List<String> newSkills,
-  // }) {
-  //   title.value = newTitle;
-
-  //   description.value = newDescription;
-
-  //   budget.value = newBudget;
-
-  //   duration.value = newDuration;
-
-  //   specialization.value = newSpecialization;
-
-  //   skills.value = newSkills;
-  // }
-
-  // /// إضافة مهارة
-  // void addSkill(String skill) {
-  //   if (skill.isNotEmpty) {
-  //     skills.add(skill);
-  //   }
-  // }
-
-  // /// حذف مهارة
-  // void removeSkill(String skill) {
-  //   skills.remove(skill);
-  // }
 }

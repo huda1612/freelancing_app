@@ -58,6 +58,16 @@ class FreelancerProjectController extends GetxController {
     );
   }
 
+  void updateProjectStatusLocally(String projectId, String status) {
+    final index = projects.indexWhere((p) => p.id == projectId);
+    if (index != -1) {
+      projects[index] = projects[index].copyWith(
+        status: status,
+      );
+      projects.refresh();
+    }
+  }
+
   String get statusForActiveTab =>
       ProjectStatus.freelancerTabStatuses[activeTabIndex.value];
 
@@ -79,6 +89,9 @@ class FreelancerProjectController extends GetxController {
   }
 
   void openActiveProject(ProjectModel project) {
+    // if (Get.isRegistered<ActiveProjectController>()) {
+    //   Get.delete<ActiveProjectController>(force: true);
+    // }
     selectedProject = project;
     NavigationService.toNamed(
       AppRoutes.activeProject,

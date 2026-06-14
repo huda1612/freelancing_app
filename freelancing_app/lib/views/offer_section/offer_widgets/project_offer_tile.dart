@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_colors.dart';
 import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
@@ -9,7 +8,7 @@ import 'package:freelancing_platform/core/widgets/custom_button.dart';
 import 'package:freelancing_platform/core/widgets/custom_loading.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 
-/// بطاقة عرض قابلة للتوسّع، بنفس أسلوب [ProfileCertificateTile] (ExpansionTile + زوايا دائرية).
+/// بطاقة عرض قابلة للتوسّع (ExpansionTile + زوايا دائرية).
 class ProjectOfferTile extends StatelessWidget {
   const ProjectOfferTile({
     super.key,
@@ -19,8 +18,6 @@ class ProjectOfferTile extends StatelessWidget {
     required this.onProfileTap,
     this.onAccept,
     this.onReject,
-    this.onWithdraw,
-    this.onEdit,
     this.onDelete,
   });
 
@@ -34,14 +31,11 @@ class ProjectOfferTile extends StatelessWidget {
 
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
-  final VoidCallback? onWithdraw;
-  final VoidCallback? onEdit;
+
   final VoidCallback? onDelete;
 
-  // static const int _previewMaxChars = 110;
-
-  bool get _isOfferOwner =>
-      UserSession.uid != null && UserSession.uid == offer.freelancerId;
+  // bool get _isOfferOwner =>
+  //     UserSession.uid != null && UserSession.uid == offer.freelancerId;
 
   bool get _showClientDecision =>
       isProjectOwner &&
@@ -49,21 +43,16 @@ class ProjectOfferTile extends StatelessWidget {
       onAccept != null &&
       onReject != null;
 
-  bool get _showFreelancerActions =>
-      _isOfferOwner &&
-      offer.status == OfferStatus.pending &&
-      (onWithdraw != null || onEdit != null);
+  // bool get _showFreelancerActions =>
+  //     _isOfferOwner &&
+  //     offer.status == OfferStatus.pending &&
+  //     (onWithdraw != null || onEdit != null);
 
   bool get _showDeleteButton =>
       isProjectOwner &&
       offer.status == OfferStatus.withdrawn &&
       onDelete != null;
 
-  // String _preview(String text) {
-  //   final t = text.trim();
-  //   if (t.length <= _previewMaxChars) return t;
-  //   return '${t.substring(0, _previewMaxChars)}…';
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +151,6 @@ class ProjectOfferTile extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Text(
                   offer.proposalText,
-                  // _preview(offer.proposalText),
                   style: AppTextStyles.body.copyWith(color: AppColors.black),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -219,25 +207,27 @@ class ProjectOfferTile extends StatelessWidget {
                   ),
                 ],
               ),
-            ] else if (_showFreelancerActions) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (onWithdraw != null)
-                    IconButton(
-                      tooltip: 'سحب العرض',
-                      onPressed: onWithdraw,
-                      icon: Icon(Icons.delete, color: AppColors.darkPurple),
-                    ),
-                  if (onEdit != null)
-                    IconButton(
-                      tooltip: 'تعديل العرض',
-                      onPressed: onEdit,
-                      icon: Icon(Icons.edit_rounded, color: AppColors.purple),
-                    ),
-                ],
-              ),
-            ] else if (_showDeleteButton) ...[
+            ]
+            // else if (_showFreelancerActions) ...[
+            //   Row(
+            //     mainAxisAlignment: MainAxisAlignment.end,
+            //     children: [
+            //       if (onWithdraw != null)
+            //         IconButton(
+            //           tooltip: 'سحب العرض',
+            //           onPressed: onWithdraw,
+            //           icon: Icon(Icons.delete, color: AppColors.darkPurple),
+            //         ),
+            //       if (onEdit != null)
+            //         IconButton(
+            //           tooltip: 'تعديل العرض',
+            //           onPressed: onEdit,
+            //           icon: Icon(Icons.edit_rounded, color: AppColors.purple),
+            //         ),
+            //     ],
+            //   ),
+            // ]
+            else if (_showDeleteButton) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

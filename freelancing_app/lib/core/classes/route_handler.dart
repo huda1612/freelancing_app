@@ -13,7 +13,6 @@ import 'package:freelancing_platform/core/constants/data_constsnats/user_status.
 import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/core/utils/helper_function/check_login.dart';
 import 'package:freelancing_platform/models/user_collections/user_model.dart';
-import 'package:freelancing_platform/views/project_section/project_controller/active_project_controller.dart';
 import 'package:get/get.dart';
 
 class RouteHandler {
@@ -115,16 +114,16 @@ class RouteHandler {
         );
 
         break;
-      case AppNotificationTypes.offerAccepted:
-        NavigationService.changeTab(3);
-        NavigationService.toNamed(
-          AppRoutes.activeProject,
-          arguments: {
-            "projectId": id,
-          },
-          id: 3,
-        );
-        break;
+      // case AppNotificationTypes.offerAccepted:
+      //   NavigationService.changeTab(3);
+      //   NavigationService.toNamed(
+      //     AppRoutes.activeProject,
+      //     arguments: {
+      //       "projectId": id,
+      //     },
+      //     id: 3,
+      //   );
+      //   break;
       case AppNotificationTypes.offerRejected:
         NavigationService.changeTab(3);
         NavigationService.toNamed(
@@ -145,12 +144,15 @@ class RouteHandler {
           id: 0,
         );
         break;
+      case AppNotificationTypes.offerAccepted:
       case AppNotificationTypes.sendTasks:
       case AppNotificationTypes.rejectTasks:
       case AppNotificationTypes.approveTasks:
       case AppNotificationTypes.endTask:
       case AppNotificationTypes.rejectTask:
-      case AppNotificationTypes.approveTask:
+      case AppNotificationTypes
+            .approveTask: //لغيتها بس اسا في اشعارات قديمه هيك
+      case AppNotificationTypes.approveTaskWithPayment:
       case AppNotificationTypes.requestExtraTask:
       case AppNotificationTypes.cancelRequestExtraTask:
       case AppNotificationTypes.rejectRequestedExtraTask:
@@ -158,17 +160,24 @@ class RouteHandler {
       case AppNotificationTypes.completeProject:
       case AppNotificationTypes.cancelProject:
       case AppNotificationTypes.newRating:
-        if (Get.isRegistered<ActiveProjectController>()) {
-          unawaited(Get.find<ActiveProjectController>().loadTasks());
-        }
-        NavigationService.changeTab(3);
-        NavigationService.toNamed(
+        Get.toNamed(
           AppRoutes.activeProject,
           arguments: {
             "projectId": id,
           },
-          id: 3,
         );
+        // if (Get.isRegistered<ActiveProjectController>()) {
+        //   unawaited(Get.find<ActiveProjectController>().loadTasks());
+        // }
+        // print("!!!!!!!!!!!!!! projectId : $id");
+        // NavigationService.changeTab(3);
+        // NavigationService.toNamed(
+        //   AppRoutes.activeProject,
+        //   arguments: {
+        //     "projectId": id,
+        //   },
+        //   id: 3,
+        // );
         break;
     }
   }

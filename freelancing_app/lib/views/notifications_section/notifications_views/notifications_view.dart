@@ -127,7 +127,8 @@ IconAndColor _mapType(String? type) {
       return IconAndColor(
           icon: Icons.edit_document, color: AppColors.lightBlue);
     case AppNotificationTypes.endTask:
-    case AppNotificationTypes.approveTask:
+    case AppNotificationTypes.approveTaskWithPayment:
+    case AppNotificationTypes.approveTask: //غيرتها بس اسا في قديمين هيك
       return IconAndColor(icon: Icons.check_box, color: AppColors.green);
     case AppNotificationTypes.rejectTask:
       return IconAndColor(

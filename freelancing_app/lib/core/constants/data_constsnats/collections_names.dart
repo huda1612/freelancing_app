@@ -16,6 +16,8 @@ class CollectionsNames {
 
   //********************************************************************* */
   static const String specializations = "specializations";
-  static const String admissionQuestions = "admission_questions "; //ما حدا يشيل المسافة الزايده اللي هون ولا بيخرب كود جلب الاسئله !!
+  static const String admissionQuestions =
+      "admission_questions "; //ما حدا يشيل المسافة الزايده اللي هون ولا بيخرب كود جلب الاسئله !!
   static const String userRequests = "user_requests";
+  static const String offerTrainingData = "offer_training_data";
 }

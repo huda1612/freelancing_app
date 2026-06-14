@@ -388,9 +388,10 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.activeProject,
-      page: () => const ActiveProjectView(),
+      page: () => ActiveProjectView(),
       binding: BindingsBuilder(() {
-        Get.lazyPut(() => ActiveProjectController());
+        final projectId = Get.arguments?['projectId']; //بحال جينا من الاشعار
+        Get.lazyPut(() => ActiveProjectController(), tag: projectId);
       }),
       middlewares: [AuthMiddleware()],
     ),

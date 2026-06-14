@@ -10,13 +10,13 @@ class AppNotificationTypes {
   static const String approveTasks = "approveTasks";
   static const String endTask = "endTask";
   static const String rejectTask = "rejectTask";
-  static const String approveTask = "approveTask";
+  static const String approveTask = "approveTask"; //غيرتها بس اسا في قديمين هيك
   static const String requestExtraTask = "requestExtraTask";
   static const String cancelRequestExtraTask = "cancelRequestExtraTask";
   static const String rejectRequestedExtraTask = "rejectRequestedExtraTask";
   static const String approveRequestExtraTask = "approveRequestExtraTask";
   static const String completeProject = "completeProject";
   static const String cancelProject = "cancelProject";
-    static const String newRating = "newRating";
-
+  static const String newRating = "newRating";
+  static const String approveTaskWithPayment = "approveTaskWithPayment";
 }

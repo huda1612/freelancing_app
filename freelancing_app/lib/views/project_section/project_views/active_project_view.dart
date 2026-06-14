@@ -25,11 +25,10 @@ import 'package:freelancing_platform/views/project_section/project_widgets/proje
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-const Color _softPurple = Color(0xffA99CFF);
-
-class ActiveProjectView extends GetView<ActiveProjectController> {
-  const ActiveProjectView({super.key});
-
+class ActiveProjectView extends StatelessWidget {
+  ActiveProjectView({super.key});
+  final controller =
+      Get.find<ActiveProjectController>(tag: Get.arguments?["projectId"]);
   @override
   Widget build(BuildContext context) {
     final tasksSectionKey = GlobalKey();
@@ -42,7 +41,7 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
           trailingIcon: controller.isClient
               ? Obx(() {
                   return // الثلاث نقاط
-                      controller.canCencelProject.value &&
+                      controller.clientCanCencelProject &&
                               !controller.cancelIsLoading.value
                           ? PopupMenuButton(
                               color: Colors.grey.shade100,
@@ -79,12 +78,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
           final project = controller.project;
           final offer = controller.offer;
 
-          // if (project == null || offer == null) {
-          //   return const Center(
-          //     child: CustomErrorWidget(message: 'تعذر تحميل البيانات'),
-          //   );
-          // }
-
           return ModalProgressHUD(
             inAsyncCall: controller.cancelIsLoading.value,
             child: UiStateHandler(
@@ -110,7 +103,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                                     onTap: () {
                                       final context =
                                           tasksSectionKey.currentContext;
-
                                       if (context != null) {
                                         Scrollable.ensureVisible(
                                           context,
@@ -124,6 +116,7 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
 
                             //project summary
                             ProjectSummarySection(
+                              projectTitle: controller.project?.title ?? "",
                               status: controller.project!.status,
                               cancelReason: controller.project!.cancelReason,
                               progress: controller.progress,
@@ -181,58 +174,11 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                                               controller.ratingIsLoading.value)
                                     ]));
                               },
-                              partnerMiniProfile: ProjectPartnerHeader(
-                                partnerType: controller.isClient
-                                    ? "Freelancer"
-                                    : "Client",
-                                displayName:
-                                    controller.partnerName.value.isNotEmpty
-                                        ? controller.partnerName.value
-                                        : 'unknown',
-                                isLoading: controller.partnerLoading.value,
-                                onViewProfile: controller.openPartnerProfile,
-                              ),
+                              projectInfo: _projectInfoSection(project, offer),
                             ),
-
+                          
                             //project details
-                            ProjectSectionCard(
-                              child: ExpansionTile(
-                                shape: const Border(), //  يشيل الخط العلوي
-                                collapsedShape:
-                                    const Border(), //  يشيل الخط السفلي
-                                title: Text(
-                                  "تفاصيل المشروع",
-                                  style: AppTextStyles.subheading
-                                      .copyWith(color: AppColors.darkPurple),
-                                ),
-                                leading: Icon(
-                                  Icons.work_outline_rounded,
-                                  color: AppColors.darkPurple,
-                                ),
-                                children: _projectInfoSections(project),
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            //offer details
-                            if (controller.offer != null)
-                              ProjectSectionCard(
-                                child: ExpansionTile(
-                                  shape: const Border(),
-                                  collapsedShape: const Border(),
-                                  title: Text(
-                                    "تفاصيل العرض",
-                                    style: AppTextStyles.subheading
-                                        .copyWith(color: AppColors.darkPurple),
-                                  ),
-                                  leading: Icon(
-                                    Icons.description_outlined,
-                                    color: AppColors.darkPurple,
-                                  ),
-                                  children: [
-                                    ..._offertInfoSections(offer!),
-                                  ],
-                                ),
-                              ),
+
                             Container(
                                 key: tasksSectionKey, child: _tasksSection()),
                             SizedBox(height: AppSpaces.heightSmall),
@@ -269,6 +215,48 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
             ),
           );
         }),
+      ),
+    );
+  }
+
+  Widget _projectInfoSection(ProjectModel? project, OfferModel? offer) {
+    return InkWell(
+      onTap: () => Get.bottomSheet(CustomBottomSheetContainer(children: [
+        ProjectPartnerHeader(
+          partnerType: controller.isClient ? "Freelancer" : "Client",
+          displayName: controller.partnerName.value.isNotEmpty
+              ? controller.partnerName.value
+              : 'unknown',
+          isLoading: controller.partnerLoading.value,
+          onViewProfile: controller.openPartnerProfile,
+        ),
+        Divider(height: 10),
+        _expendedWidget(
+          title: "تفاصيل المشروع",
+          icon: Icons.work_outline_rounded,
+          childern: _projectInfoSections(project!),
+        ),
+        SizedBox(height: 8.h),
+        if (controller.offer != null)
+          _expendedWidget(
+            title: "تفاصيل العرض",
+            icon: Icons.description_outlined,
+            childern: _offertInfoSections(offer!),
+          ),
+      ])),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 20,
+            color: AppColors.purple,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            "معلومات المشروع",
+            style: AppTextStyles.link,
+          ),
+        ],
       ),
     );
   }
@@ -343,7 +331,7 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: _softPurple.withOpacity(0.15),
+                          color: Color(0xffA99CFF).withOpacity(0.15),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
@@ -519,10 +507,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
 
   List<Widget> _extraTasksSection() {
     return [
-      // Divider(
-      //   thickness: 1,
-      //   color: AppColors.normalGrey,
-      // ),
       SizedBox(
         height: AppSpaces.heightSmall,
       ),
@@ -684,17 +668,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
           ],
         );
       }
-      // if (controller.iswaitingTasksApproval && controller.isFreelancer) {
-      //   return Align(
-      //     alignment: Alignment.center,
-      //     child: Text(
-      //       "في انتظار موافقة العميل على المهام",
-      //       style:
-      //           AppTextStyles.blacksubheading.copyWith(color: AppColors.grey),
-      //     ),
-      //   );
-      // }
-      // final _ = controller.actionLoading.value;
 
       if (controller.canCompleteProject) {
         return CustomButton(
@@ -709,7 +682,6 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
               onCancel: () => Get.back(),
             );
           },
-          //  controller.completeProject,
           isLoading: controller.actionLoading.value,
           gradient: AppColors.gradientColor,
           prefix:
@@ -783,46 +755,66 @@ class ActiveProjectView extends GetView<ActiveProjectController> {
       ],
     );
   }
-}
 
-Widget _pendingTaskApprovalBanner(
-    {required int pendingTasksCount, required VoidCallback? onTap}) {
-  return InkWell(
-    onTap: onTap,
-    child: Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(AppSpaces.paddingSmall),
-      decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.orange.withOpacity(0.4),
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.pending_actions_rounded,
-            color: Colors.orange,
+  Widget _pendingTaskApprovalBanner(
+      {required int pendingTasksCount, required VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(5.w),
+        decoration: BoxDecoration(
+          color: Colors.orange.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.orange.withOpacity(0.4),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              pendingTasksCount == 1
-                  ? 'يوجد مهمة بانتظار موافقتك على إنهائها'
-                  : 'يوجد $pendingTasksCount مهام بانتظار موافقتك على إنهائها',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.pending_actions_rounded,
+              color: Colors.orange,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                pendingTasksCount == 1
+                    ? 'يوجد مهمة بانتظار موافقتك على إنهائها'
+                    : 'يوجد $pendingTasksCount مهام بانتظار موافقتك على إنهائها',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
-          const Icon(
-            Icons.keyboard_arrow_down_outlined,
-            size: 16,
-            color: Colors.orange,
-          ),
-        ],
+            const Icon(
+              Icons.keyboard_arrow_down_outlined,
+              size: 16,
+              color: Colors.orange,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+Widget _expendedWidget(
+    {required String title,
+    required IconData icon,
+    required List<Widget> childern,
+    bool noBoarder = false}) {
+  return ExpansionTile(
+    shape: noBoarder ? const Border() : null,
+    collapsedShape: noBoarder ? const Border() : null,
+    title: Text(
+      title,
+      style: AppTextStyles.subheading.copyWith(color: AppColors.darkPurple),
     ),
+    leading: Icon(
+      icon,
+      color: AppColors.darkPurple,
+    ),
+    children: childern,
   );
 }

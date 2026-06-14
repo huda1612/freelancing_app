@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'firebase_options.dart'; //  مهم جداً
 
 void main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -37,7 +38,6 @@ void main() async {
   await notificationServices.initialize(
     onToken: checkFcmToken,
   );
-  // }
 }
 
 class MyApp extends StatelessWidget {
@@ -54,18 +54,11 @@ class MyApp extends StatelessWidget {
           locale: Locale('ar'),
           fallbackLocale: Locale('ar'),
           debugShowCheckedModeBanner: false,
-
           initialBinding: InitialBinding(),
-
           initialRoute: AppRoutes.splash,
 
           // initialRoute: AppRoutes.projectDetails,
           // initialRoute: AppRoutes.createProject,
-
-          // initialRoute: AppRoutes.rejected,
-          // initialRoute: AppRoutes.approved
-          // initialRoute: AppRoutes.login,
-
           getPages: AppPages.pages,
         );
       },

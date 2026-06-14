@@ -144,7 +144,7 @@ class HomeController extends GetxController {
   }
 
   void openProjectDetails(ProjectModel project) {
-    Get.toNamed(
+    NavigationService.toNamed(
       AppRoutes.projectDetails,
       arguments: {'projectId': project.id},
     );

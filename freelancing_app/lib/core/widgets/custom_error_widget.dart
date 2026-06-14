@@ -6,10 +6,16 @@ import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/widgets/custom_button.dart';
 
 class CustomErrorWidget extends StatelessWidget {
+  final IconData icon;
   final String? message;
   final String? title;
   final VoidCallback? onRetry;
-  const CustomErrorWidget({super.key, this.message, this.title, this.onRetry});
+  const CustomErrorWidget(
+      {super.key,
+      this.icon = Icons.error,
+      this.message,
+      this.title,
+      this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,7 @@ class CustomErrorWidget extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.error,
+                icon,
                 size: 50.w,
                 color: Colors.red,
               ),
@@ -59,7 +65,6 @@ class CustomErrorWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpaces.heightLarge),
-            
             onRetry != null
                 ? CustomButton(
                     width: 150.w,

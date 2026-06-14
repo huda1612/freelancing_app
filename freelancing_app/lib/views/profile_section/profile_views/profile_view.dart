@@ -111,25 +111,6 @@ class ProfileView extends StatelessWidget {
   TextStyle get _headerMetaStyle =>
       AppTextStyles.link.copyWith(color: AppColors.black);
 
-  // Widget _buildAccountStats() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: [
-  //       _statRow(
-  //         icon: Icons.stars_rounded,
-  //         label: 'النقاط',
-  //         value: '${controller.pointsCount}',
-  //       ),
-  //       SizedBox(width: 20.w),
-  //       _statRow(
-  //         icon: Icons.assignment_turned_in_outlined,
-  //         label: 'المشاريع المكتملة',
-  //         value: '${controller.completedProjectsCount}',
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget _statRow({
     // required IconData icon,
     required String label,
@@ -205,7 +186,7 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
               ),
-             
+
               Positioned(
                 top: MediaQuery.of(Get.context!).padding.top + 14,
                 left: 14.w,
@@ -237,7 +218,6 @@ class ProfileView extends StatelessWidget {
                         color: AppColors.darkPurple,
                         size: 20,
                       ),
-              
                     ],
                   ),
                 ),
@@ -382,12 +362,13 @@ class ProfileView extends StatelessWidget {
           onTap: () {},
           width: 150.w,
         ),
-        CustomButton(
-          text: 'وظفني',
-          textStyle: AppTextStyles.link.copyWith(color: AppColors.white),
-          onTap: () => _showHireMeDialog(),
-          width: 150.w,
-        ),
+        if (controller.isFreelancer && UserSession.role == UserRole.client)
+          CustomButton(
+            text: 'وظفني',
+            textStyle: AppTextStyles.link.copyWith(color: AppColors.white),
+            onTap: () => _showHireMeDialog(),
+            width: 150.w,
+          ),
       ],
     );
   }
@@ -564,24 +545,7 @@ class ProfileView extends StatelessWidget {
                   ? controller.user.value!.ratingsCount
                   : 0,
             ),
-            // SizedBox(
-            //   height: 116.h,
-            //   child: controller.ratings.isNotEmpty
-            //       ? ListView.separated(
-            //           scrollDirection: Axis.horizontal,
-            //           itemCount: controller.ratings.take(5).length,
-            //           separatorBuilder: (_, __) => SizedBox(width: 10.w),
-            //           itemBuilder: (context, index) {
-            //             final rating = controller.ratings[index];
-            //             return ProfileReviewCard(
-            //               rating: rating.averageRating,
-            //               // title: rating.comment,
-            //               title: '',
-            //             );
-            //           },
-            //         )
-            //       : customEmptyMessage(message: "لا يوجد تقييمات بعد"),
-            // ),
+            
 
             controller.isFreelancer
                 ? Column(

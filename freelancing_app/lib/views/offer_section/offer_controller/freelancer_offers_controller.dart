@@ -1,83 +1,94 @@
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/classes/user_session.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/constants/data_constsnats/offer_status.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
+import 'package:freelancing_platform/data/services/offer_service.dart';
 import 'package:freelancing_platform/models/project_collections/offer_model.dart';
 import 'package:get/get.dart';
-
-/// Controller لصفحة عروض الفريلانسر
-/// يدير عرض العروض مقسمة إلى تابات: معلقة، مقبولة، مرفوضة، مسحوبة
+//ok
 class FreelancerOffersController extends GetxController {
-  // ==================== State Variables ====================
-  
-  /// حالة الصفحة (loading, success, error, etc.)
-  final pageState = StatusClasses.idle.obs;
-  
-  /// مؤشر التاب النشط (0: معلقة, 1: مقبولة, 2: مرفوضة, 3: مسحوبة)
-  final activeTabIndex = 0.obs;
-  
-  /// قائمة العروض المعلقة
-  final pendingOffers = <OfferModel>[].obs;
-  
-  /// قائمة العروض المقبولة
-  final acceptedOffers = <OfferModel>[].obs;
-  
-  /// قائمة العروض المرفوضة
-  final rejectedOffers = <OfferModel>[].obs;
-  
-  /// قائمة العروض المسحوبة
-  final withdrawnOffers = <OfferModel>[].obs;
+  //service
+  final OfferService _offerService = OfferService();
 
-  // ==================== Initialization ====================
-  
+  // State 
+  final pageState = StatusClasses.isloading.obs;
+  final activeTabIndex = 0.obs;
+
+  //data
+  final offers = <OfferModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
     loadOffers();
   }
 
-  // ==================== Data Loading ====================
-
+  // Data Loading
   /// تحميل جميع عروض الفريلانسر من Firebase
-  /// يقوم بتصنيف العروض حسب حالتها وتخزينها في القوائم المناسبة
   Future<void> loadOffers() async {
-    // TODO: Implement loading offers from Firebase
-    pageState.value = StatusClasses.success;
+    pageState.value = StatusClasses.isloading;
+
+    final res = await _offerService.getFreelancerOffers(
+      freelancerId: UserSession.uid!,
+    );
+    res.fold(
+      (err) => pageState.value = err,
+      (list) async {
+        offers.assignAll(list);
+        pageState.value = StatusClasses.success;
+      },
+    );
   }
 
-  // ==================== Tab Management ====================
-
+  // Tab Management
   /// تغيير التاب النشط
-  /// @param index مؤشر التاب الجديد (0-3)
   void setTabIndex(int index) {
     activeTabIndex.value = index;
   }
 
   /// إرجاع العروض المناسبة للتاب النشط حالياً
-  /// @return قائمة العروض للتاب المحدد
-  List<OfferModel> offersForActiveTab() {
+  List<OfferModel> get offersForActiveTab {
     switch (activeTabIndex.value) {
       case 0:
-        return pendingOffers;
+        return offers.where((p) => p.status == OfferStatus.pending).toList();
       case 1:
-        return acceptedOffers;
+        return offers.where((p) => p.status == OfferStatus.accepted).toList();
       case 2:
-        return rejectedOffers;
+        return offers.where((p) => p.status == OfferStatus.rejected).toList();
       case 3:
-        return withdrawnOffers;
+        return offers.where((p) => p.status == OfferStatus.withdrawn).toList();
       default:
         return [];
     }
   }
 
-  // ==================== Navigation ====================
+  // Navigation
+  void onOfferTab(OfferModel offer) async {
+    final status = offer.status;
+    if (status == OfferStatus.accepted) {
+      openActiveProject(offer.projectId);
+    } else {
+      await openProjectDetails(offer.projectId);
+    }
+  }
 
   /// فتح صفحة تفاصيل المشروع (للعروض المعلقة)
-  /// @param projectId معرف المشروع
-  void openProjectDetails(String projectId) {
-    // TODO: Implement navigation to project details
+  Future<void> openProjectDetails(String projectId) async {
+    final result = await NavigationService.toNamed(AppRoutes.projectDetails,
+        arguments: {"projectId": projectId});
+    if (result == true) {
+      await loadOffers();
+    }
   }
 
   /// فتح صفحة المشروع النشط (للعروض المقبولة)
-  /// @param projectId معرف المشروع
   void openActiveProject(String projectId) {
-    // TODO: Implement navigation to active project
+    Get.toNamed(
+      AppRoutes.activeProject,
+      arguments: {
+        "projectId": projectId,
+      },
+    );
   }
 }

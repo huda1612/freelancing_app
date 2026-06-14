@@ -1,31 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
 import 'package:freelancing_platform/core/classes/user_session.dart';
 import 'package:freelancing_platform/core/constants/app_routes.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/core/services/navigation_service.dart';
-import 'package:freelancing_platform/core/widgets/custom_snackbar.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
-import 'package:freelancing_platform/data/services/user_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_functions/projects_auto_complete.dart';
 import 'package:get/get.dart';
-
+//ok
 class ClientProjectController extends GetxController {
   final ProjectService _projectService = ProjectService();
-  final UserService _userService = UserService();
 
   final pageState = StatusClasses.isloading.obs;
   final activeTabIndex = 0.obs;
   final projects = <ProjectModel>[].obs;
 
-  List<String> actionProjectsId = [];
+  // List<String> actionProjectsId = [];
   ProjectModel? selectedProject;
 
   @override
   void onInit() {
     super.onInit();
-    actionProjectsId = [];
+    // actionProjectsId = [];
     loadProjects();
   }
 
@@ -51,9 +47,11 @@ class ClientProjectController extends GetxController {
         projects.assignAll(list);
 
         if (updatedProjectIds.isNotEmpty) {
-          projects.value = projects.map((p) => updatedProjectIds.contains(p.id)
-              ? p.copyWith(status: ProjectStatus.completed)
-              : p).toList();
+          projects.value = projects
+              .map((p) => updatedProjectIds.contains(p.id)
+                  ? p.copyWith(status: ProjectStatus.completed)
+                  : p)
+              .toList();
         }
 
         pageState.value = StatusClasses.success;
@@ -94,7 +92,7 @@ class ClientProjectController extends GetxController {
     }
   }
 
-//later!!
+//ok
   void openActiveProject(ProjectModel project) {
     selectedProject = project;
     NavigationService.toNamed(
@@ -103,68 +101,7 @@ class ClientProjectController extends GetxController {
     );
   }
 
-  //ينفذ عند الموافقه على انهاء المشروع
-  //بده اسا تعديل بس نضيف الدفع
-  Future<void> approveProjectCompletion(ProjectModel project) async {
-    _startAction(project.id);
-    //1-تغيير حاله المشروع الى منتهي
-    final res = await _projectService.updateProjectStatus(
-      projectId: project.id,
-      status: ProjectStatus.completed,
-    );
-    if (res != StatusClasses.success) {
-      _endAction(project.id);
-      customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
-      return;
-    }
-    //2- زيادة عدد مشاريعي المكتمله بواحد
-    await _userService.updateUserData2(
-      {'completed_projects': FieldValue.increment(1)},
-      UserSession.uid!,
-    );
-    //3- زيادة عدد مشاريع الفريلانسر المكتمله بواحد
-    if (project.acceptedFreelancerId != null) {
-      await _userService.updateUserData2(
-        {'completed_projects': FieldValue.increment(1)},
-        project.acceptedFreelancerId!,
-      );
-    }
-
-    _updateLocalProjectStatus(project.id, ProjectStatus.completed);
-    _endAction(project.id);
-    customSnackbar(message: "تم إكمال المشروع بنجاح");
-  }
-
-  void confirmDeleteProject(ProjectModel project) {
-    Get.defaultDialog(
-      title: "تأكيد الحذف",
-      middleText: "هل أنت متأكد أنك تريد حذف هذا المشروع؟",
-      textCancel: "إلغاء",
-      textConfirm: "حذف",
-      onConfirm: () async {
-        Get.back();
-        await deleteProject(project);
-      },
-    );
-  }
-
-  Future<void> deleteProject(ProjectModel project) async {
-    _startAction(project.id);
-    final res = await _projectService.deleteProject(project);
-    _endAction(project.id);
-    if (res != StatusClasses.success) {
-      customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
-      return;
-    }
-    projects.removeWhere((p) => p.id == project.id);
-    customSnackbar(message: "تم حذف المشروع");
-  }
-
   void updateProjectStatusLocally(String projectId, String status) {
-    _updateLocalProjectStatus(projectId, status);
-  }
-
-  void _updateLocalProjectStatus(String projectId, String status) {
     final index = projects.indexWhere((p) => p.id == projectId);
     if (index == -1) return;
     projects[index] = projects[index].copyWith(
@@ -173,15 +110,44 @@ class ClientProjectController extends GetxController {
     projects.refresh();
   }
 
-  void _startAction(String projectId) {
-    actionProjectsId.add(projectId);
-    update();
-  }
+  // void _startAction(String projectId) {
+  //   actionProjectsId.add(projectId);
+  //   update();
+  // }
 
-  void _endAction(String projectId) {
-    actionProjectsId.remove(projectId);
-    update();
-  }
+  // void _endAction(String projectId) {
+  //   actionProjectsId.remove(projectId);
+  //   update();
+  // }
 
-  bool isBusy(String projectId) => actionProjectsId.contains(projectId);
+  // bool isBusy(String projectId) => actionProjectsId.contains(projectId);
+
+  // void confirmDeleteProject(ProjectModel project) {
+  //   Get.defaultDialog(
+  //     title: "تأكيد الحذف",
+  //     middleText: "هل أنت متأكد أنك تريد حذف هذا المشروع؟",
+  //     textCancel: "إلغاء",
+  //     textConfirm: "حذف",
+  //     onConfirm: () async {
+  //       Get.back();
+  //       await deleteProject(project);
+  //     },
+  //   );
+  // }
+
+  // Future<void> deleteProject(ProjectModel project) async {
+  //   _startAction(project.id);
+  // final res = await _projectService.deleteProject(project);
+  //   _endAction(project.id);
+  //   if (res != StatusClasses.success) {
+  //     customSnackbar(message: "خطأ : ${res.type} / ${res.message}");
+  //     return;
+  //   }
+  //   projects.removeWhere((p) => p.id == project.id);
+  //   customSnackbar(message: "تم حذف المشروع");
+  // }
+
+  // void updateProjectStatusLocally(String projectId, String status) {
+  //   _updateLocalProjectStatus(projectId, status);
+  // }
 }

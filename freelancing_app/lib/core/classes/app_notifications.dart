@@ -150,16 +150,34 @@ class AppNotification {
   }
 
   ///اشعار الموفقة على انهاء مهمه في مشروع
-  factory AppNotification.approveTask({
+  // factory AppNotification.approveTask({
+  //   required String projectId,
+  //   String? projectTitle,
+  //   int? taskNumber,
+  // }) {
+  //   return AppNotification(
+  //     title: "لقد تمت الموافقة على انهاء مهمة",
+  //     body:
+  //         "لقد تمت الموافقة على انهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في المشروع ${projectTitle ?? ''}",
+  //     data: {"type": AppNotificationTypes.approveTask, "id": projectId},
+  //   );
+  // }
+
+  /// إشعار الموافقة على إنهاء مهمة مع إتمام الدفع
+  factory AppNotification.approveTaskWithPayment({
     required String projectId,
     String? projectTitle,
     int? taskNumber,
+    double? amount,
   }) {
     return AppNotification(
-      title: "لقد تمت الموافقة على انهاء مهمة",
+      title: "تمت الموافقة على انهاء المهمة والدفع",
       body:
-          "لقد تمت الموافقة على انهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في المشروع ${projectTitle ?? ''}",
-      data: {"type": AppNotificationTypes.approveTask, "id": projectId},
+          "تمت الموافقة على إنهاء المهمة ${taskNumber != null ? "رقم $taskNumber" : ""} في مشروع ${projectTitle ?? ''} وتم تحويل المبلغ المستحق بنجاح",
+      data: {
+        "type": AppNotificationTypes.approveTaskWithPayment,
+        "id": projectId,
+      },
     );
   }
 
@@ -251,51 +269,16 @@ class AppNotification {
   factory AppNotification.newRating({
     required String projectId,
     String? projectTitle,
-    required bool isClient,
   }) {
     return AppNotification(
       title: "تقييم جديد",
       body:
           "لديك تقييم جديد في مشروع ${projectTitle != null ? '"$projectTitle"' : ''}.\n لا تنسى تقييم الطرف الآخر !",
-      // body:"لقد قام ${isClient ? "الفريلانسر" : "صاحب المشروع"} بتقييمك على مشروع ${projectTitle !=null ? '"$projectTitle"' : ''}\nيمكنك ا",
       data: {"type": AppNotificationTypes.newRating, "id": projectId},
     );
   }
 
-  /// إشعار دفعة مالية
-  // factory AppNotification.paymentReceived({
-  //   required String id,
-  //   required double amount,
-  //   required String transactionId,
-  // }) {
-  //   return AppNotification(
-  //     id: id,
-  //     type: NotificationType.paymentReceived,
-  //     createdAt: DateTime.now(),
-  //     data: {
-  //       "amount": amount,
-  //       "transactionId": transactionId,
-  //     },
-  //   );
-  // }
-
-  /// إشعار عرض جديد
-  // factory AppNotification.offerReceived({
-  //   required String id,
-  //   required String freelancerName,
-  //   required double price,
-  // }) {
-  //   return AppNotification(
-  //     id: id,
-  //     type: NotificationType.offerReceived,
-  //     createdAt: DateTime.now(),
-  //     data: {
-  //       "freelancerName": freelancerName,
-  //       "price": price,
-  //     },
-  //   );
-  // }
-
+ 
   /// إشعار عام من النظام
   // factory AppNotification.systemAlert({
   //   required String id,

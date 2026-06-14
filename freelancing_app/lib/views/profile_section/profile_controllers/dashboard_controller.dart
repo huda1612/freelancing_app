@@ -81,14 +81,13 @@ class DashboardController extends GetxController with ProjectTaskProgressMixin {
       res.fold((_) {}, (list) => all = list);
     }
 
-    final active = all
-        .where((p) => p.status == ProjectStatus.inProgress)
-        .toList()
-      ..sort((a, b) {
-        final aMs = a.createdAt?.millisecondsSinceEpoch ?? 0;
-        final bMs = b.createdAt?.millisecondsSinceEpoch ?? 0;
-        return bMs.compareTo(aMs);
-      });
+    final active =
+        all.where((p) => p.status == ProjectStatus.inProgress).toList()
+          ..sort((a, b) {
+            final aMs = a.createdAt?.millisecondsSinceEpoch ?? 0;
+            final bMs = b.createdAt?.millisecondsSinceEpoch ?? 0;
+            return bMs.compareTo(aMs);
+          });
 
     inProgressProjects.assignAll(active);
     activeProjects.value = active.length;
@@ -115,6 +114,9 @@ class DashboardController extends GetxController with ProjectTaskProgressMixin {
   }
 
   void openActiveProject(ProjectModel project) {
+    // if (Get.isRegistered<ActiveProjectController>()) {
+    //   Get.delete<ActiveProjectController>(force: true);
+    // }
     NavigationService.toNamed(
       AppRoutes.activeProject,
       arguments: {'project': project},

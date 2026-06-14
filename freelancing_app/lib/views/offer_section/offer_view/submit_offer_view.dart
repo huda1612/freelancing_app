@@ -48,6 +48,35 @@ class SubmitOfferView extends StatelessWidget {
                   // prefixText: '\$ ',
                 ),
                 SizedBox(height: AppSpaces.heightMedium2),
+
+                /// 🔥 حقل المستحقات بعد خصم العمولة
+                Row(
+                  children: [
+                    CustomTextField(
+                      controller: controller.netEarningsController,
+                      readOnly: true,
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      hintText: 'مستحقاتك',
+                      width: 250,
+                      prefixIcon: Icon(
+                        Icons.account_balance_wallet_outlined,
+                        color: AppColors.vividPurple,
+                        size: 22.w,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'بعد خصم عمولة التطبيق',
+                      style: AppTextStyles.body.copyWith(
+                        color: Colors.grey.shade600,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppSpaces.heightMedium2),
+
                 _SectionTitle(text: 'مدة التسليم'),
                 CustomTextField(
                   controller: controller.durationController,
@@ -61,6 +90,7 @@ class SubmitOfferView extends StatelessWidget {
                   ),
                   textInputAction: TextInputAction.next,
                 ),
+
                 SizedBox(height: AppSpaces.heightMedium2),
                 _SectionTitle(text: 'تفاصيل العرض'),
                 CustomTextField(
@@ -70,7 +100,9 @@ class SubmitOfferView extends StatelessWidget {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.done,
                 ),
+
                 SizedBox(height: AppSpaces.heightLarge1),
+
                 GetBuilder<SubmitOfferController>(
                   builder: (controller) => CustomButton(
                     text: controller.isEditMode

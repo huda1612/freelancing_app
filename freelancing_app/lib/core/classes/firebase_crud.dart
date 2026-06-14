@@ -27,7 +27,7 @@ class FirebaseCrud {
 
         print("fromCache = ${snapshot.metadata.isFromCache}");
         print("docsCount = ${snapshot.docs.length}");
-        // print("hiiii");
+        print("hiiii");
         return Left(StatusClasses.offlineError);
       }
 

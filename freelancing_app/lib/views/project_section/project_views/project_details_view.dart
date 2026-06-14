@@ -33,24 +33,30 @@ class ProjectDetailsView extends StatelessWidget {
     // final project =
     //     NavigationService.arguments<Map<String, ProjectModel>>(context);
 
-    // if (controller.project == null) {
-    //   return BaseScreen(
-    //     body: Center(
-    //       child: CustomErrorWidget(
-    //         message: "تعذر تحميل بيانات المشروع",
-    //       ),
-    //     ),
-    //   );
-    // }
     return GetBuilder<ProjectDetailsController>(
         // init: Get.find<ProjectDetailsController>(),
         builder: (c) {
       if (c.pageState == StatusClasses.isloading) {
         return CustomLoading();
       }
+      //بطلع رساله ان انحذف المشروع هاد
+      if (c.pageState == StatusClasses.notFound && c.project == null) {
+        return Scaffold(
+          appBar: CustomAppBar(
+            title: "تفاصيل المشروع",
+            backgroundGradient: AppColors.gradientColor,
+          ),
+          backgroundColor: Colors.grey.shade100,
+          body: CustomErrorWidget(
+            icon: Icons.delete,
+            title: "المشروع غير متوفر",
+            message: "عذرا ، لقد تم حذف بيانات هذا المشروع",
+          ),
+        );
+      }
       if (c.pageState != StatusClasses.isloading && c.project == null) {
         return CustomErrorWidget(
-          message: "تعذر تحميل المشروع",
+          message: "تعذر تحميل المشروع\n${c.pageState.message}",
         );
       }
 

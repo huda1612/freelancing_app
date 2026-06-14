@@ -50,30 +50,55 @@ class ProjectService {
     );
   }
 
-  Future<StatusClasses> deleteProject(ProjectModel project) async {
-    final transactionRes =
-        await FirebaseCrud.runTransaction(action: (transaction) async {
-      var doc = _firebaseFirestore
+  // Future<StatusClasses> deleteNewProject(ProjectModel project) async {
+  //   final transactionRes =
+  //       await FirebaseCrud.runTransaction(action: (transaction) async {
+  //     var doc = _firebaseFirestore
+  //         .collection(CollectionsNames.projects)
+  //         .doc(project.id);
+  //     transaction.delete(doc);
+
+  //     /// جلب العروض الخاصة بالمشروع
+  //     final offersQuery = await _firebaseFirestore
+  //         .collection(CollectionsNames.offers)
+  //         .where("projectId", isEqualTo: project.id)
+  //         .get();
+
+  //     // حذف جميع العروض
+  //     for (final doc in offersQuery.docs) {
+  //       _firebaseFirestore.batch().delete(doc.reference);
+  //     }
+
+  //     // تنفيذ كل العمليات دفعة واحدة
+  //     await _firebaseFirestore.batch().commit();
+  //   });
+  //   return transactionRes;
+  // }
+
+  Future<StatusClasses> deleteNewProject(ProjectModel project) async {
+  return await FirebaseCrud.runBatch(
+    action: (batch) async {
+      // final batch = _firebaseFirestore.batch();
+
+      final projectRef = _firebaseFirestore
           .collection(CollectionsNames.projects)
           .doc(project.id);
-      transaction.delete(doc);
 
-      /// جلب العروض الخاصة بالمشروع
       final offersQuery = await _firebaseFirestore
           .collection(CollectionsNames.offers)
           .where("projectId", isEqualTo: project.id)
           .get();
 
-      // حذف جميع العروض
+      batch.delete(projectRef);
+
       for (final doc in offersQuery.docs) {
-        _firebaseFirestore.batch().delete(doc.reference);
+        batch.delete(doc.reference);
       }
 
-      // تنفيذ كل العمليات دفعة واحدة
-      await _firebaseFirestore.batch().commit();
-    });
-    return transactionRes;
-  }
+      await batch.commit();
+    },
+  );
+}
 
   Future<Either<StatusClasses, List<ProjectModel>>> getOpenProjects() async {
     final query = projectsCollectionRef.where('status',

@@ -10,8 +10,10 @@ import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/freelance_project_controller.dart'
     show FreelancerProjectController;
 import 'package:freelancing_platform/views/project_section/project_widgets/freelance_project_tile.dart';
+import 'package:freelancing_platform/core/widgets/list_tab_bar.dart';
 import 'package:get/get.dart';
 
+//ok
 class FreelancerProjectView extends StatelessWidget {
   final FreelancerProjectController controller =
       Get.find<FreelancerProjectController>();
@@ -20,26 +22,23 @@ class FreelancerProjectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        appBar: CustomAppBar(
-          title: 'مشاريعي',
-          backgroundGradient: AppColors.gradientColor,
-          leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onLeadingPressed: NavigationService.back,
-        ),
-        body: Obx(
-          () => UiStateHandler(
-            status: controller.pageState.value,
-            fetchDataFun: controller.loadProjects,
-            child: Column(
-              children: [
-                _tabsBar(),
-                Expanded(child: _buildProjectsList()),
-              ],
-            ),
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: CustomAppBar(
+        title: 'مشاريعي',
+        backgroundGradient: AppColors.gradientColor,
+        leadingIcon: const Icon(Icons.arrow_back, color: AppColors.white),
+        onLeadingPressed: NavigationService.back,
+      ),
+      body: Obx(
+        () => UiStateHandler(
+          status: controller.pageState.value,
+          fetchDataFun: controller.loadProjects,
+          child: Column(
+            children: [
+              _tabsBar(),
+              Expanded(child: _buildProjectsList()),
+            ],
           ),
         ),
       ),
@@ -47,87 +46,30 @@ class FreelancerProjectView extends StatelessWidget {
   }
 
   Widget _tabsBar() {
-    return Obx(
-      () => Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.grey,
-              blurRadius: 2,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children:
-                List.generate(ProjectStatus.freelancerTabLabels.length, (i) {
-              return Padding(
-                padding: EdgeInsets.only(left: i == 0 ? 0 : 6.w),
-                child: _tabButton(
-                  label: ProjectStatus.freelancerTabLabels[i],
-                  selected: controller.activeTabIndex.value == i,
-                  onTap: () => controller.setTabIndex(i),
-                ),
-              );
-            }),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _tabButton({
-    required String label,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-        decoration: const BoxDecoration(color: Colors.transparent),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
-                color: selected ? AppColors.vividPurple : AppColors.grey,
-              ),
-            ),
-            const SizedBox(height: 7),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              height: 2.5,
-              width: selected ? 48 : 0,
-              decoration: BoxDecoration(
-                color: AppColors.vividPurple,
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Obx(() {
+      final selectedIndex =
+          controller.activeTabIndex.value; //حتى تتغير بالواجهة بالObx
+      return ListTabBar(
+        tabsLength: ProjectStatus.freelancerTabLabels.length,
+        getLabel: (i) => ProjectStatus.freelancerTabLabels[i],
+        isSelected: (i) => selectedIndex == i,
+        onLabelTab: (i) => controller.setTabIndex(i),
+      );
+    });
   }
 
   Widget _buildProjectsList() {
     return Obx(() {
       final items = controller.projectsForActiveTab();
+      // empty message
       if (items.isEmpty) {
         return CustomRefreshableEmptyMessage(
             onRefresh: controller.loadProjects,
             emptyMessage: _emptyMessageForTab(controller.activeTabIndex.value));
       }
-
+      // project list
       return RefreshIndicator(
+        color: AppColors.vividPurple,
         onRefresh: controller.loadProjects,
         child: ListView.builder(
           padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
@@ -139,9 +81,9 @@ class FreelancerProjectView extends StatelessWidget {
             return FreelancerProjectTile(
               project: project,
               mode: mode,
+              onTap: () => controller.openActiveProject(project),
               tasksDone: project.completedTasksCount,
               tasksTotal: project.tasksCount,
-              onTap: () => controller.openActiveProject(project),
             );
           },
         ),
@@ -154,10 +96,8 @@ class FreelancerProjectView extends StatelessWidget {
       case 0:
         return 'لا توجد مشاريع قيد التقدم.';
       case 1:
-        return 'لا توجد مشاريع تم تسليمها.';
-      case 2:
         return 'لا توجد مشاريع مكتملة.';
-      case 3:
+      case 2:
         return 'لا توجد مشاريع غير مكتملة.';
       default:
         return 'لا توجد بيانات.';

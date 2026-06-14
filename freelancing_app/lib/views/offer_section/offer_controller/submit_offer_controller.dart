@@ -19,6 +19,8 @@ class SubmitOfferController extends GetxController {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController durationController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
+  final TextEditingController netEarningsController = TextEditingController();
+
   double projectBudget = 0;
   int projectDurationDays = 0;
   String? projectId;
@@ -35,6 +37,11 @@ class SubmitOfferController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    priceController.addListener(() {
+      calculateNetEarnings();
+    });
+
     projectBudget = Get.arguments?["projectBudget"];
     projectDurationDays = Get.arguments?["projectDurationDays"];
     projectId = Get.arguments?['projectId'];
@@ -46,6 +53,7 @@ class SubmitOfferController extends GetxController {
       priceController.text = offerToEdit!.price.toString();
       durationController.text = offerToEdit!.durationDays.toString();
       detailsController.text = offerToEdit!.proposalText;
+      calculateNetEarnings();
     }
   }
 
@@ -56,6 +64,24 @@ class SubmitOfferController extends GetxController {
       return false;
     }
     return true;
+  }
+
+  void calculateNetEarnings() {
+    final text = priceController.text.trim();
+
+    if (text.isEmpty) {
+      netEarningsController.text = "0.00";
+      return;
+    }
+
+    final price = double.tryParse(normalizeNumbers(text));
+    if (price == null) {
+      netEarningsController.text = "0.00";
+      return;
+    }
+
+    final netEarnings = price - (price * 0.02);
+    netEarningsController.text = netEarnings.toStringAsFixed(2);
   }
 
   // Submit offer function
@@ -138,6 +164,7 @@ class SubmitOfferController extends GetxController {
         final offer = OfferModel(
           id: '',
           projectId: projectId!,
+          projectTitle: projectTitle,
           freelancerId: UserSession.uid!,
           clientId: clientId!,
           freelancerSnapshot: freelancerSnapshot,
@@ -172,12 +199,8 @@ class SubmitOfferController extends GetxController {
     });
   }
 
-  bool _validateRequired(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return true;
-    }
-    return false;
-  }
+  bool _validateRequired(String? value) =>
+      value == null || value.trim().isEmpty;
 
   String? priceValidation(String? val) {
     if (_validateRequired(val)) {

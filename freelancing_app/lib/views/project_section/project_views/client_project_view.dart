@@ -8,8 +8,10 @@ import 'package:freelancing_platform/core/widgets/get_rerponse_handler.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
 import 'package:freelancing_platform/views/project_section/project_controller/client_project_controller.dart';
 import 'package:freelancing_platform/views/project_section/project_widgets/client_project_tile.dart';
+import 'package:freelancing_platform/core/widgets/list_tab_bar.dart';
 import 'package:get/get.dart';
 
+//ok
 class ClientProjectView extends StatelessWidget {
   final ClientProjectController controller =
       Get.find<ClientProjectController>();
@@ -40,76 +42,16 @@ class ClientProjectView extends StatelessWidget {
   }
 
   Widget _tabsBar() {
-    return
-        // Obx(
-        //   () =>
-        Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.grey,
-            blurRadius: 2,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: List.generate(ProjectStatus.clientTabLabels.length, (i) {
-            return Padding(
-              padding: EdgeInsets.only(left: i == 0 ? 0 : 6.w),
-              child: _tabButton(
-                label: ProjectStatus.clientTabLabels[i],
-                selected: controller.activeTabIndex.value == i,
-                onTap: () => controller.setTabIndex(i),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-    // );
-  }
-
-  Widget _tabButton({
-    required String label,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-        decoration: const BoxDecoration(color: Colors.transparent),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
-                color: selected ? AppColors.vividPurple : AppColors.normalGrey,
-              ),
-            ),
-            const SizedBox(height: 7),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              height: 2.5,
-              width: selected ? 48 : 0,
-              decoration: BoxDecoration(
-                color: AppColors.vividPurple,
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Obx(() {
+      final selectedIndex =
+          controller.activeTabIndex.value; //حتى تتغير بالواجهة بالObx
+      return ListTabBar(
+        tabsLength: ProjectStatus.clientTabLabels.length,
+        getLabel: (i) => ProjectStatus.clientTabLabels[i],
+        isSelected: (i) => selectedIndex == i,
+        onLabelTab: (i) => controller.setTabIndex(i),
+      );
+    });
   }
 
   Widget _buildProjectsList() {
@@ -133,25 +75,12 @@ class ClientProjectView extends StatelessWidget {
             final ProjectModel project = items[index];
             final mode = ClientProjectTile.modeFromStatus(project.status);
 
-            return GetBuilder<ClientProjectController>(
-              builder: (c) => ClientProjectTile(
-                project: project,
-                mode: mode,
-                isBusy: c.isBusy(project.id),
-                onTap: () => _onProjectTap(c, project, mode),
-                tasksDone: project.completedTasksCount,
-                tasksTotal: project.tasksCount,
-                onApproveCompletion:
-                    mode == ClientProjectTileMode.readyToComplete
-                        ? () => c.approveProjectCompletion(project)
-                        : null,
-                // onRepublish: mode == ClientProjectTileMode.withdrawn
-                //     ? () => c.republishProject(project)
-                //     : null,
-                onDelete: mode == ClientProjectTileMode.withdrawn
-                    ? () => c.confirmDeleteProject(project)
-                    : null,
-              ),
+            return ClientProjectTile(
+              project: project,
+              mode: mode,
+              onTap: () => _onProjectTap(controller, project, mode),
+              tasksDone: project.completedTasksCount,
+              tasksTotal: project.tasksCount,
             );
           },
         ),
@@ -173,12 +102,9 @@ class ClientProjectView extends StatelessWidget {
       case ClientProjectTileMode.inProgress:
       case ClientProjectTileMode.readyToComplete:
       case ClientProjectTileMode.completed:
-      case ClientProjectTileMode.withdrawn:
+      case ClientProjectTileMode.cancelled:
         c.openActiveProject(project);
         break;
-
-      // case ClientProjectTileMode.withdrawn:
-      //   break;
     }
   }
 
@@ -188,8 +114,6 @@ class ClientProjectView extends StatelessWidget {
         return 'لا توجد مشاريع جديدة.';
       case 1:
         return 'لا توجد مشاريع قيد التقدم.';
-      // case 2:
-      //   return 'لا توجد مشاريع مستلمة.';
       case 2:
         return 'لا توجد مشاريع مكتملة.';
       case 3:

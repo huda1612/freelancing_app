@@ -4,6 +4,7 @@ import 'package:freelancing_platform/core/constants/data_constsnats/offer_status
 class OfferModel {
   final String id;
   final String projectId;
+  final String? projectTitle;
   final String freelancerId;
   final String clientId;
   final double price;
@@ -17,11 +18,12 @@ class OfferModel {
   OfferModel({
     required this.id,
     required this.projectId,
+    this.projectTitle,
     required this.freelancerId,
     required this.clientId,
     required this.price,
     required this.durationDays,
-    this.status =OfferStatus.pending,
+    this.status = OfferStatus.pending,
     required this.freelancerSnapshot,
     this.proposalText = '',
     this.createdAt,
@@ -32,6 +34,7 @@ class OfferModel {
   Map<String, dynamic> toMap() {
     return {
       'projectId': projectId,
+      'projectTitle': projectTitle,
       'clientId': clientId,
       'freelancerId': freelancerId,
       'price': price,
@@ -49,6 +52,7 @@ class OfferModel {
     return OfferModel(
       id: docId,
       projectId: map['projectId'],
+      projectTitle: map['projectTitle'],
       freelancerId: map['freelancerId'],
       clientId: map['clientId'],
       price: (map['price'] as num?)?.toDouble() ?? 0.0,
@@ -60,8 +64,6 @@ class OfferModel {
           map['freelancerSnapshot'] ?? {},
         ),
       ),
-      // freelancerSnapshot:
-      //     Map<String, dynamic>.from(map['freelancerSnapshot'] ?? {}),
       createdAt:
           map['createdAt'] is Timestamp ? map['createdAt'] as Timestamp : null,
       updatedAt:

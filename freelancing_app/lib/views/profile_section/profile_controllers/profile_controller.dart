@@ -193,13 +193,7 @@ class ProfileController extends GetxController {
     return "$role / $jobTitle";
   }
 
-  ///ما مستخدم !!!!!!!!!!!!!!
-  // double get averageReviewsRating {
-  //   if (reviews.isEmpty) return user.value?.rating ?? 0.0;
-  //   final sum = reviews.fold<double>(0.0, (acc, item) => acc + item.rating);
-  //   return sum / reviews.length;
-  // }
-
+ 
   ///ما مستخدم !!!!!!!!!!!!!!
   // int get completedProjects => user.value?.completedProjects ?? works.length;
   Future<void> loadNotificationDisableValue() async {

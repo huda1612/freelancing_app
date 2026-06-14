@@ -5,7 +5,7 @@ import 'package:freelancing_platform/core/constants/app_spaces.dart';
 import 'package:freelancing_platform/core/constants/app_text_styles.dart';
 import 'package:freelancing_platform/core/constants/data_constsnats/project_status.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
-
+//ok
 class ProjectCard extends StatelessWidget {
   const ProjectCard({
     super.key,
@@ -13,7 +13,7 @@ class ProjectCard extends StatelessWidget {
     this.onTap,
     this.tasksDone,
     this.tasksTotal,
-    this.footer,
+    // this.footer,
     this.header,
     this.marginBottom = true,
   });
@@ -22,7 +22,7 @@ class ProjectCard extends StatelessWidget {
   final VoidCallback? onTap;
   final int? tasksDone;
   final int? tasksTotal;
-  final Widget? footer;
+  // final Widget? footer;
   final Widget? header;
   final bool marginBottom;
 
@@ -31,6 +31,13 @@ class ProjectCard extends StatelessWidget {
           project.status == ProjectStatus.readyToComplete) &&
       tasksDone != null &&
       tasksTotal != null;
+
+  String get _categoryText {
+    if (project.category.name.trim().isNotEmpty) {
+      return project.category.name;
+    }
+    return 'غير محدد';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +109,7 @@ class ProjectCard extends StatelessWidget {
                       _InfoRow(
                         icon: Icons.task_alt_outlined,
                         label: 'المهام المنجزة',
-                        value: '$tasksDone / $tasksTotal',
+                        value: '$tasksTotal / $tasksDone',
                       ),
                     ],
                   ],
@@ -110,26 +117,16 @@ class ProjectCard extends StatelessWidget {
               ),
             ),
           ),
-          if (footer != null) ...[
-            Divider(height: 1, color: Colors.grey.shade200),
-            Padding(
-              padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 12.h),
-              child: footer!,
-            ),
-          ],
+          // if (footer != null) ...[
+          //   Divider(height: 1, color: Colors.grey.shade200),
+          //   Padding(
+          //     padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 12.h),
+          //     child: footer!,
+          //   ),
+          // ],
         ],
       ),
     );
-  }
-
-  String get _categoryText {
-    if (project.category.name.trim().isNotEmpty) {
-      return project.category.name;
-    }
-    if (project.skillsRequired.isNotEmpty) {
-      return project.skillsRequired.first;
-    }
-    return 'غير محدد';
   }
 }
 

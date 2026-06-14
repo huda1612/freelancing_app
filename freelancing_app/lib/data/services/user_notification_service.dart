@@ -19,8 +19,8 @@ class UserNotificationService {
         .collection(CollectionsNames.users)
         .doc(uId)
         .collection(CollectionsNames.notifications)
-        .orderBy('createdAt', descending: true)
-        .limit(50);
+        .orderBy('createdAt', descending: true);
+    // .limit(50);
 
     var response = await FirebaseCrud.runGetQuery<NotificationModel>(
         query: query,

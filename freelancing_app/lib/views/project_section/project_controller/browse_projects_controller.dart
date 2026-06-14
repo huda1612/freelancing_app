@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:freelancing_platform/core/classes/status_classes.dart';
+import 'package:freelancing_platform/core/constants/app_routes.dart';
+import 'package:freelancing_platform/core/services/navigation_service.dart';
 import 'package:freelancing_platform/data/services/project_service.dart';
 import 'package:freelancing_platform/data/services/specializations_skills_service.dart';
 import 'package:freelancing_platform/models/project_collections/project_model.dart';
@@ -7,9 +11,6 @@ import 'package:freelancing_platform/models/skill_collections/specialization_mod
 import 'package:get/get.dart';
 
 class BrowseProjectsController extends GetxController {
-  // final ProjectService _projectService = ProjectService();
-  // final SpecialSkillsService _specialSkillsService = SpecialSkillsService();
-
   final pageState = StatusClasses.isloading.obs;
   final projects = <ProjectModel>[].obs;
 
@@ -17,13 +18,6 @@ class BrowseProjectsController extends GetxController {
   final allSpecializations = <SpecializationModel>[].obs;
   final searchQuery = ''.obs;
   final selectedSpecialization = RxnString();
-
-  ProjectModel? selectedProject;
-  // void onProjectSelect(ProjectModel project) {
-  //   selectedProject = project;
-  //   // NavigationService.toNamed(AppRoutes.projectDetails,
-  //   //     arguments: {"project": project});
-  // }
 
   // هي بتحدد المشاريع اللي رح تظهر بالقائمه بالصفحه
   List<ProjectModel> get filteredProjects {
@@ -93,6 +87,14 @@ class BrowseProjectsController extends GetxController {
       // }
       pageState.value = StatusClasses.success;
     });
+  }
+
+  onProjectTab(ProjectModel project) async {
+    final result = await NavigationService.toNamed(AppRoutes.projectDetails,
+        arguments: {"project": project, "projectId": project.id});
+    if (result == true) {
+      await fetchOpenProjectAndSpec();
+    }
   }
 
   void onSearchChanged(String value) {
